@@ -4,8 +4,47 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard | Chamchamz Archive</title>
-  <!-- Include the script for Decap CMS (formerly Netlify CMS) -->
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  
+  <!-- Modern robust error interceptor to surface any CMS runtime issues directly back to the screen -->
+  <script>
+    window.addEventListener('error', function(e) {
+      showError('Lỗi Runtime: ' + e.message + ' tại ' + e.filename + ':' + e.lineno);
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      showError('Lỗi Unhandled Promise rejection: ' + (e.reason ? e.reason.message || e.reason : e));
+    });
+    
+    function showError(message) {
+      const errUI = document.getElementById('cms-error-ui');
+      if (errUI) {
+        errUI.querySelector('pre').innerText += '\n' + message;
+        return;
+      }
+      
+      const errDiv = document.createElement('div');
+      errDiv.id = 'cms-error-ui';
+      errDiv.style.position = 'fixed';
+      errDiv.style.bottom = '20px';
+      errDiv.style.left = '20px';
+      errDiv.style.right = '20px';
+      errDiv.style.background = '#fff1f2';
+      errDiv.style.color = '#be123c';
+      errDiv.style.padding = '20px';
+      errDiv.style.border = '3px solid #e11d48';
+      errDiv.style.borderRadius = '12px';
+      errDiv.style.fontFamily = 'monospace';
+      errDiv.style.fontSize = '12px';
+      errDiv.style.zIndex = '999999';
+      errDiv.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.2)';
+      errDiv.innerHTML = '<strong>⚠️ Phát hiện sự cố tải ứng dụng quản lý hoặc lỗi bắt tay:</strong>' +
+        '<pre style="margin: 10px 0 0 0; white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow-y: auto; background: #ffe4e6; padding: 10px; border-radius: 6px;">' + message + '</pre>' +
+        '<p style="margin: 10px 0 0 0; font-size: 11px; color: #475569;">💡 Gợi ý: Hãy mở Console (phím F12) của trình duyệt để kiểm tra chi tiết lỗi mạng (CORS, file config.yml tải thất bại, hoặc sai GITHUB CLIENT ID / SECRET).</p>';
+      document.body.appendChild(errDiv);
+    }
+  </script>
+
+  <!-- Include the secure, stable CDN script for Decap CMS -->
+  <script src="https://cdn.jsdelivr.net/npm/decap-cms@3.1.2/dist/decap-cms.js"></script>
 </head>
 <body>
 </body>

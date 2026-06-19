@@ -5,7 +5,99 @@
 
 import { HintItem, GalleryItem, RecItem, FanMessage } from './types';
 
-export const HINTS_DATA: HintItem[] = [
+// --- DYNAMIC INTEGRATION WITH DECAP CMS (VITE METADATA GLOB) ---
+const hintsGlob = (import.meta as any).glob('/src/data/hints/*.json', { eager: true });
+const galleryGlob = (import.meta as any).glob('/src/data/gallery/*.json', { eager: true });
+const recsGlob = (import.meta as any).glob('/src/data/recs/*.json', { eager: true });
+
+// 1. Process CMS Hints
+const cmsHintsList: HintItem[] = [];
+try {
+  Object.entries(hintsGlob).forEach(([path, module]: [string, any]) => {
+    const raw = module.default || module;
+    if (raw && raw.id) {
+      cmsHintsList.push({
+        id: raw.id,
+        title: raw.title || "",
+        date: raw.date || "",
+        category: (raw.category || "gợi ý") as any,
+        content: raw.content || "",
+        isUnlocked: typeof raw.isUnlocked === 'boolean' ? raw.isUnlocked : false,
+        hintIllustration: raw.hintIllustration || "🔑"
+      });
+    }
+  });
+} catch (e) {
+  console.warn("Lỗi phân tích CMS hints: ", e);
+}
+
+// 2. Process CMS Gallery Items
+const cmsGalleryList: GalleryItem[] = [];
+try {
+  Object.entries(galleryGlob).forEach(([path, module]: [string, any]) => {
+    const raw = module.default || module;
+    if (raw && raw.id) {
+      let parsedTags: string[] = [];
+      if (Array.isArray(raw.tags)) {
+        parsedTags = raw.tags.map((t: any) => {
+          if (typeof t === 'string') return t;
+          if (t && typeof t === 'object' && t.tag) return t.tag;
+          return "";
+        }).filter(Boolean);
+      }
+
+      let parsedImages: { image_file: string; caption?: string }[] = [];
+      if (Array.isArray(raw.images)) {
+        parsedImages = raw.images.map((img: any) => {
+          if (img && typeof img === 'object') {
+            return {
+              image_file: img.image_file || "",
+              caption: img.caption || ""
+            };
+          }
+          return null;
+        }).filter(Boolean) as any;
+      }
+
+      cmsGalleryList.push({
+        id: raw.id,
+        title: raw.title || "",
+        date: raw.date || "",
+        tags: parsedTags,
+        description: raw.description || "",
+        colorTheme: raw.colorTheme || "from-sky-100 to-cyan-100 border-sky-300 text-sky-800",
+        emoji: raw.emoji || "🖼️",
+        author: raw.author || "Chamchamz Fanart",
+        images: parsedImages.length > 0 ? parsedImages : undefined
+      });
+    }
+  });
+} catch (e) {
+  console.warn("Lỗi phân tích CMS gallery items: ", e);
+}
+
+// 3. Process CMS Recommendations Items
+const cmsRecsList: RecItem[] = [];
+try {
+  Object.entries(recsGlob).forEach(([path, module]: [string, any]) => {
+    const raw = module.default || module;
+    if (raw && raw.id) {
+      cmsRecsList.push({
+        id: raw.id,
+        title: raw.title || "",
+        creator: raw.creator || "",
+        type: (raw.type || "music") as any,
+        reason: raw.reason || "",
+        linkText: raw.linkText || "",
+        url: raw.url || ""
+      });
+    }
+  });
+} catch (e) {
+  console.warn("Lỗi phân tích CMS recommendations: ", e);
+}
+
+const DEFAULT_HINTS: HintItem[] = [
   {
     id: 'hint-1',
     title: 'Gợi ý về chiếc mũ len màu cam đào 🍑',
@@ -44,7 +136,7 @@ export const HINTS_DATA: HintItem[] = [
   }
 ];
 
-export const GALLERY_DATA: GalleryItem[] = [
+const DEFAULT_GALLERY: GalleryItem[] = [
   {
     id: 'gal-1',
     title: 'Nụ cười buổi ban mai',
@@ -107,7 +199,7 @@ export const GALLERY_DATA: GalleryItem[] = [
   }
 ];
 
-export const RECS_DATA: RecItem[] = [
+const DEFAULT_RECS: RecItem[] = [
   {
     id: 'rec-1',
     title: 'Ditto',
@@ -145,6 +237,18 @@ export const RECS_DATA: RecItem[] = [
     url: 'https://youtube.com'
   }
 ];
+
+// Helper to merge CMS list and hardcoded fallback by ID
+function mergeLists<T extends { id: string }>(defaultList: T[], cmsList: T[]): T[] {
+  const map = new Map<string, T>();
+  defaultList.forEach(item => map.set(item.id, item));
+  cmsList.forEach(item => map.set(item.id, item));
+  return Array.from(map.values());
+}
+
+export const HINTS_DATA = mergeLists(DEFAULT_HINTS, cmsHintsList);
+export const GALLERY_DATA = mergeLists(DEFAULT_GALLERY, cmsGalleryList);
+export const RECS_DATA = mergeLists(DEFAULT_RECS, cmsRecsList);
 
 export const INITIAL_MESSAGES: FanMessage[] = [
   {
@@ -212,7 +316,7 @@ Website được triển khai dưới cấu trúc **Single-Page Application (SPA
 
 ---
 
-### 🌐 4. TỐI ƯU HÓA TÌM KIẾM (SEO METADATA)
+### 4. TỐI ƯU HÓA TÌM KIẾM (SEO METADATA)
 - **SEO Title**: \`Chamchamz Archive - Kho Lưu Trữ Ký Ức & Manh Mối Độc Quyền | Sáng Tạo & Bảo Mật\`
 - **Meta Description**: \`Truy cập Chamchamz Archive để xem các hình ảnh cưng xỉu, gợi ý bí mật và đề xuất âm nhạc yêu thích của Chamchamz. Cam kết lưu trữ nội bộ và bảo mật thông tin tuyệt đối cho cộng đồng fan.\`
 

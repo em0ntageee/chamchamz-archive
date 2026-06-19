@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Music, Play, Pause, Volume2, VolumeX, Settings, Sparkles, Sliders, Check, Link, Globe } from 'lucide-react';
+import musicData from '../data/music.json';
 
 interface MusicTrack {
   name: string;
@@ -13,7 +14,7 @@ interface MusicTrack {
   url: string;
 }
 
-const PRESET_TRACKS: MusicTrack[] = [
+const PRESET_TRACKS: MusicTrack[] = (musicData && musicData.tracks) ? musicData.tracks : [
   {
     name: "Cozy Stream Lo-Fi",
     artist: "Chilhop Melodies",

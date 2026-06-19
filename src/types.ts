@@ -23,6 +23,7 @@ export interface GalleryItem {
   colorTheme: string; // Pastel tailwind colors
   emoji: string;
   author: string;
+  images?: { image_file: string; caption?: string }[];
 }
 
 export interface RecItem {

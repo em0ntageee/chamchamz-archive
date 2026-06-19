@@ -6,11 +6,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Calendar, Users, Eye, HelpCircle, RefreshCw, X, ShieldAlert, Check, Sparkles, AlertCircle } from 'lucide-react';
+import countersData from '../data/counters.json';
 
 export default function DynamicCounters() {
   // LIVESTREAM DATE calculations
-  // Default livestream date: Nov 5, 2025, which gives exactly 225 days on June 18, 2026.
-  const DEFAULT_STREAM_DATE = "2025-11-05";
+  const DEFAULT_STREAM_DATE = countersData.stream_date || "2025-11-05";
   const [livestreamDateStr, setLivestreamDateStr] = useState<string>(() => {
     const saved = localStorage.getItem('chamchamz_stream_date');
     return saved || DEFAULT_STREAM_DATE;
@@ -19,12 +19,11 @@ export default function DynamicCounters() {
   const [daysSince, setDaysSince] = useState<number>(225);
 
   // VISITOR COUNTER setup
-  // Default base: 142580, incrementing by 1 on landing, and optionally simulating sporadic active visits
   const [visitorCount, setVisitorCount] = useState<number>(() => {
     const saved = localStorage.getItem('chamchamz_visitor_count');
     if (saved) return parseInt(saved, 10);
-    // Large pretty starter value
-    return 142580;
+    // Large pretty starter value loaded from CMS counters_data
+    return countersData.base_visits || 142580;
   });
 
   // Admin Config Panel Visibility

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { HintItem, GalleryItem, RecItem, FanMessage } from '../types';
 import { HINTS_DATA, GALLERY_DATA, RECS_DATA, INITIAL_MESSAGES } from '../data';
+import contactData from '../data/contact.json';
 
 interface ArchiveExplorerProps {
   initialTab?: string;
@@ -688,8 +689,8 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
             >
               {/* Header inside Tab */}
               <div>
-                <h3 className="text-xl font-bold text-slate-800">Lá Thư Gửi Gắm Tình Yêu ✉️</h3>
-                <p className="text-xs text-slate-500 font-semibold">Không quản ngại khoảng cách, viết đôi lời nhắn nhủ chân thành đến Chamchamz. Đính kèm một nhãn dán dễ thương!</p>
+                <h3 className="text-xl font-bold text-slate-800">{contactData.title || "Lá Thư Gửi Gắm Tình Yêu ✉️"}</h3>
+                <p className="text-xs text-slate-500 font-semibold">{contactData.description || "Không quản ngại khoảng cách, viết đôi lời nhắn nhủ chân thành đến Chamchamz. Đính kèm một nhãn dán dễ thương!"}</p>
               </div>
 
               {/* Form and Board Layout */}
@@ -768,7 +769,7 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   {formSuccess && (
                     <div className="text-[10px] font-bold text-emerald-600 flex items-center gap-1 bg-emerald-50 p-2 rounded-lg border border-emerald-105">
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>Lá thư đã bay vút vào rương bảo mật!</span>
+                      <span>{contactData.success_msg || "Lá thư đã bay vút vào rương bảo mật!"}</span>
                     </div>
                   )}
 
@@ -866,13 +867,34 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
               </button>
 
               <div>
-                {/* Big cute visual representation */}
-                <div className={`aspect-video rounded-2xl bg-gradient-to-br ${selectedGalleryItem.colorTheme} flex items-center justify-center text-6xl border-2 border-slate-900 shadow-sm relative overflow-hidden mb-6`}>
-                  <span>{selectedGalleryItem.emoji}</span>
-                  <div className="absolute bottom-2 right-2 bg-white/90 border border-slate-900 text-[9px] font-bold px-2 py-0.5 rounded uppercase font-mono">
-                    Watermarked 🚫
+                {/* Big cute visual representation / Uploaded Image Showcase */}
+                {selectedGalleryItem.images && selectedGalleryItem.images.length > 0 ? (
+                  <div className="space-y-2 mb-6">
+                    <div className="aspect-video rounded-2xl border-2 border-slate-900 overflow-hidden bg-slate-100 flex items-center justify-center relative shadow-sm">
+                      <img 
+                        src={selectedGalleryItem.images[0].image_file} 
+                        alt={selectedGalleryItem.title} 
+                        className="w-full h-full object-cover"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="absolute bottom-2 right-2 bg-white/90 border border-slate-900 text-[9px] font-bold px-2 py-0.5 rounded uppercase font-mono z-10">
+                        Watermarked 🚫
+                      </div>
+                    </div>
+                    {selectedGalleryItem.images[0].caption && (
+                      <p className="text-[11px] text-slate-500 italic text-center font-semibold">
+                        "{selectedGalleryItem.images[0].caption}"
+                      </p>
+                    )}
                   </div>
-                </div>
+                ) : (
+                  <div className={`aspect-video rounded-2xl bg-gradient-to-br ${selectedGalleryItem.colorTheme} flex items-center justify-center text-6xl border-2 border-slate-900 shadow-sm relative overflow-hidden mb-6`}>
+                    <span>{selectedGalleryItem.emoji}</span>
+                    <div className="absolute bottom-2 right-2 bg-white/90 border border-slate-900 text-[9px] font-bold px-2 py-0.5 rounded uppercase font-mono">
+                      Watermarked 🚫
+                    </div>
+                  </div>
+                )}
 
                 {/* Subtitle tag chips */}
                 <div className="flex flex-wrap gap-1 mb-3">
