@@ -155,17 +155,7 @@ export default function Hero({ onExploreClick, onAboutClick }: HeroProps) {
            </button>
          </motion.div>
 
-        {/* Soft Decorative Info Line */}
-        <motion.div
-          id="hero-scrolldown"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="mt-12 text-slate-400 flex flex-col items-center gap-1.5 animate-bounce text-xs font-bold font-mono uppercase tracking-wider"
-        >
-          <span>Khám phá kho tàng bên dưới</span>
-          <ArrowDown className="w-4 h-4 text-brand-blue-400" />
-        </motion.div>
+        {/* Soft Decorative Info Line - Hidden */}
       </div>
     </section>
   );

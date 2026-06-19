@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Calendar, Users, Eye, HelpCircle, RefreshCw, X, ShieldAlert, Check, Sparkles, AlertCircle } from 'lucide-react';
 import countersData from '../data/counters.json';
+import { SITE_CONFIG } from '../data';
 
 export default function DynamicCounters() {
   // LIVESTREAM DATE calculations
@@ -127,59 +128,69 @@ export default function DynamicCounters() {
     }, 1500);
   };
 
+  const showStatic = SITE_CONFIG.showStaticIcons !== false;
+
   return (
     <section id="dynamic-counters-section" className="max-w-5xl mx-auto px-4 py-8 relative">
       {/* Container Card */}
-      <div className="bg-gradient-to-r from-brand-blue-101 via-white to-brand-cyan-100 rounded-3xl border-4 border-slate-900 p-6 md:p-8 shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] relative overflow-hidden">
+      <div className="bg-gradient-to-r from-brand-blue-101 via-white to-brand-cyan-100 rounded-3xl border-4 border-slate-900 p-6 md:p-8 shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] relative overflow-visible">
         
         {/* Playful top tag */}
-        <div className="absolute top-0 right-12 transform -translate-y-1/2 bg-amber-300 border-2 border-slate-900 text-slate-900 font-bold text-[10px] uppercase font-mono px-3 py-1 rounded-full shadow-sm z-10">
-          Chỉ Số Thời Gian Thực 📊
-        </div>
+        {countersData.show_counters_section_title !== false && countersData.counters_section_title && (
+          <div className="absolute top-0 right-12 transform -translate-y-1/2 bg-amber-300 border-2 border-slate-900 text-slate-900 font-bold text-[10px] uppercase font-mono px-3 py-1 rounded-full shadow-sm z-10">
+            {countersData.counters_section_title}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           
           {/* Counter 1: Days Since Livestream */}
           <div className="flex items-center gap-5 bg-white/60 p-5 rounded-2xl border-2 border-slate-800 backdrop-blur-xs relative overflow-hidden group">
-            <div className="w-16 h-16 rounded-2xl bg-amber-400 border-2 border-slate-900 flex items-center justify-center text-3xl shadow-sm transform group-hover:rotate-6 transition-transform">
-              🗓️
-            </div>
+            {showStatic && (
+              <div className="w-16 h-16 rounded-2xl bg-amber-400 border-2 border-slate-900 flex items-center justify-center text-3xl shadow-sm transform group-hover:rotate-6 transition-transform">
+                {countersData.counter1_emoji || "🗓️"}
+              </div>
+            )}
             <div className="flex-1">
               <span className="text-[10px] font-mono font-bold tracking-widest text-[#1e293b]/70 uppercase block mb-1">
-                Kỷ Niệm Cặp Đôi (Livestream)
+                {countersData.counter1_title || "Kỷ Niệm Cặp Đôi (Livestream)"}
               </span>
               <div className="flex items-baseline gap-1.5">
                 <span id="days-since-counter" className="text-3.5xl md:text-4.5xl font-extrabold text-slate-900 tracking-tight font-sans">
                   {daysSince}
                 </span>
-                <span className="text-sm font-bold text-slate-500">ngày đã trôi qua</span>
+                <span className="text-sm font-bold text-slate-500">{countersData.counter1_suffix || "ngày đã trôi qua"}</span>
               </div>
               <p className="text-[11px] text-slate-500 font-semibold mt-1">
-                Được tính tự động từ ngày livestream ({new Date(livestreamDateStr).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}).
+                {(countersData.counter1_desc || "Được tính tự động từ ngày livestream ({date}).").replace("{date}", new Date(livestreamDateStr).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }))}
               </p>
             </div>
           </div>
 
           {/* Counter 2: Website Visitors */}
           <div className="flex items-center gap-5 bg-white/60 p-5 rounded-2xl border-2 border-slate-800 backdrop-blur-xs relative overflow-hidden group">
-            <div className="w-16 h-16 rounded-2xl bg-brand-cyan-300 border-2 border-slate-900 flex items-center justify-center text-3xl shadow-sm transform group-hover:-rotate-6 transition-transform">
-              🐾
-            </div>
+            {showStatic && (
+              <div className="w-16 h-16 rounded-2xl bg-brand-cyan-300 border-2 border-slate-900 flex items-center justify-center text-3xl shadow-sm transform group-hover:-rotate-6 transition-transform">
+                {countersData.counter2_emoji || "🐾"}
+              </div>
+            )}
             <div className="flex-1">
               <span className="text-[10px] font-mono font-bold tracking-widest text-[#1e293b]/70 uppercase block mb-1">
-                Tổng Lượt Tham Quan Archive
+                {countersData.counter2_title || "Tổng Lượt Tham Quan Archive"}
               </span>
               <div className="flex items-baseline gap-1.5">
                 <span id="visitor-counter" className="text-3.5xl md:text-4.5xl font-extrabold text-slate-900 tracking-tight font-mono">
                   {visitorCount.toLocaleString()}
                 </span>
                 {/* Active glow tag to mimic real-time updates */}
-                <span className="inline-flex items-center gap-1 bg-emerald-100 border border-emerald-300 text-emerald-800 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full animate-pulse ml-2">
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> Live
-                </span>
+                {countersData.show_counter2_live_tag !== false && (
+                  <span className="inline-flex items-center gap-1 bg-emerald-100 border border-emerald-300 text-emerald-800 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full animate-pulse ml-2">
+                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> {countersData.counter2_live_tag || "Live"}
+                  </span>
+                )}
               </div>
               <p className="text-[11px] text-slate-500 font-semibold mt-1">
-                Số lần fan chân chính mở xem rương lưu trữ kể từ ngày đầu tiên xây dựng.
+                {countersData.counter2_desc || "Số lần fan chân chính mở xem rương lưu trữ kể từ ngày đầu tiên xây dựng."}
               </p>
             </div>
           </div>
@@ -187,12 +198,14 @@ export default function DynamicCounters() {
         </div>
 
         {/* Admin configuration button bottom bar - Hidden on main website and managed in CMS */}
-        <div className="mt-6 pt-5 border-t border-slate-900/10 flex items-center justify-between">
-          <div className="text-[10px] text-slate-500 font-semibold italic flex items-center gap-1">
-            <AlertCircle className="w-3.5 h-3.5 text-[#1e293b]/50" />
-            <span>Mọi số liệu được bảo vệ nghiêm mật theo hiệp ước.</span>
+        {countersData.show_counters_bottom_note !== false && countersData.counters_bottom_note && (
+          <div className="mt-6 pt-5 border-t border-slate-900/10 flex items-center justify-between">
+            <div className="text-[10px] text-slate-500 font-semibold italic flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5 text-[#1e293b]/50" />
+              <span>{countersData.counters_bottom_note}</span>
+            </div>
           </div>
-        </div>
+        )}
 
       </div>
 

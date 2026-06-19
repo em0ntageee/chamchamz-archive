@@ -338,6 +338,146 @@ collections:
             default: "Đã Ký Thệ Ước Bảo Mật 💖"
             required: true
 
+          # === BỔ SUNG CONFIG CHO MENU PHÂN LOẠI & MASCOT & FOOTER ===
+          - label: "Dòng chọn phân loại (Explorer Tag)"
+            name: "explorerSectionTag"
+            widget: "string"
+            default: "✦ Chọn Thư Mục Phân Loại ✦"
+            required: true
+          - label: "Tiêu đề tủ lưu trữ (Explorer Title)"
+            name: "explorerSectionTitle"
+            widget: "string"
+            default: "Mở tủ lưu trữ của Chamchamz"
+            required: true
+          - label: "Hiện Mascot Nhảy Tung Tăng Khắp Trang (Dynamic Floating Mascots)"
+            name: "showFloatingIcons"
+            widget: "boolean"
+            default: true
+          - label: "Hiện các biểu tượng tĩnh (Static Icons Toggles)"
+            name: "showStaticIcons"
+            widget: "boolean"
+            default: true
+          - label: "Ẩn/Hiện Footer (Show/Hide Footer)"
+            name: "showFooter"
+            widget: "boolean"
+            default: true
+          - label: "Hiện Banner Trên Cùng Của Footer"
+            name: "showFooterTopBanner"
+            widget: "boolean"
+            default: true
+          - label: "Nội Dung Chữ Banner Trên Cùng Footer"
+            name: "footerTopBannerText"
+            widget: "string"
+            default: "Vùng An Toàn Độc Quyền • Nghiêm Cấm Sao Chép Ra Ngoài 🔐"
+            required: false
+          - label: "Hiện Logo Footer"
+            name: "showFooterLogo"
+            widget: "boolean"
+            default: true
+          - label: "Biểu Tượng Logo Footer (Emoji)"
+            name: "footerLogoEmoji"
+            widget: "string"
+            default: "🐾"
+            required: false
+          - label: "Tên Thương Hiệu Footer"
+            name: "footerLogoText"
+            widget: "string"
+            default: "Chamchamz Archive"
+            required: true
+          - label: "Đoạn Giới Thiệu Ngắn Footer (Brand Bio)"
+            name: "footerBrandDesc"
+            widget: "text"
+            default: "Nơi cất giữ báu vật rực rỡ và những hạt giống niềm vui của bé Chamchamz. Chúng tôi cam kết tạo ra một môi trường lưu trữ an toàn, tôn trọng quyền riêng tư của thần tượng và cộng đồng người hâm mộ tại Việt Nam."
+            required: false
+          - label: "Nhãn bảo mật / bảo hộ ở Col 1 Footer"
+            name: "footerProtectionText"
+            widget: "string"
+            default: "Được bảo vệ bởi Hiệp Ước Người Hâm Mộ Mùa Đông"
+            required: false
+          - label: "Hiện Cột Bản Đồ Thư Mục"
+            name: "showFooterNav"
+            widget: "boolean"
+            default: true
+          - label: "Tiêu Đề Cột Bản Đồ Thư Mục"
+            name: "footerNavTitle"
+            widget: "string"
+            default: "Bản đồ Thư Mục"
+            required: false
+          - label: "Nhãn link Hộp Manh Mối (Hints Link Text)"
+            name: "footerNavHintLabel"
+            widget: "string"
+            default: "📁 Hộp Manh Mối (Hints)"
+            required: false
+          - label: "Nhãn link Triển Lãm Ảnh (Gallery Link Text)"
+            name: "footerNavGalleryLabel"
+            widget: "string"
+            default: "📁 Triển Lãm Ảnh (Gallery)"
+            required: false
+          - label: "Nhãn link Đề Xuất Nghệ Thuật (Recs Link Text)"
+            name: "footerNavRecsLabel"
+            widget: "string"
+            default: "📁 Đề Xuất Nghệ Thuật (Recs)"
+            required: false
+          - label: "Nhãn link Hòm Thư Yêu Thương (Contact Link Text)"
+            name: "footerNavContactLabel"
+            widget: "string"
+            default: "📁 Hòm Thư Yêu Thương (Contact)"
+            required: false
+          - label: "Hiện Cột Liên Hệ"
+            name: "showFooterContactCol"
+            widget: "boolean"
+            default: true
+          - label: "Tiêu Đề Cột Liên Hệ"
+            name: "footerContactTitle"
+            widget: "string"
+            default: "Liên Hệ Người Giữ Khóa"
+            required: false
+          - label: "Địa Chỉ Email Liên Hệ"
+            name: "footerContactEmail"
+            widget: "string"
+            default: "archive@chamchamz.fan"
+            required: false
+          - label: "Chú thích thêm ở cột Liên Hệ"
+            name: "footerContactInfoText"
+            widget: "text"
+            default: "Đây là blog lưu trữ do cộng đồng fan xây dựng, phi thương mại và tuyệt đối không liên kết tài trợ chính thức nào."
+            required: false
+          - label: "Hiện Thanh Bản Quyền Dưới Cùng (Bottom Copyright Bar)"
+            name: "showFooterBottomBar"
+            widget: "boolean"
+            default: true
+          - label: "Dòng Chữ Bản Quyền Copyright"
+            name: "footerCopyrightText"
+            widget: "string"
+            default: "© 2026 Chamchamz Archive. Bản quyền được bảo vệ an ninh tuyệt hảo."
+            required: false
+          - label: "Nhãn liên kết Chính Sách (Policy link text)"
+            name: "footerPolicyLabel"
+            widget: "string"
+            default: "Chính Sách Nội Bộ"
+            required: false
+          - label: "Nhãn liên kết Điều Khoản (Terms link text)"
+            name: "footerTermsLabel"
+            widget: "string"
+            default: "Điều Khoản Fan"
+            required: false
+
+          - label: "Địa chỉ Email liên hệ mục Contacts"
+            name: "contactEmail"
+            widget: "string"
+            default: "archive@chamchamz.fan"
+            required: true
+          - label: "Link Facebook mục Contacts"
+            name: "contactFacebook"
+            widget: "string"
+            default: "https://facebook.com/chamchamz"
+            required: true
+          - label: "Link Threads mục Contacts"
+            name: "contactThreads"
+            widget: "string"
+            default: "https://threads.net/@chamchamz"
+            required: true
+
   # Collection 1 & 2: Counters settings
   - name: "counters"
     label: "⏱️ Bộ Đếm Chỉ Số"
@@ -359,6 +499,68 @@ collections:
             default: 142580
             required: true
             hint: "Điểm mốc thiết lập trước cho lượt truy cập trang chủ."
+          - label: "Tiêu đề cụm chỉ số (Section Badge Title)"
+            name: "counters_section_title"
+            widget: "string"
+            default: "Chỉ Số Thời Gian Thực 📊"
+            required: false
+          - label: "Hiện tiêu đề cụm chỉ số"
+            name: "show_counters_section_title"
+            widget: "boolean"
+            default: true
+          - label: "Tiêu đề Bộ đếm 1 (Kỷ niệm)"
+            name: "counter1_title"
+            widget: "string"
+            default: "Kỷ Niệm Cặp Đôi (Livestream)"
+            required: true
+          - label: "Biểu tượng Bộ đếm 1 (Emoji)"
+            name: "counter1_emoji"
+            widget: "string"
+            default: "🗓️"
+            required: false
+          - label: "Hậu tố con số Bộ đếm 1"
+            name: "counter1_suffix"
+            widget: "string"
+            default: "ngày đã trôi qua"
+            required: true
+          - label: "Dòng chú thích Bộ đếm 1 (Thay {date} bằng ngày thực tế)"
+            name: "counter1_desc"
+            widget: "string"
+            default: "Được tính tự động từ ngày livestream ({date})."
+            required: false
+          - label: "Tiêu đề Bộ đếm 2 (Lượt truy cập)"
+            name: "counter2_title"
+            widget: "string"
+            default: "Tổng Lượt Tham Quan Archive"
+            required: true
+          - label: "Biểu tượng Bộ đếm 2 (Emoji)"
+            name: "counter2_emoji"
+            widget: "string"
+            default: "🐾"
+            required: false
+          - label: "Nhãn Nhấp nháy Live"
+            name: "counter2_live_tag"
+            widget: "string"
+            default: "Live"
+            required: false
+          - label: "Hiện nhãn nhấp nháy Live"
+            name: "show_counter2_live_tag"
+            widget: "boolean"
+            default: true
+          - label: "Dòng chú thích Bộ đếm 2"
+            name: "counter2_desc"
+            widget: "string"
+            default: "Số lần fan chân chính mở xem rương lưu trữ kể từ ngày đầu tiên xây dựng."
+            required: false
+          - label: "Chú thích an ninh ở cuối khối"
+            name: "counters_bottom_note"
+            widget: "string"
+            default: "Mọi số liệu được bảo vệ nghiêm mật theo hiệp ước."
+            required: false
+          - label: "Hiện chú thích an ninh ở cuối"
+            name: "show_counters_bottom_note"
+            widget: "boolean"
+            default: true
 
   # Collection 3: Background Music (with audio upload field)
   - name: "music"
@@ -414,7 +616,7 @@ collections:
       - label: "Thể loại"
         name: "category"
         widget: "select"
-        options: ["gợi ý", "bí mật", "sự kiện", "thông báo"]
+        options: ["Livestream", "Youtube", "Phỏng vấn", "Kênh bên ngoài"]
         required: true
       - label: "Hình Minh Họa (Emoji)"
         name: "hintIllustration"
@@ -465,7 +667,13 @@ collections:
       - label: "Màu thẻ (Tailwind Class)"
         name: "colorTheme"
         widget: "string"
-        default: "from-sky-100 to-cyan-100 border-sky-300 text-sky-800"
+        default: "from-sky-100 to-cyan-100 border-sky-305 text-sky-800"
+      - label: "Chuyên mục (Category)"
+        name: "category"
+        widget: "select"
+        options: ["X", "IG", "Weverse", "Nguồn bên ngoài"]
+        default: "X"
+        required: true
       - label: "Từ khóa nhãn (Tags)"
         name: "tags"
         widget: "list"
@@ -510,8 +718,8 @@ collections:
       - label: "Thể Loại"
         name: "type"
         widget: "select"
-        options: ["music", "book", "movie"]
-        default: "music"
+        options: ["Fanfic/Author", "Art/Artist", "Khác"]
+        default: "Khác"
       - label: "Lý Do Nên Đọc/Nghe"
         name: "reason"
         widget: "text"

@@ -7,7 +7,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Lock, Unlock, Search, Tag, Play, Pause, Calendar, 
-  User, Send, Volume2, Sparkles, AlertCircle, Heart, X, Smile 
+  User, Send, Volume2, Sparkles, AlertCircle, Heart, X, Smile, Star 
 } from 'lucide-react';
 import { HintItem, GalleryItem, RecItem, FanMessage } from '../types';
 import { HINTS_DATA, GALLERY_DATA, RECS_DATA, INITIAL_MESSAGES, SITE_CONFIG } from '../data';
@@ -28,7 +28,7 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
 
   // States for Gallery Module
   const [gallerySearch, setGallerySearch] = useState('');
-  const [selectedTag, setSelectedTag] = useState<string>('all');
+  const [selectedGalleryCategory, setSelectedGalleryCategory] = useState<string>('all');
   const [selectedGalleryItem, setSelectedGalleryItem] = useState<GalleryItem | null>(null);
 
   // States for Recommendations Module
@@ -144,11 +144,13 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
   const filteredGallery = useMemo(() => {
     return GALLERY_DATA.filter(item => {
       const matchesSearch = item.title.toLowerCase().includes(gallerySearch.toLowerCase()) || 
+                            item.description.toLowerCase().includes(gallerySearch.toLowerCase()) ||
                             item.tags.some(t => t.toLowerCase().includes(gallerySearch.toLowerCase()));
-      const matchesTag = selectedTag === 'all' || item.tags.includes(selectedTag);
-      return matchesSearch && matchesTag;
+      const matchesCategory = selectedGalleryCategory === 'all' || 
+                              (item.category && item.category.toLowerCase() === selectedGalleryCategory.toLowerCase());
+      return matchesSearch && matchesCategory;
     });
-  }, [gallerySearch, selectedTag]);
+  }, [gallerySearch, selectedGalleryCategory]);
 
   // Filter recommendations
   const filteredRecs = useMemo(() => {
@@ -167,9 +169,11 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
       {/* 🚀 CATEGORY SELECTOR CARDS SECTION */}
       <div className="mb-12">
         <div className="text-center mb-8">
-          <p className="text-brand-teal-600 uppercase text-xs font-bold tracking-wider font-mono">✦ Chọn Thư Mục Phân Loại ✦</p>
-          <h2 className="text-2.5xl font-bold text-slate-805 mt-1 font-sans">
-            Mở tủ lưu trữ của Chamchamz
+          <p className="text-brand-teal-600 uppercase text-xs font-bold tracking-wider font-mono">
+            {SITE_CONFIG.explorerSectionTag || "✦ Chọn Thư Mục Phân Loại ✦"}
+          </p>
+          <h2 className="text-2.5xl font-bold text-slate-810 mt-1 font-sans font-semibold">
+            {SITE_CONFIG.explorerSectionTitle || "Mở tủ lưu trữ của Chamchamz"}
           </h2>
         </div>
 
@@ -185,7 +189,7 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
               }`}
             >
-              <div className="text-2xl">{SITE_CONFIG.hintsTabEmoji || "🔑"}</div>
+            {SITE_CONFIG.showStaticIcons !== false && <div className="text-2xl">{SITE_CONFIG.hintsTabEmoji || "🔑"}</div>}
               <div>
                 <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">{SITE_CONFIG.hintsTabBadge || "Trang #01"}</span>
                 <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.hintsTabTitle || "Hints"}</h3>
@@ -193,7 +197,11 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   <p className="text-[11px] opacity-70 mt-1 line-clamp-1">{SITE_CONFIG.hintsTabDesc}</p>
                 )}
               </div>
-              {activeTab === 'hints' && <div className="absolute right-2.5 top-2.5 text-xs bg-brand-teal-400 text-slate-900 font-bold px-2 py-0.5 rounded-full font-mono">Lọt</div>}
+              {activeTab === 'hints' && (
+                <div className="absolute right-2.5 top-2.5 bg-amber-400 border-2 border-slate-900 text-slate-900 p-1.5 rounded-full shadow-xs flex items-center justify-center animate-wrap animate-pulse">
+                  <Star className="w-3 h-3 fill-slate-900" />
+                </div>
+              )}
             </button>
           )}
 
@@ -208,7 +216,7 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
               }`}
             >
-              <div className="text-2xl">{SITE_CONFIG.galleryTabEmoji || "📸"}</div>
+            {SITE_CONFIG.showStaticIcons !== false && <div className="text-2xl">{SITE_CONFIG.galleryTabEmoji || "📸"}</div>}
               <div>
                 <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">{SITE_CONFIG.galleryTabBadge || "Trang #02"}</span>
                 <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.galleryTabTitle || "Gallery"}</h3>
@@ -216,7 +224,11 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   <p className="text-[11px] opacity-70 mt-1 line-clamp-1">{SITE_CONFIG.galleryTabDesc}</p>
                 )}
               </div>
-              {activeTab === 'gallery' && <div className="absolute right-2.5 top-2.5 text-xs bg-brand-teal-400 text-slate-900 font-bold px-2 py-0.5 rounded-full font-mono">Lọt</div>}
+              {activeTab === 'gallery' && (
+                <div className="absolute right-2.5 top-2.5 bg-amber-400 border-2 border-slate-900 text-slate-900 p-1.5 rounded-full shadow-xs flex items-center justify-center animate-wrap animate-pulse">
+                  <Star className="w-3 h-3 fill-slate-900" />
+                </div>
+              )}
             </button>
           )}
 
@@ -231,7 +243,7 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
               }`}
             >
-              <div className="text-2xl">{SITE_CONFIG.recsTabEmoji || "🎵"}</div>
+            {SITE_CONFIG.showStaticIcons !== false && <div className="text-2xl">{SITE_CONFIG.recsTabEmoji || "🎵"}</div>}
               <div>
                 <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">{SITE_CONFIG.recsTabBadge || "Trang #03"}</span>
                 <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.recsTabTitle || "Recs"}</h3>
@@ -239,7 +251,11 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   <p className="text-[11px] opacity-70 mt-1 line-clamp-1">{SITE_CONFIG.recsTabDesc}</p>
                 )}
               </div>
-              {activeTab === 'recs' && <div className="absolute right-2.5 top-2.5 text-xs bg-brand-teal-400 text-slate-900 font-bold px-2 py-0.5 rounded-full font-mono">Lọt</div>}
+              {activeTab === 'recs' && (
+                <div className="absolute right-2.5 top-2.5 bg-amber-400 border-2 border-slate-900 text-slate-900 p-1.5 rounded-full shadow-xs flex items-center justify-center animate-wrap animate-pulse">
+                  <Star className="w-3 h-3 fill-slate-900" />
+                </div>
+              )}
             </button>
           )}
 
@@ -254,7 +270,7 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
               }`}
             >
-              <div className="text-2xl">{SITE_CONFIG.contactsTabEmoji || "✉️"}</div>
+            {SITE_CONFIG.showStaticIcons !== false && <div className="text-2xl">{SITE_CONFIG.contactsTabEmoji || "✉️"}</div>}
               <div>
                 <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">{SITE_CONFIG.contactsTabBadge || "Trang #04"}</span>
                 <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.contactsTabTitle || "Contacts"}</h3>
@@ -262,7 +278,11 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   <p className="text-[11px] opacity-70 mt-1 line-clamp-1">{SITE_CONFIG.contactsTabDesc}</p>
                 )}
               </div>
-              {activeTab === 'contact' && <div className="absolute right-2.5 top-2.5 text-xs bg-brand-teal-400 text-slate-900 font-bold px-2 py-0.5 rounded-full font-mono">Lọt</div>}
+              {activeTab === 'contact' && (
+                <div className="absolute right-2.5 top-2.5 bg-amber-400 border-2 border-slate-900 text-slate-900 p-1.5 rounded-full shadow-xs flex items-center justify-center animate-wrap animate-pulse">
+                  <Star className="w-3 h-3 fill-slate-900" />
+                </div>
+              )}
             </button>
           )}
         </div>
@@ -307,35 +327,21 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                     <p className="text-xs text-slate-500 font-semibold">{SITE_CONFIG.hintsSectionDesc}</p>
                   )}
                 </div>
-                {/* Search / Filter bar for Hints */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                  <div className="relative">
-                    <input
-                      id="input-search-hints"
-                      type="text"
-                      className="w-full sm:w-44 bg-white border-2 border-slate-800 rounded-xl py-1.5 pl-8 pr-3 text-xs font-semibold focus:outline-none focus:border-brand-teal-500"
-                      placeholder="Tìm manh mối..."
-                      value={hintSearch}
-                      onChange={(e) => setHintSearch(e.target.value)}
-                    />
-                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
-                  </div>
-                </div>
               </div>
 
               {/* Category buttons */}
               <div className="flex flex-wrap gap-2">
-                {['all', 'gợi ý', 'bí mật', 'sự kiện', 'thông báo'].map((catName) => (
+                {['all', 'Livestream', 'Youtube', 'Phỏng vấn', 'Kênh bên ngoài'].map((catName) => (
                   <button
                     key={catName}
                     onClick={() => setSelectedHintCategory(catName)}
-                    className={`px-3.5 py-1 rounded-full text-xs font-bold border-2 capitalize cursor-pointer transition-transform hover:scale-101 active:scale-95 ${
+                    className={`px-3.5 py-1 rounded-full text-xs font-bold border-2 cursor-pointer transition-transform hover:scale-101 active:scale-95 ${
                       selectedHintCategory === catName 
-                        ? 'bg-brand-teal-400 border-slate-900 text-slate-900 shadow-xs' 
+                        ? 'bg-brand-teal-400 border-slate-900 text-slate-1000 shadow-xs' 
                         : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400'
                     }`}
                   >
-                    {catName === 'all' ? 'Tất cả 🧭' : catName}
+                    {catName === 'all' ? 'All' : catName}
                   </button>
                 ))}
               </div>
@@ -448,29 +454,19 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                 </div>
               </div>
 
-              {/* Tag filters */}
-              <div className="flex flex-wrap gap-1.5">
-                <button
-                  onClick={() => setSelectedTag('all')}
-                  className={`px-3 py-0.5 rounded-full text-[11px] font-bold border cursor-pointer transition-colors ${
-                    selectedTag === 'all'
-                      ? 'bg-brand-cyan-500 border-brand-cyan-600 text-white'
-                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  Tất cả Thẻ 🏷️
-                </button>
-                {allGalleryTags.map(tag => (
+              {/* Category filters */}
+              <div className="flex flex-wrap gap-1.5 font-sans">
+                {['all', 'X', 'IG', 'Weverse', 'Nguồn bên ngoài'].map((cat) => (
                   <button
-                    key={tag}
-                    onClick={() => setSelectedTag(tag)}
-                    className={`px-3 py-0.5 rounded-full text-[11px] font-bold border cursor-pointer transition-colors ${
-                      selectedTag === tag
-                        ? 'bg-brand-cyan-500 border-brand-cyan-600 text-white'
+                    key={cat}
+                    onClick={() => setSelectedGalleryCategory(cat)}
+                    className={`px-3 py-1 rounded-full text-xs font-bold border-2 cursor-pointer transition-colors ${
+                      selectedGalleryCategory === cat
+                        ? 'bg-brand-cyan-500 border-slate-900 text-white shadow-xs'
                         : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                     }`}
                   >
-                    #{tag}
+                    {cat === 'all' ? 'All' : cat}
                   </button>
                 ))}
               </div>
@@ -487,8 +483,15 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   >
                     <div>
                       {/* Emoji Illustration Showcase */}
-                      <div className="h-14 w-14 bg-white/90 border border-slate-900 rounded-xl flex items-center justify-center text-2.5xl mb-3 shadow-xs">
-                        {item.emoji}
+                      <div className="flex items-center justify-between">
+                        <div className="h-14 w-14 bg-white/90 border border-slate-900 rounded-xl flex items-center justify-center text-2.5xl mb-3 shadow-xs">
+                          {item.emoji}
+                        </div>
+                        {item.category && (
+                          <span className="text-[9px] font-mono font-bold bg-white/90 border-2 border-slate-900 rounded-full px-2 py-0.5 text-slate-850 uppercase tracking-wider mb-3">
+                            {item.category}
+                          </span>
+                        )}
                       </div>
                       <h4 className="font-bold text-slate-800 text-sm line-clamp-1">{item.title}</h4>
                       <p className="text-[11px] text-slate-600 line-clamp-2 mt-1 leading-relaxed font-semibold">
@@ -534,17 +537,17 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
 
                 {/* Filter buttons */}
                 <div className="flex gap-1.5 self-start">
-                  {['all', 'music', 'book', 'movie'].map((type) => (
+                  {['all', 'Fanfic/Author', 'Art/Artist', 'Khác'].map((type) => (
                     <button
                       key={type}
                       onClick={() => setActiveRecType(type)}
-                      className={`px-3 py-1 rounded-full text-[11px] font-bold border capitalize cursor-pointer transition-colors ${
+                      className={`px-3 py-1 rounded-full text-[11px] font-bold border-2 cursor-pointer transition-colors ${
                         activeRecType === type
-                          ? 'bg-brand-teal-500 border-brand-teal-600 text-white'
+                          ? 'bg-brand-teal-500 border-slate-900 text-white shadow-xs'
                           : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                       }`}
                     >
-                      {type === 'all' ? 'Tất cả 📚' : type}
+                      {type === 'all' ? 'All' : type}
                     </button>
                   ))}
                 </div>
@@ -641,7 +644,7 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                     >
                       {/* Media type icon column */}
                       <div className="text-2.5xl flex-shrink-0 mt-0.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
-                        {rec.type === 'music' ? '🎵' : rec.type === 'book' ? '📖' : rec.type === 'movie' ? '🎬' : '💬'}
+                        {rec.type === 'Fanfic/Author' ? '📖' : rec.type === 'Art/Artist' ? '🎨' : '🎵'}
                       </div>
 
                       {/* Detail Column */}
@@ -652,8 +655,8 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                             <span className="text-[10px] font-mono text-slate-400 italic">({rec.creator})</span>
                           </div>
                           
-                          {/* Play button specifically for audio files */}
-                          {rec.type === 'music' && (
+                          {/* Play button specifically for Khác / audios */}
+                          {rec.type === 'Khác' && (
                             <button
                               id={`btn-play-rec-${rec.id}`}
                               onClick={() => setPlayingId(playingId === rec.id ? null : rec.id)}
@@ -704,155 +707,47 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.2 }}
-              className="space-y-8"
+              className="max-w-xl mx-auto py-8"
             >
-              <div className="font-sans">
-                <h3 className="text-xl font-bold text-slate-800">{SITE_CONFIG.contactsSectionTitle || contactData.title || "Lá Thư Gửi Gắm Tình Yêu ✉️"}</h3>
-                {SITE_CONFIG.showContactsSectionDesc && (
-                  <p className="text-xs text-slate-500 font-semibold">{SITE_CONFIG.contactsSectionDesc || contactData.description}</p>
-                )}
-              </div>
-
-              {/* Form and Board Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                
-                {/* Form column (Col-5) */}
-                <form 
-                  id="fan-letter-form"
-                  onSubmit={handleSubmitMessage} 
-                  className="lg:col-span-4 bg-white border-2 border-slate-900 p-5 rounded-2xl shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] space-y-4"
-                >
-                  <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider text-brand-teal-700 flex items-center gap-1.5">
-                    <Smile className="w-4 h-4" />
-                    <span>Viết thư của bạn</span>
-                  </h4>
-                  
-                  {/* Name field */}
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase font-bold text-slate-500">Biệt danh cưng xỉu của bạn:</label>
-                    <input
-                      id="input-letter-author"
-                      type="text"
-                      className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-2 px-3 text-xs font-semibold focus:outline-none focus:border-brand-teal-500"
-                      placeholder="Mochi Heo Con, Trà Sữa..."
-                      value={authorName}
-                      onChange={(e) => setAuthorName(e.target.value)}
-                      maxLength={25}
-                    />
+              <div className="bg-white border-2 border-slate-900 p-8 rounded-2xl shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] font-sans space-y-4">
+                <div className="text-sm font-semibold text-slate-800 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-dashed border-slate-200 pb-3">
+                    <span className="text-slate-500 font-bold">Email:</span>
+                    <a 
+                      id="contact-link-email" 
+                      href={`mailto:${SITE_CONFIG.contactEmail || "archive@chamchamz.fan"}`} 
+                      className="text-brand-teal-600 hover:text-brand-teal-700 hover:underline font-mono"
+                    >
+                      {SITE_CONFIG.contactEmail || "archive@chamchamz.fan"}
+                    </a>
                   </div>
 
-                  {/* Sticker selector wrapper */}
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase font-bold text-slate-500">Lựa chọn nhãn dán đính kèm:</label>
-                    <div className="flex flex-wrap gap-1.5">
-                      {stickers.map((s) => (
-                        <button
-                          key={s}
-                          type="button"
-                          onClick={() => setSelectedSticker(s)}
-                          className={`text-sm w-8 h-8 rounded-lg flex items-center justify-center border cursor-pointer transition-transform ${
-                            selectedSticker === s
-                              ? 'bg-brand-cyan-100 border-brand-cyan-400 scale-110'
-                              : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
-                          }`}
-                        >
-                          {s}
-                        </button>
-                      ))}
-                    </div>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-dashed border-slate-200 pb-3">
+                    <span className="text-slate-500 font-bold">Facebook:</span>
+                    <a 
+                      id="contact-link-facebook" 
+                      href={SITE_CONFIG.contactFacebook || "https://facebook.com/chamchamz"} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-brand-teal-600 hover:text-brand-teal-700 hover:underline font-mono"
+                    >
+                      {SITE_CONFIG.contactFacebook || "https://facebook.com/chamchamz"}
+                    </a>
                   </div>
 
-                  {/* Message body */}
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] uppercase font-bold text-slate-500">Nội dung bức thư:</label>
-                    <textarea
-                      id="input-letter-text"
-                      className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-2 px-3 text-xs font-semibold focus:outline-none focus:border-brand-teal-500 h-28 resize-none"
-                      placeholder="Viết thư tại đây... (Nội dung sưởi ấm tâm hồn bé Chamchamz)"
-                      value={messageText}
-                      onChange={(e) => setMessageText(e.target.value)}
-                      maxLength={200}
-                    />
-                    <div className="text-right text-[9px] text-slate-400 font-mono">
-                      {messageText.length}/200
-                    </div>
-                  </div>
-
-                  {/* Status labels */}
-                  {formError && (
-                    <div className="text-[10px] font-bold text-rose-500 flex items-center gap-1 bg-rose-50 p-2 rounded-lg border border-rose-100">
-                      <AlertCircle className="w-3.5 h-3.5" />
-                      <span>{formError}</span>
-                    </div>
-                  )}
-
-                  {formSuccess && (
-                    <div className="text-[10px] font-bold text-emerald-600 flex items-center gap-1 bg-emerald-50 p-2 rounded-lg border border-emerald-105">
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>{contactData.success_msg || "Lá thư đã bay vút vào rương bảo mật!"}</span>
-                    </div>
-                  )}
-
-                  {/* Submit CTA */}
-                  <button
-                    id="btn-submit-letter"
-                    type="submit"
-                    className="w-full bg-slate-900 hover:bg-brand-teal-500 hover:text-slate-900 border-2 border-slate-900 text-white font-bold py-2 px-4 rounded-xl text-xs cursor-pointer flex items-center justify-center gap-1.5 hover:scale-101 active:scale-97 transition-all"
-                  >
-                    <span>Gửi Lá Thư Ngọt Ngào</span>
-                    <Send className="w-3 h-3" />
-                  </button>
-                </form>
-
-                {/* Interactive fan board (Col-8) */}
-                <div className="lg:col-span-8 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-800 text-sm">💌 Bức Tường Lá Thư Hâm Mộ ({messages.length})</h4>
-                    <span className="text-[10px] text-slate-400 font-mono font-bold">Lưu giữ vĩnh hằng trong rương</span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[460px] overflow-y-auto pr-2 pb-4 scrollbar-thin">
-                    <AnimatePresence initial={false}>
-                      {messages.map((msg) => (
-                        <motion.div
-                          key={msg.id}
-                          className="bg-gradient-to-br from-brand-teal-50 to-white border-2 border-slate-900 rounded-2xl p-4.5 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] relative flex flex-col justify-between"
-                          initial={{ opacity: 0, scale: 0.9, y: 15 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.9 }}
-                          transition={{ type: 'spring', damping: 15 }}
-                        >
-                          {/* Sticker on note pin layout */}
-                          <div className="absolute -top-2.5 -right-1 text-2xl select-none animate-pulse">
-                            {msg.sticker}
-                          </div>
-
-                          <div>
-                            {/* Author name & Date */}
-                            <div className="border-b border-dashed border-slate-200 pb-2 mb-2">
-                              <span className="text-xs font-bold text-brand-teal-800">
-                                🕵️ {msg.authorName}
-                              </span>
-                              <p className="text-[9px] text-slate-400 font-mono mt-0.5">{msg.createdAt}</p>
-                            </div>
-                            
-                            {/* Message text */}
-                            <p className="text-xs text-slate-600 leading-relaxed font-semibold italic">
-                              "{msg.messageText}"
-                            </p>
-                          </div>
-
-                          {/* Safe metadata confirmation */}
-                          <div className="pt-2 mt-3 border-t border-slate-100 flex items-center justify-between text-[9px] text-brand-cyan-700 font-bold uppercase font-mono">
-                            <span>Sự Riêng Tư Tuyệt Đối</span>
-                            <span>🔐 Fan-Only</span>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-1">
+                    <span className="text-slate-500 font-bold">Threads:</span>
+                    <a 
+                      id="contact-link-threads" 
+                      href={SITE_CONFIG.contactThreads || "https://threads.net/@chamchamz"} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-brand-teal-600 hover:text-brand-teal-700 hover:underline font-mono"
+                    >
+                      {SITE_CONFIG.contactThreads || "https://threads.net/@chamchamz"}
+                    </a>
                   </div>
                 </div>
-
               </div>
             </motion.div>
           )}

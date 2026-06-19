@@ -11,6 +11,7 @@ import About from './components/About';
 import ArchiveExplorer from './components/ArchiveExplorer';
 import Footer from './components/Footer';
 import BlueprintDrawer from './components/BlueprintDrawer';
+import JumpingIcons from './components/JumpingIcons';
 import { Sparkles, Shield, Heart } from 'lucide-react';
 import { SITE_CONFIG } from './data';
 
@@ -39,7 +40,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-brand-blue-50 via-brand-cyan-50 to-white relative pb-12">
+    <div className="min-h-screen bg-gradient-to-br from-[#e0f2fe] via-[#f0f9ff] to-[#ecfeff] relative pb-12 overflow-x-hidden">
+      {/* 🌟 Animated Floating Background Mascots */}
+      {SITE_CONFIG.showFloatingIcons !== false && <JumpingIcons />}
       
       {/* 🌸 FLOATING NAVIGATION TOP BAR */}
       <header className="sticky top-0 z-30 bg-white/85 backdrop-blur-md border-b-2 border-slate-900 px-4 py-3 md:py-4 transition-all">
@@ -113,7 +116,7 @@ export default function App() {
       </header>
 
       {/* 🌟 MAIN APP CONTENT RUNWAYS */}
-      <main className="relative">
+      <main className="relative z-10">
         
         {/* Section 1: Hero */}
         <Hero 
@@ -135,7 +138,7 @@ export default function App() {
       </main>
 
       {/* Section 4: Footer */}
-      <Footer onTabSwitch={handleExploreTabSelect} />
+      {SITE_CONFIG.showFooter !== false && <Footer onTabSwitch={handleExploreTabSelect} />}
 
       {/* 🎵 FLOATING BACK GROUND MUSIC WIDGET */}
       {SITE_CONFIG.showMusic && <BackgroundMusic />}
