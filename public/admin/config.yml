@@ -368,7 +368,7 @@ collections:
           - label: "Nội Dung Chữ Banner Trên Cùng Footer"
             name: "footerTopBannerText"
             widget: "string"
-            default: "Vùng An Toàn Độc Quyền • Nghiêm Cấm Sao Chép Ra Ngoài 🔐"
+            default: "CHAMCHAMZ'S LOVER CLUB"
             required: false
           - label: "Hiện Logo Footer"
             name: "showFooterLogo"
