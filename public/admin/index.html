@@ -15,9 +15,13 @@
     });
     
     function showError(message) {
+      console.error("[CMS Error] " + message);
       const errUI = document.getElementById('cms-error-ui');
       if (errUI) {
-        errUI.querySelector('pre').innerText += '\n' + message;
+        const pre = errUI.querySelector('pre');
+        if (pre) {
+          pre.innerText += '\n' + message;
+        }
         return;
       }
       
@@ -39,13 +43,54 @@
       errDiv.innerHTML = '<strong>⚠️ Phát hiện sự cố tải ứng dụng quản lý hoặc lỗi bắt tay:</strong>' +
         '<pre style="margin: 10px 0 0 0; white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow-y: auto; background: #ffe4e6; padding: 10px; border-radius: 6px;">' + message + '</pre>' +
         '<p style="margin: 10px 0 0 0; font-size: 11px; color: #475569;">💡 Gợi ý: Hãy mở Console (phím F12) của trình duyệt để kiểm tra chi tiết lỗi mạng (CORS, file config.yml tải thất bại, hoặc sai GITHUB CLIENT ID / SECRET).</p>';
-      document.body.appendChild(errDiv);
+      
+      if (document.body) {
+        document.body.appendChild(errDiv);
+      } else {
+        document.documentElement.appendChild(errDiv);
+      }
     }
   </script>
-
-  <!-- Include the secure, stable CDN script for Decap CMS -->
-  <script src="https://cdn.jsdelivr.net/npm/decap-cms@3.1.2/dist/decap-cms.js"></script>
 </head>
 <body>
+  <!-- Include the secure, stable CDN script for Decap CMS via self-healing multi-CDN fallback tag to prevent VN ISP blockages -->
+  <script>
+    (function() {
+      const cdns = [
+        "https://unpkg.com/decap-cms@3.1.2/dist/decap-cms.js",
+        "https://cdn.jsdelivr.net/npm/decap-cms@3.1.2/dist/decap-cms.js"
+      ];
+      let currentIndex = 0;
+
+      function tryLoadNext() {
+        if (currentIndex >= cdns.length) {
+          showError("Không thể nạp thư viện quản trị Decap CMS từ bất kỳ máy chủ CDN nào (UNPKG, JSDelivr). Vui lòng kiểm tra lại kết nối Internet hoặc thử dùng 3G/4G/VPN.");
+          return;
+        }
+
+        const url = cdns[currentIndex];
+        console.log("Đang tải Decap CMS từ: " + url + " (" + (currentIndex + 1) + "/" + cdns.length + ")...");
+        
+        const script = document.createElement('script');
+        script.src = url;
+        
+        script.onload = function() {
+          console.log("Nạp thành công Decap CMS chính xác từ: " + url);
+        };
+        
+        script.onerror = function() {
+          console.warn("Lỗi tải từ CDN " + url + ". Đang nạp máy chủ dự phòng tiếp theo...");
+          currentIndex++;
+          tryLoadNext();
+        };
+        
+        // Append to body since we are executing in the body block
+        document.body.appendChild(script);
+      }
+
+      // Execute directly as the script runs inside body, which guarantees document.body is not null!
+      tryLoadNext();
+    })();
+  </script>
 </body>
 </html>
