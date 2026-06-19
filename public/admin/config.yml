@@ -644,8 +644,12 @@ collections:
         default: false
       - label: "Nội Dung Manh Mối / Gợi Ý"
         name: "content"
-        widget: "text"
+        widget: "markdown"
         required: true
+      - label: "Hình Ảnh Gợi Ý / Manh Mối (Không bắt buộc)"
+        name: "imageFile"
+        widget: "image"
+        required: false
       - label: "Đường dẫn nguồn tham khảo / gốc (Không bắt buộc)"
         name: "sourceUrl"
         widget: "string"
@@ -782,6 +786,10 @@ collections:
         widget: "string"
         required: false
         default: "Nghe ngay 🎧"
+      - label: "Hình Ảnh Đề Xuất (Không bắt buộc)"
+        name: "imageFile"
+        widget: "image"
+        required: false
       - label: "Đường dẫn chi tiết"
         name: "url"
         widget: "string"

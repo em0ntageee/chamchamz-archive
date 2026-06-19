@@ -13,6 +13,7 @@ export interface HintItem {
   hintKey?: string; // Optional code to unlock if wanted, or simple click-to-reveal
   hintIllustration?: string;
   sourceUrl?: string;
+  imageFile?: string;
 }
 
 export interface GalleryItem {
@@ -37,6 +38,7 @@ export interface RecItem {
   reason: string;
   linkText?: string;
   url?: string;
+  imageFile?: string;
 }
 
 export interface FanMessage {

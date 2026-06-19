@@ -54,7 +54,8 @@ try {
         content: raw.content || "",
         isUnlocked: typeof raw.isUnlocked === 'boolean' ? raw.isUnlocked : false,
         hintIllustration: raw.hintIllustration || "🔑",
-        sourceUrl: raw.sourceUrl || ""
+        sourceUrl: raw.sourceUrl || "",
+        imageFile: raw.imageFile || ""
       });
     }
   });
@@ -122,7 +123,8 @@ try {
         type: mapRecType(raw.type || "music"),
         reason: raw.reason || "",
         linkText: raw.linkText || "",
-        url: raw.url || ""
+        url: raw.url || "",
+        imageFile: raw.imageFile || ""
       });
     }
   });

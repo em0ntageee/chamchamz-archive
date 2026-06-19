@@ -12,6 +12,7 @@ import {
 import { HintItem, GalleryItem, RecItem, FanMessage } from '../types';
 import { HINTS_DATA, GALLERY_DATA, RECS_DATA, INITIAL_MESSAGES, SITE_CONFIG } from '../data';
 import contactData from '../data/contact.json';
+import Markdown from 'react-markdown';
 
 interface ArchiveExplorerProps {
   initialTab?: string;
@@ -804,6 +805,17 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                             {rec.reason}
                           </p>
                         )}
+
+                        {rec.imageFile && (
+                          <div className="mt-2.5 max-w-sm rounded-xl overflow-hidden border-2 border-slate-900 aspect-video bg-slate-50 flex items-center justify-center relative shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]">
+                            <img 
+                              src={rec.imageFile} 
+                              alt={rec.title} 
+                              className="w-full h-full object-cover" 
+                              referrerPolicy="no-referrer"
+                            />
+                          </div>
+                        )}
                         
                         {/* Optional Reference button */}
                         {rec.url && (
@@ -1064,9 +1076,18 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
               <div>
                 {/* Big cute visual representation / Emoji block */}
                 <div className="aspect-video rounded-2xl bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center text-6xl border-2 border-slate-900 shadow-sm relative overflow-hidden mb-6">
-                  <span>{selectedHintItem.hintIllustration || "🔑"}</span>
+                  {selectedHintItem.isUnlocked && selectedHintItem.imageFile ? (
+                    <img 
+                      src={selectedHintItem.imageFile} 
+                      alt={selectedHintItem.title} 
+                      className="w-full h-full object-cover" 
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <span>{selectedHintItem.hintIllustration || "🔑"}</span>
+                  )}
                   <div className="absolute bottom-2 right-2 bg-white/90 border border-slate-900 text-[9px] font-bold px-2 py-0.5 rounded uppercase font-mono">
-                    SECRET HINT 🔐
+                    {selectedHintItem.isUnlocked ? "UNLOCKED 🌸" : "SECRET HINT 🔐"}
                   </div>
                 </div>
 
@@ -1086,9 +1107,25 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                 {selectedHintItem.isUnlocked ? (
                   <div className="space-y-4">
                     {selectedHintItem.content && (
-                      <p className="text-xs text-slate-600 leading-relaxed font-semibold bg-slate-50 border border-slate-100 rounded-xl p-3.5">
-                        {selectedHintItem.content}
-                      </p>
+                      <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 max-h-72 overflow-y-auto shadow-inner text-xs font-semibold leading-relaxed text-slate-600">
+                        <div className="markdown-body text-xs break-words">
+                          <Markdown
+                            components={{
+                              h1: ({node, ...props}) => <h1 className="text-base font-extrabold text-slate-900 mt-3 mb-1.5" {...props} />,
+                              h2: ({node, ...props}) => <h2 className="text-sm font-bold text-slate-900 mt-2.5 mb-1" {...props} />,
+                              h3: ({node, ...props}) => <h3 className="text-xs font-bold text-slate-900 mt-2 mb-1" {...props} />,
+                              p: ({node, ...props}) => <p className="mb-2.5 last:mb-0 leading-relaxed" {...props} />,
+                              ul: ({node, ...props}) => <ul className="list-disc pl-4 mb-2.5 space-y-1" {...props} />,
+                              ol: ({node, ...props}) => <ol className="list-decimal pl-4 mb-2.5 space-y-1" {...props} />,
+                              li: ({node, ...props}) => <li className="mb-0.5" {...props} />,
+                              strong: ({node, ...props}) => <strong className="font-extrabold text-slate-950" {...props} />,
+                              em: ({node, ...props}) => <em className="italic text-slate-705" {...props} />,
+                            }}
+                          >
+                            {selectedHintItem.content}
+                          </Markdown>
+                        </div>
+                      </div>
                     )}
 
                     {selectedHintItem.sourceUrl && (
