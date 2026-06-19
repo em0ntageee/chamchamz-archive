@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard | Chamchamz Archive</title>
   
+  <!-- Explicitly set the configuration path from root to prevent 404 router mismatch on Vercel -->
+  <link rel="cms-config-url" type="text/yaml" href="/admin/config.yml" />
+  
   <!-- Modern robust error interceptor to surface any CMS runtime issues directly back to the screen -->
   <script>
     window.addEventListener('error', function(e) {
