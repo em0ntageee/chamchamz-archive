@@ -1,6 +1,9 @@
 backend:
-  name: git-gateway
-  branch: main # Default branch to update
+  name: github
+  repo: YOUR_GITHUB_USERNAME/chamchamz-archive
+  branch: main
+  base_url: https://chamchamz-archive.vercel.app
+  auth_endpoint: api/auth
 
 # Enable local backend for Vite development environment
 local_backend: true
