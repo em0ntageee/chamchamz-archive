@@ -9,7 +9,7 @@ import { ShieldAlert, BookOpen, Quote, Heart, CheckCircle2, LockKeyhole } from '
 import { SITE_CONFIG } from '../data';
 
 export default function About() {
-  const [pledgesCount, setPledgesCount] = useState(1324);
+  const [pledgesCount, setPledgesCount] = useState(0);
   const [hasPledged, setHasPledged] = useState(false);
 
   useEffect(() => {

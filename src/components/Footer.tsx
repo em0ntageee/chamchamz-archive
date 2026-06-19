@@ -22,8 +22,7 @@ export default function Footer({ onTabSwitch }: FooterProps) {
       {SITE_CONFIG.showFooterTopBanner !== false && (
         <div className="bg-gradient-to-r from-brand-teal-400 to-brand-cyan-400 py-3.5 px-4 text-center border-b-4 border-slate-950">
           <p className="text-slate-900 font-bold text-xs uppercase tracking-widest font-sans flex items-center justify-center gap-1.5">
-            {showStatic && <ShieldCheck className="w-4 h-4 animate-bounce" />}
-            <span>{SITE_CONFIG.footerTopBannerText || "Vùng An Toàn Độc Quyền • Nghiêm Cấm Sao Chép Ra Ngoài 🔐"}</span>
+            <span>{SITE_CONFIG.footerTopBannerText || "ONLY FOR CHAMCHAMZ"}</span>
           </p>
         </div>
       )}
