@@ -86,6 +86,137 @@ collections:
             name: "showAbout"
             widget: "boolean"
             default: true
+          - label: "Ảnh đại diện Mascot / Logo (Mascot Image)"
+            name: "mascotImageUrl"
+            widget: "image"
+            default: ""
+            required: false
+          - label: "Emoji Mascot gốc Navbar / Sticker"
+            name: "navbarMascotEmoji"
+            widget: "string"
+            default: "🐹"
+            required: true
+          - label: "Chữ liên kết Home (Về chúng mình)"
+            name: "navHomeText"
+            widget: "string"
+            default: "Home"
+            required: true
+          - label: "Hiện nút Mở Khóa Album Gợi Ý chính"
+            name: "showHeroPrimaryCta"
+            widget: "boolean"
+            default: false
+          - label: "Tên Thẻ Mục Manh Mối (Tab Title)"
+            name: "hintsTabTitle"
+            widget: "string"
+            default: "hints"
+            required: true
+          - label: "Mô tả ngắn thẻ Manh Mối"
+            name: "hintsTabDesc"
+            widget: "string"
+            default: "Khám phá bí mật, sự kiện đoán trước..."
+            required: true
+          - label: "Hiện mô tả ngắn thẻ Manh Mối"
+            name: "showHintsTabDesc"
+            widget: "boolean"
+            default: true
+          - label: "Tên Thẻ Mục Triển Lãm (Tab Title)"
+            name: "galleryTabTitle"
+            widget: "string"
+            default: "gallery"
+            required: true
+          - label: "Mô tả ngắn thẻ Triển Lãm"
+            name: "galleryTabDesc"
+            widget: "string"
+            default: "Nụ cười tươi sáng, nét bút nguệch ngoạc..."
+            required: true
+          - label: "Hiện mô tả ngắn thẻ Triển Lãm"
+            name: "showGalleryTabDesc"
+            widget: "boolean"
+            default: true
+          - label: "Tên Thẻ Mục Đề Xuất (Tab Title)"
+            name: "recsTabTitle"
+            widget: "string"
+            default: "recs"
+            required: true
+          - label: "Mô tả ngắn thẻ Đề Xuất"
+            name: "recsTabDesc"
+            widget: "string"
+            default: "Bài hát ru hồn, sách truyện dịu ngọt..."
+            required: true
+          - label: "Hiện mô tả ngắn thẻ Đề Xuất"
+            name: "showRecsTabDesc"
+            widget: "boolean"
+            default: true
+          - label: "Tên Thẻ Mục Hòm Thư (Tab Title)"
+            name: "contactsTabTitle"
+            widget: "string"
+            default: "Contacts"
+            required: true
+          - label: "Mô tả ngắn thẻ Hòm Thư"
+            name: "contactsTabDesc"
+            widget: "string"
+            default: "Viết lời chào gửi trực tiếp lên bức tường..."
+            required: true
+          - label: "Hiện mô tả ngắn thẻ Hòm Thư"
+            name: "showContactsTabDesc"
+            widget: "boolean"
+            default: true
+          - label: "Tiêu đề lớn phân mục Manh Mối"
+            name: "hintsSectionTitle"
+            widget: "string"
+            default: "Cất Giữ Manh Mối Bí Mật 🔑"
+            required: true
+          - label: "Dòng mô tả phụ phân mục Manh Mối"
+            name: "hintsSectionDesc"
+            widget: "string"
+            default: "Cung cấp manh mối gợi ý về Chamchamz. Tránh rò rỉ ra ngoài."
+            required: true
+          - label: "Hiện dòng mô tả phụ phân mục Manh Mối"
+            name: "showHintsSectionDesc"
+            widget: "boolean"
+            default: true
+          - label: "Tiêu đề lớn phân mục Triển Lãm"
+            name: "gallerySectionTitle"
+            widget: "string"
+            default: "Tuyệt tác Triển Lãm Ảnh 📷"
+            required: true
+          - label: "Dòng mô tả phụ phân mục Triển Lãm"
+            name: "gallerySectionDesc"
+            widget: "string"
+            default: "Khung hình nghệ thuật tươi trẻ, nhí nhảnh từ cuộc sống ngọt lịm của Chamchamz."
+            required: true
+          - label: "Hiện dòng mô tả phụ phân mục Triển Lãm"
+            name: "showGallerySectionDesc"
+            widget: "boolean"
+            default: true
+          - label: "Tiêu đề lớn phân mục Đề Xuất"
+            name: "recsSectionTitle"
+            widget: "string"
+            default: "Không Gian Đề Xuất Nghệ Thuật 🎵"
+            required: true
+          - label: "Dòng mô tả phụ phân mục Đề Xuất"
+            name: "recsSectionDesc"
+            widget: "string"
+            default: "Tổng hợp sở thích đáng yêu như sách quý, bài hát chill được yêu thích từ lòng Chamchamz."
+            required: true
+          - label: "Hiện dòng mô tả phụ phân mục Đề Xuất"
+            name: "showRecsSectionDesc"
+            widget: "boolean"
+            default: true
+          - label: "Tiêu đề lớn phân mục Hòm Thư"
+            name: "contactsSectionTitle"
+            widget: "string"
+            default: "Lá Thư Gửi Gắm Tình Yêu ✉️"
+            required: true
+          - label: "Dòng mô tả phụ phân mục Hòm Thư"
+            name: "contactsSectionDesc"
+            widget: "string"
+            default: "Không quản ngại khoảng cách, viết đôi lời nhắn nhủ chân thành đến Chamchamz. Đính kèm một nhãn dán dễ thương!"
+            required: true
+          - label: "Hiện dòng mô tả phụ phân mục Hòm Thư"
+            name: "showContactsSectionDesc"
+            widget: "boolean"
+            default: true
 
   # Collection 1 & 2: Counters settings
   - name: "counters"

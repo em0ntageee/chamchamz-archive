@@ -186,21 +186,12 @@ export default function DynamicCounters() {
 
         </div>
 
-        {/* Admin configuration button bottom bar */}
+        {/* Admin configuration button bottom bar - Hidden on main website and managed in CMS */}
         <div className="mt-6 pt-5 border-t border-slate-900/10 flex items-center justify-between">
           <div className="text-[10px] text-slate-500 font-semibold italic flex items-center gap-1">
             <AlertCircle className="w-3.5 h-3.5 text-[#1e293b]/50" />
             <span>Mọi số liệu được bảo vệ nghiêm mật theo hiệp ước.</span>
           </div>
-
-          <button
-            id="btn-open-admin-counters"
-            onClick={() => setIsAdminOpen(true)}
-            className="flex items-center gap-1 bg-slate-900 hover:bg-brand-cyan-500 hover:text-slate-900 text-white font-bold text-[10px] px-3.5 py-1.5 rounded-xl border border-slate-900 cursor-pointer transition-colors"
-          >
-            <RefreshCw className="w-3 h-3 text-brand-cyan-200" />
-            <span>Quản trị viên (Admin Tools)</span>
-          </button>
         </div>
 
       </div>

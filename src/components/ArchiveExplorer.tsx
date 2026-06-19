@@ -10,7 +10,7 @@ import {
   User, Send, Volume2, Sparkles, AlertCircle, Heart, X, Smile 
 } from 'lucide-react';
 import { HintItem, GalleryItem, RecItem, FanMessage } from '../types';
-import { HINTS_DATA, GALLERY_DATA, RECS_DATA, INITIAL_MESSAGES } from '../data';
+import { HINTS_DATA, GALLERY_DATA, RECS_DATA, INITIAL_MESSAGES, SITE_CONFIG } from '../data';
 import contactData from '../data/contact.json';
 
 interface ArchiveExplorerProps {
@@ -173,82 +173,98 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 font-sans">
           {/* Card 1: Hints */}
-          <button
-            id="cat-card-hints"
-            onClick={() => handleTabSwitch('hints')}
-            className={`p-5 rounded-2xl border-2 text-left flex flex-col justify-between h-40 transition-all cursor-pointer relative overflow-hidden group ${
-              activeTab === 'hints' 
-                ? 'bg-slate-900 border-slate-900 text-white shadow-md' 
-                : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
-            }`}
-          >
-            <div className="text-2xl">🔑</div>
-            <div>
-              <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">Trang #01</span>
-              <h3 className="text-base font-bold mt-1">Hộp Manh Mối</h3>
-              <p className="text-[11px] opacity-70 mt-1 line-clamp-1">Khám phá bí mật, sự kiện đoán trước...</p>
-            </div>
-            {activeTab === 'hints' && <div className="absolute right-2.5 top-2.5 text-xs bg-brand-teal-400 text-slate-900 font-bold px-2 py-0.5 rounded-full font-mono">Lọt</div>}
-          </button>
+          {SITE_CONFIG.showHints && (
+            <button
+              id="cat-card-hints"
+              onClick={() => handleTabSwitch('hints')}
+              className={`p-5 rounded-2xl border-2 text-left flex flex-col justify-between h-40 transition-all cursor-pointer relative overflow-hidden group ${
+                activeTab === 'hints' 
+                  ? 'bg-slate-900 border-slate-900 text-white shadow-md' 
+                  : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
+              }`}
+            >
+              <div className="text-2xl">🔑</div>
+              <div>
+                <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">Trang #01</span>
+                <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.hintsTabTitle || "hints"}</h3>
+                {SITE_CONFIG.showHintsTabDesc && (
+                  <p className="text-[11px] opacity-70 mt-1 line-clamp-1">{SITE_CONFIG.hintsTabDesc}</p>
+                )}
+              </div>
+              {activeTab === 'hints' && <div className="absolute right-2.5 top-2.5 text-xs bg-brand-teal-400 text-slate-900 font-bold px-2 py-0.5 rounded-full font-mono">Lọt</div>}
+            </button>
+          )}
 
           {/* Card 2: Gallery */}
-          <button
-            id="cat-card-gallery"
-            onClick={() => handleTabSwitch('gallery')}
-            className={`p-5 rounded-2xl border-2 text-left flex flex-col justify-between h-40 transition-all cursor-pointer relative overflow-hidden group ${
-              activeTab === 'gallery' 
-                ? 'bg-slate-900 border-slate-900 text-white shadow-md' 
-                : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
-            }`}
-          >
-            <div className="text-2xl">📸</div>
-            <div>
-              <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">Trang #02</span>
-              <h3 className="text-base font-bold mt-1">Triển Lãm Ảnh</h3>
-              <p className="text-[11px] opacity-70 mt-1 line-clamp-1">Nụ cười tươi sáng, nét bút nguệch ngoạc...</p>
-            </div>
-            {activeTab === 'gallery' && <div className="absolute right-2.5 top-2.5 text-xs bg-brand-teal-400 text-slate-900 font-bold px-2 py-0.5 rounded-full font-mono">Lọt</div>}
-          </button>
+          {SITE_CONFIG.showGallery && (
+            <button
+              id="cat-card-gallery"
+              onClick={() => handleTabSwitch('gallery')}
+              className={`p-5 rounded-2xl border-2 text-left flex flex-col justify-between h-40 transition-all cursor-pointer relative overflow-hidden group ${
+                activeTab === 'gallery' 
+                  ? 'bg-slate-900 border-slate-900 text-white shadow-md' 
+                  : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
+              }`}
+            >
+              <div className="text-2xl">📸</div>
+              <div>
+                <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">Trang #02</span>
+                <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.galleryTabTitle || "gallery"}</h3>
+                {SITE_CONFIG.showGalleryTabDesc && (
+                  <p className="text-[11px] opacity-70 mt-1 line-clamp-1">{SITE_CONFIG.galleryTabDesc}</p>
+                )}
+              </div>
+              {activeTab === 'gallery' && <div className="absolute right-2.5 top-2.5 text-xs bg-brand-teal-400 text-slate-900 font-bold px-2 py-0.5 rounded-full font-mono">Lọt</div>}
+            </button>
+          )}
 
           {/* Card 3: Recs */}
-          <button
-            id="cat-card-recs"
-            onClick={() => handleTabSwitch('recs')}
-            className={`p-5 rounded-2xl border-2 text-left flex flex-col justify-between h-40 transition-all cursor-pointer relative overflow-hidden group ${
-              activeTab === 'recs' 
-                ? 'bg-slate-900 border-slate-900 text-white shadow-md' 
-                : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
-            }`}
-          >
-            <div className="text-2xl">🎵</div>
-            <div>
-              <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">Trang #03</span>
-              <h3 className="text-base font-bold mt-1">Đề Xuất Chọn Lọc</h3>
-              <p className="text-[11px] opacity-70 mt-1 line-clamp-1">Bài hát ru hồn, sách truyện dịu ngọt...</p>
-            </div>
-            {activeTab === 'recs' && <div className="absolute right-2.5 top-2.5 text-xs bg-brand-teal-400 text-slate-900 font-bold px-2 py-0.5 rounded-full font-mono">Lọt</div>}
-          </button>
+          {SITE_CONFIG.showRecs && (
+            <button
+              id="cat-card-recs"
+              onClick={() => handleTabSwitch('recs')}
+              className={`p-5 rounded-2xl border-2 text-left flex flex-col justify-between h-40 transition-all cursor-pointer relative overflow-hidden group ${
+                activeTab === 'recs' 
+                  ? 'bg-slate-900 border-slate-900 text-white shadow-md' 
+                  : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
+              }`}
+            >
+              <div className="text-2xl">🎵</div>
+              <div>
+                <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">Trang #03</span>
+                <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.recsTabTitle || "recs"}</h3>
+                {SITE_CONFIG.showRecsTabDesc && (
+                  <p className="text-[11px] opacity-70 mt-1 line-clamp-1">{SITE_CONFIG.recsTabDesc}</p>
+                )}
+              </div>
+              {activeTab === 'recs' && <div className="absolute right-2.5 top-2.5 text-xs bg-brand-teal-400 text-slate-900 font-bold px-2 py-0.5 rounded-full font-mono">Lọt</div>}
+            </button>
+          )}
 
           {/* Card 4: Contact */}
-          <button
-            id="cat-card-contact"
-            onClick={() => handleTabSwitch('contact')}
-            className={`p-5 rounded-2xl border-2 text-left flex flex-col justify-between h-40 transition-all cursor-pointer relative overflow-hidden group ${
-              activeTab === 'contact' 
-                ? 'bg-slate-900 border-slate-900 text-white shadow-md' 
-                : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
-            }`}
-          >
-            <div className="text-2xl">✉️</div>
-            <div>
-              <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">Trang #04</span>
-              <h3 className="text-base font-bold mt-1">Hòm Thư Kỷ Niệm</h3>
-              <p className="text-[11px] opacity-70 mt-1 line-clamp-1">Viết lời chào gửi trực tiếp lên bức tường...</p>
-            </div>
-            {activeTab === 'contact' && <div className="absolute right-2.5 top-2.5 text-xs bg-brand-teal-400 text-slate-900 font-bold px-2 py-0.5 rounded-full font-mono">Lọt</div>}
-          </button>
+          {SITE_CONFIG.showContact && (
+            <button
+              id="cat-card-contact"
+              onClick={() => handleTabSwitch('contact')}
+              className={`p-5 rounded-2xl border-2 text-left flex flex-col justify-between h-40 transition-all cursor-pointer relative overflow-hidden group ${
+                activeTab === 'contact' 
+                  ? 'bg-slate-900 border-slate-900 text-white shadow-md' 
+                  : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
+              }`}
+            >
+              <div className="text-2xl">✉️</div>
+              <div>
+                <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">Trang #04</span>
+                <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.contactsTabTitle || "Contacts"}</h3>
+                {SITE_CONFIG.showContactsTabDesc && (
+                  <p className="text-[11px] opacity-70 mt-1 line-clamp-1">{SITE_CONFIG.contactsTabDesc}</p>
+                )}
+              </div>
+              {activeTab === 'contact' && <div className="absolute right-2.5 top-2.5 text-xs bg-brand-teal-400 text-slate-900 font-bold px-2 py-0.5 rounded-full font-mono">Lọt</div>}
+            </button>
+          )}
         </div>
       </div>
 
@@ -284,11 +300,12 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
               transition={{ duration: 0.2 }}
               className="space-y-6"
             >
-              {/* Header inside tab */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-sans">
                 <div>
-                  <h3 className="text-xl font-bold text-slate-800">Cất Giữ Manh Mối Bí Mật 🔑</h3>
-                  <p className="text-xs text-slate-500 font-semibold">Cung cấp manh mối gợi ý về Chamchamz. Tránh rò rỉ ra ngoài.</p>
+                  <h3 className="text-xl font-bold text-slate-800">{SITE_CONFIG.hintsSectionTitle || "Cất Giữ Manh Mối Bí Mật 🔑"}</h3>
+                  {SITE_CONFIG.showHintsSectionDesc && (
+                    <p className="text-xs text-slate-500 font-semibold">{SITE_CONFIG.hintsSectionDesc}</p>
+                  )}
                 </div>
                 {/* Search / Filter bar for Hints */}
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
@@ -405,13 +422,14 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
               transition={{ duration: 0.2 }}
               className="space-y-6"
             >
-              {/* Header inside Tab */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-sans">
                 <div>
                   <h3 className="text-xl font-bold text-slate-800 flex items-center gap-1.5">
-                    <span>Tuyệt tác Triển Lãm Ảnh 📷</span>
+                    <span>{SITE_CONFIG.gallerySectionTitle || "Tuyệt tác Triển Lãm Ảnh 📷"}</span>
                   </h3>
-                  <p className="text-xs text-slate-500 font-semibold">Khung hình nghệ thuật tươi trẻ, nhí nhảnh từ cuộc sống ngọt lịm của Chamchamz.</p>
+                  {SITE_CONFIG.showGallerySectionDesc && (
+                    <p className="text-xs text-slate-500 font-semibold">{SITE_CONFIG.gallerySectionDesc}</p>
+                  )}
                 </div>
 
                 {/* Grid Search */}
@@ -506,11 +524,12 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
               transition={{ duration: 0.2 }}
               className="space-y-6"
             >
-              {/* Header inside Tab */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-sans">
                 <div>
-                  <h3 className="text-xl font-bold text-slate-800">Không Gian Đề Xuất Nghệ Thuật 🎵</h3>
-                  <p className="text-xs text-slate-500 font-semibold">Tổng hợp sở thích đáng yêu như sách quý, bài hát chill được yêu thích từ lòng Chamchamz.</p>
+                  <h3 className="text-xl font-bold text-slate-800">{SITE_CONFIG.recsSectionTitle || "Không Gian Đề Xuất Nghệ Thuật 🎵"}</h3>
+                  {SITE_CONFIG.showRecsSectionDesc && (
+                    <p className="text-xs text-slate-500 font-semibold">{SITE_CONFIG.recsSectionDesc}</p>
+                  )}
                 </div>
 
                 {/* Filter buttons */}
@@ -687,10 +706,11 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
               transition={{ duration: 0.2 }}
               className="space-y-8"
             >
-              {/* Header inside Tab */}
-              <div>
-                <h3 className="text-xl font-bold text-slate-800">{contactData.title || "Lá Thư Gửi Gắm Tình Yêu ✉️"}</h3>
-                <p className="text-xs text-slate-500 font-semibold">{contactData.description || "Không quản ngại khoảng cách, viết đôi lời nhắn nhủ chân thành đến Chamchamz. Đính kèm một nhãn dán dễ thương!"}</p>
+              <div className="font-sans">
+                <h3 className="text-xl font-bold text-slate-800">{SITE_CONFIG.contactsSectionTitle || contactData.title || "Lá Thư Gửi Gắm Tình Yêu ✉️"}</h3>
+                {SITE_CONFIG.showContactsSectionDesc && (
+                  <p className="text-xs text-slate-500 font-semibold">{SITE_CONFIG.contactsSectionDesc || contactData.description}</p>
+                )}
               </div>
 
               {/* Form and Board Layout */}

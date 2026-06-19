@@ -50,8 +50,12 @@ export default function App() {
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="flex items-center gap-2 cursor-pointer group"
           >
-            <div className="w-9 h-9 rounded-xl bg-brand-cyan-400 border-2 border-slate-900 flex items-center justify-center text-xl group-hover:rotate-6 transition-transform">
-              🐹
+            <div className="w-9 h-9 rounded-xl bg-brand-cyan-400 border-2 border-slate-900 flex items-center justify-center text-xl overflow-hidden group-hover:rotate-6 transition-transform">
+              {SITE_CONFIG.mascotImageUrl ? (
+                <img src={SITE_CONFIG.mascotImageUrl} alt="Logo" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+              ) : (
+                <span>{SITE_CONFIG.navbarMascotEmoji || "🐹"}</span>
+              )}
             </div>
             <div>
               <span className="font-bold text-slate-800 text-sm md:text-base leading-none block">{SITE_CONFIG.siteTitle}</span>
@@ -64,23 +68,10 @@ export default function App() {
             {SITE_CONFIG.showAbout && (
               <button
                 id="nav-btn-about"
-                onClick={handleScrollToAbout}
-                className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 relative rounded-lg cursor-pointer transition-colors"
               >
-                Về Chúng Mình
-              </button>
-            )}
-            
-            {SITE_CONFIG.showCounters && (
-              <button
-                 id="nav-btn-counters"
-                 onClick={() => {
-                   const el = document.getElementById('dynamic-counters-section');
-                   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                 }}
-                 className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
-              >
-                Chỉ Số Live 📊
+                {SITE_CONFIG.navHomeText || "Home"}
               </button>
             )}
 
@@ -90,7 +81,7 @@ export default function App() {
                 onClick={() => handleExploreTabSelect('hints')}
                 className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors hidden sm:inline"
               >
-                Manh Mối
+                {SITE_CONFIG.hintsTabTitle || "hints"}
               </button>
             )}
 
@@ -100,7 +91,7 @@ export default function App() {
                 onClick={() => handleExploreTabSelect('gallery')}
                 className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors hidden sm:inline"
               >
-                Triển Lãm
+                {SITE_CONFIG.galleryTabTitle || "gallery"}
               </button>
             )}
 
@@ -111,7 +102,7 @@ export default function App() {
                 onClick={() => handleExploreTabSelect('contact')}
                 className="bg-brand-cyan-200 border-2 border-slate-900 text-slate-850 px-3.5 py-1.5 rounded-xl hover:bg-slate-900 hover:text-white cursor-pointer active:scale-95 transition-all text-[11px]"
               >
-                Gửi Thư Yêu Thương ✉️
+                {SITE_CONFIG.contactsTabTitle || "Contacts"} ✉️
               </button>
             )}
           </nav>
@@ -143,9 +134,6 @@ export default function App() {
 
       {/* Section 4: Footer */}
       <Footer onTabSwitch={handleExploreTabSelect} />
-
-      {/* 📋 BLUEPRINT EXPERT OVERLAY DATA */}
-      <BlueprintDrawer />
 
       {/* 🎵 FLOATING BACK GROUND MUSIC WIDGET */}
       {SITE_CONFIG.showMusic && <BackgroundMusic />}
