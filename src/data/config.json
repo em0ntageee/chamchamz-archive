@@ -1,16 +1,16 @@
 {
-  "siteTitle": "Chamchamz Archive",
-  "siteSubtitle": "VÙNG BẢO MẬT FAN-ONLY",
-  "heroHeadline": "Chamchamz Archive",
-  "heroSubheadline": "Khám Phá Rương Ký Ức Sáng Tạo & Tươi Vui 🫧",
-  "heroDescription": "Hộp nhạc thời gian lưu cất những manh mối nhỏ nhoi, tranh vẽ sắc sảo, gợi ý nhạc êm dịu và lá thư hâm mộ ngọt ngào của Chamchamz. Một góc trời trong lành ngọc bích chỉ dành riêng cho fan hâm mộ chân chính.",
-  "ctaPrimaryText": "Mở Khóa Album Gợi Ý",
-  "ctaSecondaryText": "Cam Kế Bản Mật",
-  "showCounters": true,
-  "showMusic": true,
-  "showHints": true,
-  "showGallery": true,
   "showRecs": true,
+  "heroDescription": "Chào mừng mọi người ghé thăm góc nhỏ dành cho Chamchamz.\nLưu ý: tất cả nội dung trong website đều thuộc về zone cp, vui lòng không mang các thông tin này ra bên ngoài.\nCần góp ý gì thì liên hệ với chúng mình qua mục \"Contact\" nhé!",
   "showContact": true,
-  "showAbout": true
+  "showMusic": true,
+  "heroHeadline": "Chamchamz Archive ᯓ★",
+  "showHints": true,
+  "showAbout": true,
+  "ctaSecondaryText": "Rules",
+  "siteTitle": "Chamchamz Archive ᯓ★",
+  "showCounters": true,
+  "showGallery": true,
+  "heroSubheadline": "Welcome home!",
+  "siteSubtitle": "a home for you.",
+  "ctaPrimaryText": "Hints"
 }
