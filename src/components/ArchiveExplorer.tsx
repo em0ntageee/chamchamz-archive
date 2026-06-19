@@ -185,10 +185,10 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
               }`}
             >
-              <div className="text-2xl">🔑</div>
+              <div className="text-2xl">{SITE_CONFIG.hintsTabEmoji || "🔑"}</div>
               <div>
-                <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">Trang #01</span>
-                <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.hintsTabTitle || "hints"}</h3>
+                <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">{SITE_CONFIG.hintsTabBadge || "Trang #01"}</span>
+                <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.hintsTabTitle || "Hints"}</h3>
                 {SITE_CONFIG.showHintsTabDesc && (
                   <p className="text-[11px] opacity-70 mt-1 line-clamp-1">{SITE_CONFIG.hintsTabDesc}</p>
                 )}
@@ -208,10 +208,10 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
               }`}
             >
-              <div className="text-2xl">📸</div>
+              <div className="text-2xl">{SITE_CONFIG.galleryTabEmoji || "📸"}</div>
               <div>
-                <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">Trang #02</span>
-                <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.galleryTabTitle || "gallery"}</h3>
+                <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">{SITE_CONFIG.galleryTabBadge || "Trang #02"}</span>
+                <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.galleryTabTitle || "Gallery"}</h3>
                 {SITE_CONFIG.showGalleryTabDesc && (
                   <p className="text-[11px] opacity-70 mt-1 line-clamp-1">{SITE_CONFIG.galleryTabDesc}</p>
                 )}
@@ -231,10 +231,10 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
               }`}
             >
-              <div className="text-2xl">🎵</div>
+              <div className="text-2xl">{SITE_CONFIG.recsTabEmoji || "🎵"}</div>
               <div>
-                <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">Trang #03</span>
-                <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.recsTabTitle || "recs"}</h3>
+                <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">{SITE_CONFIG.recsTabBadge || "Trang #03"}</span>
+                <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.recsTabTitle || "Recs"}</h3>
                 {SITE_CONFIG.showRecsTabDesc && (
                   <p className="text-[11px] opacity-70 mt-1 line-clamp-1">{SITE_CONFIG.recsTabDesc}</p>
                 )}
@@ -254,9 +254,9 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   : 'bg-white border-brand-teal-200 text-slate-800 hover:border-brand-teal-400 hover:scale-101'
               }`}
             >
-              <div className="text-2xl">✉️</div>
+              <div className="text-2xl">{SITE_CONFIG.contactsTabEmoji || "✉️"}</div>
               <div>
-                <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">Trang #04</span>
+                <span className="text-xs font-bold font-mono tracking-wide opacity-80 uppercase block">{SITE_CONFIG.contactsTabBadge || "Trang #04"}</span>
                 <h3 className="text-base font-bold mt-1 text-slate-850 group-hover:text-amber-500 transition-colors uppercase text-[12px] tracking-wide">{SITE_CONFIG.contactsTabTitle || "Contacts"}</h3>
                 {SITE_CONFIG.showContactsTabDesc && (
                   <p className="text-[11px] opacity-70 mt-1 line-clamp-1">{SITE_CONFIG.contactsTabDesc}</p>

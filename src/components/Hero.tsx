@@ -38,17 +38,20 @@ export default function Hero({ onExploreClick, onAboutClick }: HeroProps) {
           transition={{ type: 'spring', damping: 15, stiffness: 120 }}
           className="relative mb-6"
         >
-          {/* Main mascot container */}
-          <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-gradient-to-tr from-brand-cyan-200 via-white to-brand-blue-200 border-4 border-slate-800 flex items-center justify-center shadow-md relative group hover:rotate-3 transition-transform overflow-hidden">
-            {SITE_CONFIG.mascotImageUrl ? (
+          {SITE_CONFIG.mascotImageUrl ? (
+            /* Outer original-ratio content box without forced circular layout and without chamchamz sticker */
+            <div className="max-w-xs max-h-56 overflow-hidden rounded-2xl border-4 border-slate-800 shadow-md relative group transition-transform hover:scale-102 flex items-center justify-center bg-white p-1">
               <img 
                 src={SITE_CONFIG.mascotImageUrl} 
-                alt="Mascot Avatar" 
-                className="w-full h-full object-cover"
+                alt="Uploaded Mascot" 
+                className="max-h-48 object-contain rounded-xl w-auto h-auto"
                 referrerPolicy="no-referrer"
               />
-            ) : (
-              /* Custom SVG Cute Hamster Mascot Face fallback */
+            </div>
+          ) : (
+            /* Main mascot fallback container with sticker */
+            <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-gradient-to-tr from-brand-cyan-200 via-white to-brand-blue-200 border-4 border-slate-800 flex items-center justify-center shadow-md relative group hover:rotate-3 transition-transform overflow-hidden">
+              {/* Custom SVG Cute Hamster Mascot Face fallback */}
               <svg viewBox="0 0 100 100" className="w-16 h-16 md:w-24 md:h-24">
                 {/* Ears */}
                 <ellipse cx="25" cy="25" rx="15" ry="12" fill="#bae6fd" stroke="#1E293B" strokeWidth="3" />
@@ -69,16 +72,16 @@ export default function Hero({ onExploreClick, onAboutClick }: HeroProps) {
                 <path d="M 46 62 Q 50 66 54 62" fill="none" stroke="#1E293B" strokeWidth="3" strokeLinecap="round" />
                 <path d="M 50 63 L 50 58" stroke="#1E293B" strokeWidth="3" />
               </svg>
-            )}
-            
-            {/* Cute Sticker elements overlapping the avatar */}
-            <span className="absolute -top-1 -right-3 bg-rose-400 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-slate-800 rotate-12 shadow-sm font-sans z-10">
-              CHAMCHAM {SITE_CONFIG.navbarMascotEmoji || "🐹"}
-            </span>
-          </div>
+              
+              {/* Cute Sticker elements overlapping the avatar */}
+              <span className="absolute -top-1 -right-3 bg-rose-400 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-slate-800 rotate-12 shadow-sm font-sans z-10">
+                CHAMCHAM {SITE_CONFIG.navbarMascotEmoji || "🐹"}
+              </span>
+            </div>
+          )}
 
           {/* Halo Indicator */}
-          <div className="absolute -inset-1.5 bg-gradient-to-r from-brand-cyan-300 to-brand-blue-300 rounded-full blur-xs opacity-40 -z-10 animate-pulse"></div>
+          <div className="absolute -inset-1.5 bg-gradient-to-r from-brand-cyan-300 to-brand-blue-300 rounded-full blur-xs opacity-45 -z-10 animate-pulse"></div>
         </motion.div>
 
         {/* Security / Exclusive Badge */}

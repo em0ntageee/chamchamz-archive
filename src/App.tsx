@@ -51,7 +51,9 @@ export default function App() {
             className="flex items-center gap-2 cursor-pointer group"
           >
             <div className="w-9 h-9 rounded-xl bg-brand-cyan-400 border-2 border-slate-900 flex items-center justify-center text-xl overflow-hidden group-hover:rotate-6 transition-transform">
-              {SITE_CONFIG.mascotImageUrl ? (
+              {SITE_CONFIG.navbarLogoUrl ? (
+                <img src={SITE_CONFIG.navbarLogoUrl} alt="Logo" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+              ) : SITE_CONFIG.mascotImageUrl ? (
                 <img src={SITE_CONFIG.mascotImageUrl} alt="Logo" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               ) : (
                 <span>{SITE_CONFIG.navbarMascotEmoji || "🐹"}</span>

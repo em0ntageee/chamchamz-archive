@@ -91,6 +91,11 @@ collections:
             widget: "image"
             default: ""
             required: false
+          - label: "Ảnh Logo nhỏ trên Navbar (Navbar Logo Image)"
+            name: "navbarLogoUrl"
+            widget: "image"
+            default: ""
+            required: false
           - label: "Emoji Mascot gốc Navbar / Sticker"
             name: "navbarMascotEmoji"
             widget: "string"
@@ -108,7 +113,17 @@ collections:
           - label: "Tên Thẻ Mục Manh Mối (Tab Title)"
             name: "hintsTabTitle"
             widget: "string"
-            default: "hints"
+            default: "Hints"
+            required: true
+          - label: "Nhãn Thẻ Mục Manh Mối (Tab Badge)"
+            name: "hintsTabBadge"
+            widget: "string"
+            default: "Trang #01"
+            required: true
+          - label: "Biểu tượng Thẻ Mục Manh Mối (Tab Emoji)"
+            name: "hintsTabEmoji"
+            widget: "string"
+            default: "🔑"
             required: true
           - label: "Mô tả ngắn thẻ Manh Mối"
             name: "hintsTabDesc"
@@ -122,7 +137,17 @@ collections:
           - label: "Tên Thẻ Mục Triển Lãm (Tab Title)"
             name: "galleryTabTitle"
             widget: "string"
-            default: "gallery"
+            default: "Gallery"
+            required: true
+          - label: "Nhãn Thẻ Mục Triển Lãm (Tab Badge)"
+            name: "galleryTabBadge"
+            widget: "string"
+            default: "Trang #02"
+            required: true
+          - label: "Biểu tượng Thẻ Mục Triển Lãm (Tab Emoji)"
+            name: "galleryTabEmoji"
+            widget: "string"
+            default: "📸"
             required: true
           - label: "Mô tả ngắn thẻ Triển Lãm"
             name: "galleryTabDesc"
@@ -136,7 +161,17 @@ collections:
           - label: "Tên Thẻ Mục Đề Xuất (Tab Title)"
             name: "recsTabTitle"
             widget: "string"
-            default: "recs"
+            default: "Recs"
+            required: true
+          - label: "Nhãn Thẻ Mục Đề Xuất (Tab Badge)"
+            name: "recsTabBadge"
+            widget: "string"
+            default: "Trang #03"
+            required: true
+          - label: "Biểu tượng Thẻ Mục Đề Xuất (Tab Emoji)"
+            name: "recsTabEmoji"
+            widget: "string"
+            default: "🎵"
             required: true
           - label: "Mô tả ngắn thẻ Đề Xuất"
             name: "recsTabDesc"
@@ -151,6 +186,16 @@ collections:
             name: "contactsTabTitle"
             widget: "string"
             default: "Contacts"
+            required: true
+          - label: "Nhãn Thẻ Mục Hòm Thư (Tab Badge)"
+            name: "contactsTabBadge"
+            widget: "string"
+            default: "Trang #04"
+            required: true
+          - label: "Biểu tượng Thẻ Mục Hòm Thư (Tab Emoji)"
+            name: "contactsTabEmoji"
+            widget: "string"
+            default: "✉️"
             required: true
           - label: "Mô tả ngắn thẻ Hòm Thư"
             name: "contactsTabDesc"
@@ -217,6 +262,81 @@ collections:
             name: "showContactsSectionDesc"
             widget: "boolean"
             default: true
+          - label: "Tiêu đề mục Giới thiệu (About Title)"
+            name: "aboutTitle"
+            widget: "string"
+            default: "Về Chamchamz Archive 🎨"
+            required: true
+          - label: "Tiêu đề nhỏ mục Câu Chuyện (Story Title)"
+            name: "aboutStoryTitle"
+            widget: "string"
+            default: "🏰 Câu Chuyện Của Góc Nhỏ"
+            required: true
+          - label: "Đoạn văn câu chuyện #1 (Paragraph 1)"
+            name: "aboutStoryPara1"
+            widget: "text"
+            default: "Chamchamz Archive ra đời từ ngọn lửa đam mê thuần khiết của một nhóm nhỏ những trái tim yêu thương Chamchamz vô điều kiện. Đúng như tinh thần cốt lõi trong triết lý hoạt động, chúng tôi tạo ra không gian lưu trữ số này để bảo tồn những nét dễ thương nhất, những bí mật ngọt ngào và giai điệu ru êm giấc mơ ban tối."
+            required: true
+          - label: "Đoạn văn câu chuyện #2 (Paragraph 2)"
+            name: "aboutStoryPara2"
+            widget: "text"
+            default: "Website của chúng mình được mô phỏng theo triết lý mỹ thuật tối giản, rực rỡ và đong đầy niềm vui hồn nhiên. Từng chi tiết nhỏ ở đây đều được đục đẽo tỉ mỉ bằng tình cảm chân thành nhất."
+            required: true
+          - label: "Tiêu đề Khối Độ tin cậy (Trust Title)"
+            name: "aboutTrustTitle"
+            widget: "string"
+            default: "ĐỘ TIN CẬY TUYỆT ĐỐI"
+            required: true
+          - label: "Nội dung Khối Độ tin cậy (Trust Text)"
+            name: "aboutTrustText"
+            widget: "text"
+            default: "Mọi tư liệu ảnh, gợi ý sự kiện (hints) hay đề xuất nhạc đăng tải tại đây đều được Ban Quản Trị xác minh kỹ càng từ các nguồn chính thống, bảo vệ lòng tin tuyệt hảo của người hâm mộ."
+            required: true
+          - label: "Tiêu đề khối Quy Tắc (Rules Title)"
+            name: "aboutRulesTitle"
+            widget: "string"
+            default: "Quy Tắc Tối Thượng 🔐"
+            required: true
+          - label: "Dòng phụ đề khối Quy Tắc (Rules Subtitle)"
+            name: "aboutRulesSubtitle"
+            widget: "text"
+            default: "Đây là thư mục lưu giữ thông tin mang tính bảo mật và thân mật của Chamchamz. Do đó, chúng tôi thiết lập quy chuẩn hoạt động nghiêm ngặt:"
+            required: true
+          - label: "Quy tắc bảo mật #1 (Rule 1)"
+            name: "aboutRule1"
+            widget: "string"
+            default: "Hoàn toàn KHÔNG trích xuất dữ liệu, chụp màn hình hay đem chia sẻ ra trang mạng xã hội công cộng khác."
+            required: true
+          - label: "Quy tắc bảo mật #2 (Rule 2)"
+            name: "aboutRule2"
+            widget: "string"
+            default: "Bảo toàn không gian an yên tuyệt đối cho Chamchamz."
+            required: true
+          - label: "Quy tắc bảo mật #3 (Rule 3)"
+            name: "aboutRule3"
+            widget: "string"
+            default: "Tôn trọng bản quyền tác giả trong bộ sưu tập."
+            required: true
+          - label: "Dòng chữ nhãn Thệ Ước (Pledge Label)"
+            name: "aboutPledgeLabel"
+            widget: "string"
+            default: "Số fan đã thực hiện lời thề:"
+            required: true
+          - label: "Biểu tượng Thệ Ước (Pledge Suffix)"
+            name: "aboutPledgeSuffix"
+            widget: "string"
+            default: "🧑‍🚀"
+            required: true
+          - label: "Dòng chữ nút Thệ Ước thường (Pledge Btn Text)"
+            name: "aboutPledgeBtnText"
+            widget: "string"
+            default: "Tớ Đồng Ý Bảo Mật Kho Lưu Trữ"
+            required: true
+          - label: "Dòng chữ nút Thệ Ước đã ký (Signed Btn Text)"
+            name: "aboutPledgeBtnSignedText"
+            widget: "string"
+            default: "Đã Ký Thệ Ước Bảo Mật 💖"
+            required: true
 
   # Collection 1 & 2: Counters settings
   - name: "counters"
