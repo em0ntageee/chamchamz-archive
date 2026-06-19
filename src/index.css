@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Quicksand", "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-brand-cyan-50: #f0fdfa;
+  --color-brand-cyan-100: #e0f2fe;
+  --color-brand-cyan-200: #bae6fd;
+  --color-brand-cyan-300: #7dd3fc;
+  --color-brand-cyan-400: #38bdf8;
+  --color-brand-cyan-500: #0ea5e9;
+  --color-brand-cyan-600: #0284c7;
+  
+  --color-brand-blue-50: #f0f9ff;
+  --color-brand-blue-101: #e0f2fe;
+  --color-brand-blue-200: #bae6fd;
+  --color-brand-blue-300: #7dd3fc;
+  --color-brand-blue-400: #38bdf8;
+  --color-brand-blue-500: #0ea5e9;
+  --color-brand-blue-600: #0284c7;
+
+  --color-brand-teal-50: #f0fdfa;
+  --color-brand-teal-100: #ccfbf1;
+  --color-brand-teal-200: #99f6e4;
+  --color-brand-teal-300: #5eead4;
+  --color-brand-teal-400: #2dd4bf;
+  --color-brand-teal-500: #14b8a6;
+  --color-brand-teal-600: #0d9488;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-blue-50 text-slate-800 font-sans antialiased selection:bg-brand-blue-200 selection:text-brand-blue-600;
+  }
+}
+

@@ -1,0 +1,6 @@
+{
+  "name": "Chamchamz Archive",
+  "description": "Kho lưu trữ thông tin tươi sáng, nhiều màu sắc và hiện đại dành cho cộng đồng người hâm mộ Chamchamz tại Việt Nam.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
