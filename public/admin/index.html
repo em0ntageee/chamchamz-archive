@@ -54,6 +54,37 @@
       }
     }
   </script>
+  
+  <!-- Self-healing OAuth helper tab storage synchronization fallback to bypass postMessage blocking in InPrivate/Incognito/Safari tabs -->
+  <script>
+    (function() {
+      const hadTokenAtStart = !!(localStorage.getItem('netlify-cms-user') || localStorage.getItem('decap-cms-user'));
+      
+      if (!hadTokenAtStart) {
+        console.log("Đăng nhập chưa được thiết lập. Đang theo dõi cửa sổ phụ qua localStorage/storage events...");
+        
+        // Listen to native storage mutations made by callback popups
+        window.addEventListener('storage', function(e) {
+          if (e.key === 'netlify-cms-user' || e.key === 'decap-cms-user') {
+            if (e.newValue) {
+              console.log("Tìm thấy thông tin đăng nhập từ sự kiện Storage. Đang làm mới...");
+              window.location.reload();
+            }
+          }
+        });
+
+        // Fast fallback interval polling
+        const pollId = setInterval(function() {
+          const hasTokenNow = !!(localStorage.getItem('netlify-cms-user') || localStorage.getItem('decap-cms-user'));
+          if (hasTokenNow) {
+            clearInterval(pollId);
+            console.log("Đăng nhập thành công phát hiện qua Polling. Làm mới trang...");
+            window.location.reload();
+          }
+        }, 800);
+      }
+    })();
+  </script>
 </head>
 <body>
   <!-- Include the secure, stable CDN script for Decap CMS via self-healing multi-CDN fallback tag to prevent VN ISP blockages -->

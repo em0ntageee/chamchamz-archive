@@ -84,6 +84,20 @@ function sendResponse(res, status, content) {
         const payload = ${serializedPayload};
         const messageKey = 'authorization:github:success:' + JSON.stringify(payload);
         
+        // Write fallback token credentials directly into the same-domain localStorage
+        try {
+          const cmsUser = {
+            backendName: 'github',
+            token: payload.token,
+            useLocalGit: false
+          };
+          localStorage.setItem('netlify-cms-user', JSON.stringify(cmsUser));
+          localStorage.setItem('decap-cms-user', JSON.stringify(cmsUser));
+          console.log("Saved fallback local storage credentials successfully.");
+        } catch(err) {
+          console.error("Local storage credentials write failed:", err);
+        }
+        
         if (window.opener) {
           try {
             window.opener.postMessage(messageKey, window.location.origin);
@@ -94,9 +108,12 @@ function sendResponse(res, status, content) {
           
           setTimeout(function() {
             window.close();
-          }, 300);
+          }, 600);
         } else {
-          document.querySelector('p').innerText = 'Kết nối thành công nhưng không tìm thấy cửa sổ mẹ để tiếp quản!';
+          document.querySelector('p').innerText = 'Kết nối thành công! Cửa sổ phụ sẽ tự đóng và trang chính sẽ tự động đăng nhập.';
+          setTimeout(function() {
+            window.close();
+          }, 1500);
         }
       })();
     `;
