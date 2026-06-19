@@ -1,0 +1,123 @@
+backend:
+  name: github
+  repo: em0ntageee/chamchamz-archive
+  branch: main
+  base_url: https://chamchamz-archive.vercel.app
+  auth_endpoint: api/auth
+
+local_backend: true
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  # Collection 1: Live Counter Start Date
+  # Collection 2: Homepage Total Visits (manageable via CMS file-based settings)
+  - name: "counters"
+    label: "⏱️ Bộ Đếm Chỉ Số"
+    files:
+      - file: "src/data/counters.json"
+        label: "Cấu hình Bộ Đếm"
+        name: "counters_data"
+        fields:
+          - label: "Ngày bắt đầu Livestream (YYYY-MM-DD)"
+            name: "stream_date"
+            widget: "datetime"
+            format: "YYYY-MM-DD"
+            default: "2025-11-05"
+            required: true
+            hint: "Dùng để đo số ngày kỷ niệm đã trôi qua kể từ ngày đặc biệt này."
+          - label: "Số lượng lượt tham quan ban đầu (Visits Base)"
+            name: "base_visits"
+            widget: "number"
+            default: 142580
+            required: true
+            hint: "Điểm mốc thiết lập trước cho lượt truy cập trang chủ."
+
+  # Collection 3: Background Music (with audio upload field)
+  - name: "music"
+    label: "🎵 Nhạc Nền Thư Giãn"
+    files:
+      - file: "src/data/music.json"
+        label: "Danh Sách Phát Nhạc"
+        name: "playlist_config"
+        fields:
+          - label: "Phiên bản danh sách"
+            name: "version"
+            widget: "string"
+            default: "1.0"
+          - label: "Danh sách bài hát"
+            name: "tracks"
+            widget: "list"
+            fields:
+              - { label: "Tên bài hát", name: "name", widget: "string", required: true }
+              - { label: "Nghệ sĩ thể hiện", name: "artist", widget: "string", required: true }
+              - { label: "Tập tin âm thanh (Audio File Upload)", name: "url", widget: "file", required: true, hint: "Tải lên tệp .mp3, .ogg để chơi trực tiếp trên trang chủ." }
+
+  # Collection 4: Categories/Cards - Hints List
+  - name: "hints"
+    label: "🔍 Kho Gợi Ý & Manh Mối (Hints)"
+    folder: "src/data/hints"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Mã Định Danh (ID)", name: "id", widget: "string", required: true }
+      - { label: "Tiêu Đề Lớn", name: "title", widget: "string", required: true }
+      - { label: "Ngày Phát Hành", name: "date", widget: "string", required: true }
+      - { label: "Thể loại", name: "category", widget: "select", options: ["gợi ý", "bí mật", "sự kiện", "thông báo"], required: true }
+      - { label: "Hình Minh Họa (Emoji)", name: "hintIllustration", widget: "string", default: "🔑" }
+      - { label: "Trạng Thái Mở Khóa", name: "isUnlocked", widget: "boolean", default: false }
+      - { label: "Nội Dung Manh Mối / Gợi Ý", name: "content", widget: "text", required: true }
+
+  # Collection 5: Categories/Cards - Gallery with multiple image uploads
+  - name: "gallery"
+    label: "🎨 Triển Lãm Tranh & Ảnh (Gallery)"
+    folder: "src/data/gallery"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Mã Định Danh (ID)", name: "id", widget: "string", required: true }
+      - { label: "Tiêu đề Tác phẩm", name: "title", widget: "string", required: true }
+      - { label: "Ngày đăng tải", name: "date", widget: "string", required: true }
+      - { label: "Mô tả ngắn", name: "description", widget: "text", required: true }
+      - { label: "Emoji đại diện", name: "emoji", widget: "string", default: "🖼️" }
+      - { label: "Người vẽ / Tác giả", name: "author", widget: "string", default: "Chamchamz Fanart" }
+      - { label: "Màu thẻ (Tailwind Class)", name: "colorTheme", widget: "string", default: "from-sky-100 to-cyan-100 border-sky-300 text-sky-800" }
+      - label: "Từ khóa nhãn (Tags)"
+        name: "tags"
+        widget: "list"
+        fields:
+          - { label: "Tên nhãn", name: "tag", widget: "string" }
+      - label: "Danh sách Hình ảnh tải lên (Multiple Images)"
+        name: "images"
+        widget: "list"
+        fields:
+          - { label: "Tập tin Hình ảnh", name: "image_file", widget: "image", required: true }
+          - { label: "Chú thích ảnh", name: "caption", widget: "string", required: false }
+
+  # Collection 6: Categories/Cards - Recs (Recommendations list)
+  - name: "recs"
+    label: "📚 Đề Xuất Sách & Nhạc (Recs)"
+    folder: "src/data/recs"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Mã Định Danh (ID)", name: "id", widget: "string", required: true }
+      - { label: "Tiêu Đề Sách/Bài hát", name: "title", widget: "string", required: true }
+      - { label: "Tác Giả / Người Sáng Tạo", name: "creator", widget: "string", required: true }
+      - { label: "Thể Loại", name: "type", widget: "select", options: ["music", "book", "movie"], default: "music" }
+      - { label: "Lý Do Nên Đọc/Nghe", name: "reason", widget: "text", required: true }
+      - { label: "Tên nút nhấp (Link Text)", name: "linkText", widget: "string", required: false, default: "Nghe ngay 🎧" }
+      - { label: "Đường dẫn chi tiết", name: "url", widget: "string", required: false }
+
+  # Collection 7: Categories/Cards - Contact (Feedback inbox & message setup)
+  - name: "contact"
+    label: "✉️ Trang Gửi Thư Liên Hệ (Contact)"
+    files:
+      - file: "src/data/contact.json"
+        label: "Cấu hình Hòm Thư Liên Hệ"
+        name: "contact_setup"
+        fields:
+          - { label: "Tiêu đề trang", name: "title", widget: "string", default: "Lá Thư Gửi Gắm Tình Yêu ✉️", required: true }
+          - { label: "Mô tả / Lời ngỏ", name: "description", widget: "text", default: "Không quản ngại khoảng cách địa lý, hãy viết đôi lời nhắn nhủ ngọt ngào đến cặp đôi của chúng ta.", required: true }
+          - { label: "Lời chúc khi gửi thư thành công", name: "success_msg", widget: "string", default: "Thư đã bay thẳng vào hộp kín của Chamchamz rồi nhé! 🕊️", required: true }
