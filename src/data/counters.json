@@ -1,17 +1,17 @@
 {
-  "show_counters_bottom_note": true,
   "stream_date": "2025-11-05",
-  "show_counter2_live_tag": true,
-  "counter1_title": "First Livestream:",
-  "counter2_title": "Tổng số lượt ghé thăm:",
-  "counter2_live_tag": "Live",
-  "counters_section_title": "Cập nhật mới nhất theo thời gian thực.",
-  "base_visits": 1,
+  "base_visits": 142580,
+  "counters_section_title": "Chỉ Số Thời Gian Thực 📊",
   "show_counters_section_title": true,
-  "counter2_desc": "Lượt ghé thăm cho tới hiện tại.",
-  "counter1_suffix": "ngày đã trôi qua.",
-  "counter1_desc": "Được tính từ ngày livestream ({date}).",
+  "counter1_title": "Kỷ Niệm Cặp Đôi (Livestream)",
   "counter1_emoji": "🗓️",
+  "counter1_suffix": "ngày đã trôi qua",
+  "counter1_desc": "Được tính tự động từ ngày livestream ({date}).",
+  "counter2_title": "Tổng Lượt Tham Quan Archive",
   "counter2_emoji": "🐾",
-  "counters_bottom_note": "Hoonjames yêu nhau!"
+  "counter2_desc": "Số lần fan chân chính mở xem rương lưu trữ kể từ ngày đầu tiên xây dựng.",
+  "counter2_live_tag": "Live",
+  "show_counter2_live_tag": true,
+  "counters_bottom_note": "Mọi số liệu được bảo vệ nghiêm mật theo hiệp ước.",
+  "show_counters_bottom_note": true
 }
