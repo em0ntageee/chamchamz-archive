@@ -638,10 +638,15 @@ collections:
         name: "hintIllustration"
         widget: "string"
         default: "🔑"
-      - label: "Trạng Thái Mở Khóa"
+      - label: "Trạng Trái Mở Khóa"
         name: "isUnlocked"
         widget: "boolean"
         default: false
+      - label: "Ẩn bài viết này khỏi trang chủ"
+        name: "isHidden"
+        widget: "boolean"
+        default: false
+        required: false
       - label: "Nội Dung Manh Mối / Gợi Ý"
         name: "content"
         widget: "markdown"
@@ -714,6 +719,11 @@ collections:
         options: ["X", "IG", "Weverse", "Nguồn bên ngoài"]
         default: "X"
         required: true
+      - label: "Ẩn bài viết này khỏi trang chủ"
+        name: "isHidden"
+        widget: "boolean"
+        default: false
+        required: false
       - label: "Từ khóa nhãn (Tags)"
         name: "tags"
         widget: "list"
@@ -777,6 +787,11 @@ collections:
         widget: "select"
         options: ["Fanfic/Author", "Art/Artist", "Khác"]
         default: "Khác"
+      - label: "Ẩn bài viết này khỏi trang chủ"
+        name: "isHidden"
+        widget: "boolean"
+        default: false
+        required: false
       - label: "Lý Do Nên Đọc/Nghe"
         name: "reason"
         widget: "text"

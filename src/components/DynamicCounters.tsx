@@ -21,10 +21,10 @@ export default function DynamicCounters() {
 
   // VISITOR COUNTER setup
   const [visitorCount, setVisitorCount] = useState<number>(() => {
-    const saved = localStorage.getItem('chamchamz_visitor_count');
+    const saved = localStorage.getItem('chamchamz_visitor_count_reset_v3');
     if (saved) return parseInt(saved, 10);
-    // Large pretty starter value loaded from CMS counters_data
-    return countersData.base_visits || 142580;
+    // Base value loaded from CMS counters_data
+    return typeof countersData.base_visits === 'number' ? countersData.base_visits : 0;
   });
 
   // Admin Config Panel Visibility
@@ -59,13 +59,13 @@ export default function DynamicCounters() {
     // Land increment
     const updatedCount = visitorCount + 1;
     setVisitorCount(updatedCount);
-    localStorage.setItem('chamchamz_visitor_count', String(updatedCount));
+    localStorage.setItem('chamchamz_visitor_count_reset_v3', String(updatedCount));
 
     // Simulated ticking (sporadic visitor increments every 5-15 seconds to look vibrant and alive)
     const interval = setInterval(() => {
       setVisitorCount(prev => {
         const next = prev + Math.floor(Math.random() * 2) + 1;
-        localStorage.setItem('chamchamz_visitor_count', String(next));
+        localStorage.setItem('chamchamz_visitor_count_reset_v3', String(next));
         return next;
       });
     }, 8000);
@@ -97,7 +97,7 @@ export default function DynamicCounters() {
     }
 
     localStorage.setItem('chamchamz_stream_date', adminDateInput);
-    localStorage.setItem('chamchamz_visitor_count', String(parsedVisits));
+    localStorage.setItem('chamchamz_visitor_count_reset_v3', String(parsedVisits));
     
     setLivestreamDateStr(adminDateInput);
     setVisitorCount(parsedVisits);
@@ -113,13 +113,13 @@ export default function DynamicCounters() {
   const handleResetToZero = () => {
     const todayStr = new Date().toISOString().split('T')[0];
     setAdminDateInput(todayStr);
-    setAdminVisitorInput('1');
+    setAdminVisitorInput('0');
     
     localStorage.setItem('chamchamz_stream_date', todayStr);
-    localStorage.setItem('chamchamz_visitor_count', '1');
+    localStorage.setItem('chamchamz_visitor_count_reset_v3', '0');
     
     setLivestreamDateStr(todayStr);
-    setVisitorCount(1);
+    setVisitorCount(0);
     
     setAdminSuccess(true);
     setTimeout(() => {

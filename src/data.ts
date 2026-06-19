@@ -55,7 +55,8 @@ try {
         isUnlocked: typeof raw.isUnlocked === 'boolean' ? raw.isUnlocked : false,
         hintIllustration: raw.hintIllustration || "🔑",
         sourceUrl: raw.sourceUrl || "",
-        imageFile: raw.imageFile || ""
+        imageFile: raw.imageFile || "",
+        isHidden: typeof raw.isHidden === 'boolean' ? raw.isHidden : false
       });
     }
   });
@@ -102,7 +103,8 @@ try {
         emoji: raw.emoji || "🖼️",
         author: raw.author || "Chamchamz Fanart",
         images: parsedImages.length > 0 ? parsedImages : undefined,
-        sourceUrl: raw.sourceUrl || ""
+        sourceUrl: raw.sourceUrl || "",
+        isHidden: typeof raw.isHidden === 'boolean' ? raw.isHidden : false
       });
     }
   });
@@ -124,7 +126,8 @@ try {
         reason: raw.reason || "",
         linkText: raw.linkText || "",
         url: raw.url || "",
-        imageFile: raw.imageFile || ""
+        imageFile: raw.imageFile || "",
+        isHidden: typeof raw.isHidden === 'boolean' ? raw.isHidden : false
       });
     }
   });
@@ -279,17 +282,14 @@ const DEFAULT_RECS: RecItem[] = [
   }
 ];
 
-// Helper to merge CMS list and hardcoded fallback by ID
-function mergeLists<T extends { id: string }>(defaultList: T[], cmsList: T[]): T[] {
-  const map = new Map<string, T>();
-  defaultList.forEach(item => map.set(item.id, item));
-  cmsList.forEach(item => map.set(item.id, item));
-  return Array.from(map.values());
-}
+// Helper to merge CMS list and hardcoded fallback by ID (using CMS as full authority if populated to allow deletes)
+const computedHints = cmsHintsList.length > 0 ? cmsHintsList : DEFAULT_HINTS;
+const computedGallery = cmsGalleryList.length > 0 ? cmsGalleryList : DEFAULT_GALLERY;
+const computedRecs = cmsRecsList.length > 0 ? cmsRecsList : DEFAULT_RECS;
 
-export const HINTS_DATA = mergeLists(DEFAULT_HINTS, cmsHintsList);
-export const GALLERY_DATA = mergeLists(DEFAULT_GALLERY, cmsGalleryList);
-export const RECS_DATA = mergeLists(DEFAULT_RECS, cmsRecsList);
+export const HINTS_DATA = computedHints.filter(item => !item.isHidden);
+export const GALLERY_DATA = computedGallery.filter(item => !item.isHidden);
+export const RECS_DATA = computedRecs.filter(item => !item.isHidden);
 
 export const INITIAL_MESSAGES: FanMessage[] = [
   {

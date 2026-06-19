@@ -14,6 +14,7 @@ export interface HintItem {
   hintIllustration?: string;
   sourceUrl?: string;
   imageFile?: string;
+  isHidden?: boolean;
 }
 
 export interface GalleryItem {
@@ -28,6 +29,7 @@ export interface GalleryItem {
   author: string;
   images?: { image_file: string; caption?: string }[];
   sourceUrl?: string;
+  isHidden?: boolean;
 }
 
 export interface RecItem {
@@ -39,6 +41,7 @@ export interface RecItem {
   linkText?: string;
   url?: string;
   imageFile?: string;
+  isHidden?: boolean;
 }
 
 export interface FanMessage {
