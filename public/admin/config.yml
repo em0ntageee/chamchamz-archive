@@ -3,7 +3,7 @@ backend:
   repo: em0ntageee/chamchamz-archive
   branch: main
   base_url: https://chamchamz-archive.vercel.app
-  auth_endpoint: api/auth
+  auth_endpoint: /api/auth
 
 local_backend: true
 
