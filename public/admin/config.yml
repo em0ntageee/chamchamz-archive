@@ -12,6 +12,81 @@ media_folder: "public/uploads"
 public_folder: "/uploads"
 
 collections:
+  # Collection 0: Global Configuration Settings
+  - name: "settings"
+    label: "⚙️ Cấu Hình Chung Website"
+    delete: false
+    editor:
+      preview: false
+    files:
+      - file: "src/data/config.json"
+        label: "Cấu hình chính của Website"
+        name: "website_config"
+        fields:
+          - label: "Tiêu đề trang chính (Navbar)"
+            name: "siteTitle"
+            widget: "string"
+            default: "Chamchamz Archive"
+            required: true
+          - label: "Mô tả phụ Navbar (Sub-logo)"
+            name: "siteSubtitle"
+            widget: "string"
+            default: "VÙNG BẢO MẬT FAN-ONLY"
+            required: true
+          - label: "Tiêu đề chính Hero (Headline)"
+            name: "heroHeadline"
+            widget: "string"
+            default: "Chamchamz Archive"
+            required: true
+          - label: "Tiêu đề phụ Hero (Subheadline)"
+            name: "heroSubheadline"
+            widget: "string"
+            default: "Khám Phá Rương Ký Ức Sáng Tạo & Tươi Vui 🫧"
+            required: true
+          - label: "Mô tả chi tiết Hero"
+            name: "heroDescription"
+            widget: "text"
+            default: "Hộp nhạc thời gian lưu cất những manh mối nhỏ nhoi, tranh vẽ sắc sảo, gợi ý nhạc êm dịu và lá thư hâm mộ ngọt ngào của Chamchamz. Một góc trời trong lành ngọc bích chỉ dành riêng cho fan hâm mộ chân chính."
+            required: true
+          - label: "Chữ hiển thị Nút chính CTA"
+            name: "ctaPrimaryText"
+            widget: "string"
+            default: "Mở Khóa Album Gợi Ý"
+            required: true
+          - label: "Chữ hiển thị Nút phụ CTA"
+            name: "ctaSecondaryText"
+            widget: "string"
+            default: "Cam Kết Bảo Mật"
+            required: true
+          - label: "Hiện bộ đếm (Dynamic Counters)"
+            name: "showCounters"
+            widget: "boolean"
+            default: true
+          - label: "Hiện nhạc nền (Background Music)"
+            name: "showMusic"
+            widget: "boolean"
+            default: true
+          - label: "Hiện mục gợi ý (Hints)"
+            name: "showHints"
+            widget: "boolean"
+            default: true
+          - label: "Hiện triển lãm (Gallery)"
+            name: "showGallery"
+            widget: "boolean"
+            default: true
+          - label: "Hiện đề xuất (Recs)"
+            name: "showRecs"
+            widget: "boolean"
+            default: true
+          - label: "Hiện mục hòm thư gửi gắm (Contact)"
+            name: "showContact"
+            widget: "boolean"
+            default: true
+          - label: "Hiện mục mô tả/cam kết (About)"
+            name: "showAbout"
+            widget: "boolean"
+            default: true
+
   # Collection 1 & 2: Counters settings
   - name: "counters"
     label: "⏱️ Bộ Đếm Chỉ Số"

@@ -12,6 +12,7 @@ import ArchiveExplorer from './components/ArchiveExplorer';
 import Footer from './components/Footer';
 import BlueprintDrawer from './components/BlueprintDrawer';
 import { Sparkles, Shield, Heart } from 'lucide-react';
+import { SITE_CONFIG } from './data';
 
 export default function App() {
   const [explorerTab, setExplorerTab] = useState('hints');
@@ -53,56 +54,66 @@ export default function App() {
               🐹
             </div>
             <div>
-              <span className="font-bold text-slate-800 text-sm md:text-base leading-none block">Chamchamz Archive</span>
-              <span className="text-[10px] text-slate-400 font-bold block mt-0.5">VÙNG BẢO MẬT FAN-ONLY</span>
+              <span className="font-bold text-slate-800 text-sm md:text-base leading-none block">{SITE_CONFIG.siteTitle}</span>
+              <span className="text-[10px] text-slate-400 font-bold block mt-0.5">{SITE_CONFIG.siteSubtitle}</span>
             </div>
           </div>
 
           {/* Nav buttons linked to Active tabs / sections */}
           <nav className="flex items-center gap-2 md:gap-4 text-xs font-bold text-slate-600">
-            <button
-              id="nav-btn-about"
-              onClick={handleScrollToAbout}
-              className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
-            >
-              Về Chúng Mình
-            </button>
+            {SITE_CONFIG.showAbout && (
+              <button
+                id="nav-btn-about"
+                onClick={handleScrollToAbout}
+                className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
+              >
+                Về Chúng Mình
+              </button>
+            )}
             
-            <button
-               id="nav-btn-counters"
-               onClick={() => {
-                 const el = document.getElementById('dynamic-counters-section');
-                 if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-               }}
-               className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
-            >
-              Chỉ Số Live 📊
-            </button>
+            {SITE_CONFIG.showCounters && (
+              <button
+                 id="nav-btn-counters"
+                 onClick={() => {
+                   const el = document.getElementById('dynamic-counters-section');
+                   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 }}
+                 className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors"
+              >
+                Chỉ Số Live 📊
+              </button>
+            )}
 
-            <button
-              id="nav-btn-hints"
-              onClick={() => handleExploreTabSelect('hints')}
-              className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors hidden sm:inline"
-            >
-              Manh Mối
-            </button>
+            {SITE_CONFIG.showHints && (
+              <button
+                id="nav-btn-hints"
+                onClick={() => handleExploreTabSelect('hints')}
+                className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors hidden sm:inline"
+              >
+                Manh Mối
+              </button>
+            )}
 
-            <button
-              id="nav-btn-gallery"
-              onClick={() => handleExploreTabSelect('gallery')}
-              className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors hidden sm:inline"
-            >
-              Triển Lãm
-            </button>
+            {SITE_CONFIG.showGallery && (
+              <button
+                id="nav-btn-gallery"
+                onClick={() => handleExploreTabSelect('gallery')}
+                className="px-2.5 py-1.5 hover:text-slate-900 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors hidden sm:inline"
+              >
+                Triển Lãm
+              </button>
+            )}
 
             {/* Quick entry Action button */}
-            <button
-              id="nav-btn-explore-now"
-              onClick={() => handleExploreTabSelect('contact')}
-              className="bg-brand-cyan-200 border-2 border-slate-900 text-slate-850 px-3.5 py-1.5 rounded-xl hover:bg-slate-900 hover:text-white cursor-pointer active:scale-95 transition-all text-[11px]"
-            >
-              Gửi Thư Yêu Thương ✉️
-            </button>
+            {SITE_CONFIG.showContact && (
+              <button
+                id="nav-btn-explore-now"
+                onClick={() => handleExploreTabSelect('contact')}
+                className="bg-brand-cyan-200 border-2 border-slate-900 text-slate-850 px-3.5 py-1.5 rounded-xl hover:bg-slate-900 hover:text-white cursor-pointer active:scale-95 transition-all text-[11px]"
+              >
+                Gửi Thư Yêu Thương ✉️
+              </button>
+            )}
           </nav>
 
         </div>
@@ -118,13 +129,15 @@ export default function App() {
         />
 
         {/* Section 1.5: Dynamic Live Counters */}
-        <DynamicCounters />
+        {SITE_CONFIG.showCounters && <DynamicCounters />}
 
         {/* Section 2: Interactive Explorer (Tab Card Selector & Active module viewers) */}
-        <ArchiveExplorer initialTab={explorerTab} />
+        {(SITE_CONFIG.showHints || SITE_CONFIG.showGallery || SITE_CONFIG.showRecs || SITE_CONFIG.showContact) && (
+          <ArchiveExplorer initialTab={explorerTab} />
+        )}
 
         {/* Section 3: About (Pledge & Bio) */}
-        <About />
+        {SITE_CONFIG.showAbout && <About />}
 
       </main>
 
@@ -135,7 +148,7 @@ export default function App() {
       <BlueprintDrawer />
 
       {/* 🎵 FLOATING BACK GROUND MUSIC WIDGET */}
-      <BackgroundMusic />
+      {SITE_CONFIG.showMusic && <BackgroundMusic />}
 
     </div>
   );

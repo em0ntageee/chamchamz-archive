@@ -4,6 +4,9 @@
  */
 
 import { HintItem, GalleryItem, RecItem, FanMessage } from './types';
+import configData from './data/config.json';
+
+export const SITE_CONFIG = configData;
 
 // --- DYNAMIC INTEGRATION WITH DECAP CMS (VITE METADATA GLOB) ---
 const hintsGlob = (import.meta as any).glob('/src/data/hints/*.json', { eager: true });

@@ -5,6 +5,7 @@
 
 import { motion } from 'motion/react';
 import { Sparkles, ArrowDown, Lock, ShieldCheck, Heart } from 'lucide-react';
+import { SITE_CONFIG } from '../data';
 
 interface HeroProps {
   onExploreClick: (tabId: string) => void;
@@ -92,11 +93,11 @@ export default function Hero({ onExploreClick, onAboutClick }: HeroProps) {
           className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 tracking-tight leading-none mb-4"
         >
           <span className="bg-gradient-to-r from-brand-blue-500 via-brand-cyan-500 to-brand-blue-600 bg-clip-text text-transparent">
-            Chamchamz Archive
+            {SITE_CONFIG.heroHeadline}
           </span>
           <br />
           <span className="text-2xl md:text-3.5xl lg:text-4xl text-slate-705 font-medium block mt-3">
-            Khám Phá Rương Ký Ức Sáng Tạo & Tươi Vui 🫧
+            {SITE_CONFIG.heroSubheadline}
           </span>
         </motion.h1>
 
@@ -108,7 +109,7 @@ export default function Hero({ onExploreClick, onAboutClick }: HeroProps) {
           transition={{ delay: 0.4 }}
           className="text-slate-650 text-sm md:text-base max-w-2xl leading-relaxed mb-8 px-4 font-medium"
         >
-          Hộp nhạc thời gian lưu cất những manh mối nhỏ nhoi, tranh vẽ sắc sảo, gợi ý nhạc êm dịu và lá thư hâm mộ ngọt ngào của Chamchamz. Một góc trời trong lành ngọc bích chỉ dành riêng cho fan hâm mộ chân chính.
+          {SITE_CONFIG.heroDescription}
         </motion.p>
 
         {/* Call to Actions (CTAs) */}
@@ -125,7 +126,7 @@ export default function Hero({ onExploreClick, onAboutClick }: HeroProps) {
             onClick={() => onExploreClick('hints')}
             className="group bg-slate-900 hover:bg-brand-blue-500 text-white font-bold py-3.5 px-8 rounded-2xl shadow-md cursor-pointer flex items-center justify-center gap-2 hover:scale-102 active:scale-95 transition-all outline-none border-2 border-slate-900"
           >
-            <span>Mở Khóa Album Gợi Ý</span>
+            <span>{SITE_CONFIG.ctaPrimaryText}</span>
             <Sparkles className="w-4 h-4 text-brand-cyan-300 group-hover:rotate-12 transition-transform" />
           </button>
 
@@ -135,7 +136,7 @@ export default function Hero({ onExploreClick, onAboutClick }: HeroProps) {
             onClick={onAboutClick}
             className="bg-white hover:bg-brand-cyan-50 text-slate-700 font-semibold py-3.5 px-6 rounded-2xl border-2 border-slate-800 shadow-sm cursor-pointer flex items-center justify-center gap-2 hover:scale-102 active:scale-95 transition-transform"
           >
-            <span>Cam Kết Bảo Mật</span>
+            <span>{SITE_CONFIG.ctaSecondaryText}</span>
             <Lock className="w-4 h-4 text-amber-500" />
           </button>
         </motion.div>
