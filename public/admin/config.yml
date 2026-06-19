@@ -600,6 +600,22 @@ collections:
     format: "json"
     create: true
     slug: "{{slug}}"
+    view_groups:
+      - label: "Chuyên mục"
+        field: "category"
+    view_filters:
+      - label: "Livestream"
+        field: "category"
+        pattern: "Livestream"
+      - label: "Youtube"
+        field: "category"
+        pattern: "Youtube"
+      - label: "Phỏng vấn"
+        field: "category"
+        pattern: "Phỏng vấn"
+      - label: "Kênh bên ngoài"
+        field: "category"
+        pattern: "Kênh bên ngoài"
     fields:
       - label: "Mã Định Danh (ID)"
         name: "id"
@@ -630,6 +646,10 @@ collections:
         name: "content"
         widget: "text"
         required: true
+      - label: "Đường dẫn nguồn tham khảo / gốc (Không bắt buộc)"
+        name: "sourceUrl"
+        widget: "string"
+        required: false
 
   # Collection 5: Categories/Cards - Gallery with multiple image uploads
   - name: "gallery"
@@ -639,6 +659,22 @@ collections:
     format: "json"
     create: true
     slug: "{{slug}}"
+    view_groups:
+      - label: "Chuyên mục"
+        field: "category"
+    view_filters:
+      - label: "X"
+        field: "category"
+        pattern: "X"
+      - label: "IG"
+        field: "category"
+        pattern: "IG"
+      - label: "Weverse"
+        field: "category"
+        pattern: "Weverse"
+      - label: "Nguồn bên ngoài"
+        field: "category"
+        pattern: "Nguồn bên ngoài"
     fields:
       - label: "Mã Định Danh (ID)"
         name: "id"
@@ -693,6 +729,10 @@ collections:
             name: "caption"
             widget: "string"
             required: false
+      - label: "Đường dẫn nguồn tham khảo / gốc (Không bắt buộc)"
+        name: "sourceUrl"
+        widget: "string"
+        required: false
 
   # Collection 6: Categories/Cards - Recs (Recommendations list)
   - name: "recs"
@@ -702,6 +742,19 @@ collections:
     format: "json"
     create: true
     slug: "{{slug}}"
+    view_groups:
+      - label: "Mảng nội dung"
+        field: "type"
+    view_filters:
+      - label: "Fanfic/Author"
+        field: "type"
+        pattern: "Fanfic/Author"
+      - label: "Art/Artist"
+        field: "type"
+        pattern: "Art/Artist"
+      - label: "Khác"
+        field: "type"
+        pattern: "Khác"
     fields:
       - label: "Mã Định Danh (ID)"
         name: "id"

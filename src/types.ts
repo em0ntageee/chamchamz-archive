@@ -12,6 +12,7 @@ export interface HintItem {
   isUnlocked: boolean;
   hintKey?: string; // Optional code to unlock if wanted, or simple click-to-reveal
   hintIllustration?: string;
+  sourceUrl?: string;
 }
 
 export interface GalleryItem {
@@ -25,6 +26,7 @@ export interface GalleryItem {
   emoji: string;
   author: string;
   images?: { image_file: string; caption?: string }[];
+  sourceUrl?: string;
 }
 
 export interface RecItem {

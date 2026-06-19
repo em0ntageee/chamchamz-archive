@@ -4,7 +4,7 @@
  */
 
 import { motion } from 'motion/react';
-import { Sparkles, ArrowDown, Lock, ShieldCheck, Heart } from 'lucide-react';
+import { Sparkles, ArrowDown, Lock, Heart } from 'lucide-react';
 import { SITE_CONFIG } from '../data';
 
 interface HeroProps {
@@ -15,19 +15,7 @@ interface HeroProps {
 export default function Hero({ onExploreClick, onAboutClick }: HeroProps) {
   return (
     <section id="hero-section" className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24 px-4">
-      {/* Decorative Floating Sparkles */}
-      <div className="absolute top-10 left-10 md:left-24 animate-bounce text-brand-blue-400 select-none pointer-events-none text-2xl">
-        ⭐
-      </div>
-      <div className="absolute top-28 right-8 md:right-32 text-brand-cyan-400 select-none pointer-events-none text-3xl animate-pulse delay-500">
-        ✨
-      </div>
-      <div className="absolute bottom-8 left-12 md:left-48 text-brand-blue-300 select-none pointer-events-none text-2xl animate-spin">
-        🫧
-      </div>
-      <div className="absolute bottom-20 right-14 md:right-40 text-amber-300 select-none pointer-events-none text-xl">
-        🍃
-      </div>
+
 
       <div className="max-w-4xl mx-auto text-center relative z-10 flex flex-col items-center">
         {/* Cute Mascot Showcase Avatar */}
@@ -84,17 +72,7 @@ export default function Hero({ onExploreClick, onAboutClick }: HeroProps) {
           <div className="absolute -inset-1.5 bg-gradient-to-r from-brand-cyan-300 to-brand-blue-300 rounded-full blur-xs opacity-45 -z-10 animate-pulse"></div>
         </motion.div>
 
-        {/* Security / Exclusive Badge */}
-        <motion.div
-          id="security-pill"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="inline-flex items-center gap-1.5 bg-brand-blue-50 border border-brand-blue-200 text-brand-blue-600 text-xs font-semibold px-4 py-1.5 rounded-full mb-4 shadow-xs"
-        >
-          <ShieldCheck className="w-3.5 h-3.5 text-brand-blue-500" />
-          <span>Lưu trữ Fan-only • Bảo mật nội bộ 🔐</span>
-        </motion.div>
+
 
         {/* Primary Headline */}
         <motion.h1

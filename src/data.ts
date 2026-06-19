@@ -31,6 +31,15 @@ export function mapRecType(type: string): string {
   return type || 'Khác';
 }
 
+export function mapGalleryCategory(cat: string): string {
+  const norm = String(cat || 'X').trim().toLowerCase();
+  if (norm === 'x') return 'X';
+  if (norm === 'ig') return 'IG';
+  if (norm === 'weverse') return 'Weverse';
+  if (norm === 'nguồn bên ngoài') return 'Nguồn bên ngoài';
+  return cat || 'X';
+}
+
 // 1. Process CMS Hints
 const cmsHintsList: HintItem[] = [];
 try {
@@ -44,7 +53,8 @@ try {
         category: mapHintCategory(raw.category),
         content: raw.content || "",
         isUnlocked: typeof raw.isUnlocked === 'boolean' ? raw.isUnlocked : false,
-        hintIllustration: raw.hintIllustration || "🔑"
+        hintIllustration: raw.hintIllustration || "🔑",
+        sourceUrl: raw.sourceUrl || ""
       });
     }
   });
@@ -85,12 +95,13 @@ try {
         title: raw.title || "",
         date: raw.date || "",
         tags: parsedTags,
-        category: raw.category || "X", // read customizable category in CMS/JSON
+        category: mapGalleryCategory(raw.category),
         description: raw.description || "",
         colorTheme: raw.colorTheme || "from-sky-100 to-cyan-100 border-sky-305 text-sky-800",
         emoji: raw.emoji || "🖼️",
         author: raw.author || "Chamchamz Fanart",
-        images: parsedImages.length > 0 ? parsedImages : undefined
+        images: parsedImages.length > 0 ? parsedImages : undefined,
+        sourceUrl: raw.sourceUrl || ""
       });
     }
   });

@@ -25,15 +25,32 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
   const [hintSearch, setHintSearch] = useState('');
   const [selectedHintCategory, setSelectedHintCategory] = useState<string>('all');
   const [unlockMessageId, setUnlockMessageId] = useState<string | null>(null);
+  const [selectedHintItem, setSelectedHintItem] = useState<HintItem | null>(null);
+  const [hintsPage, setHintsPage] = useState(1);
 
   // States for Gallery Module
   const [gallerySearch, setGallerySearch] = useState('');
   const [selectedGalleryCategory, setSelectedGalleryCategory] = useState<string>('all');
   const [selectedGalleryItem, setSelectedGalleryItem] = useState<GalleryItem | null>(null);
+  const [galleryPage, setGalleryPage] = useState(1);
 
   // States for Recommendations Module
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [activeRecType, setActiveRecType] = useState<string>('all');
+  const [recsPage, setRecsPage] = useState(1);
+
+  // Reset pagination on category or search updates
+  useEffect(() => {
+    setHintsPage(1);
+  }, [selectedHintCategory, hintSearch]);
+
+  useEffect(() => {
+    setGalleryPage(1);
+  }, [selectedGalleryCategory, gallerySearch]);
+
+  useEffect(() => {
+    setRecsPage(1);
+  }, [activeRecType]);
 
   // States for Contact / Fan Wall
   const [messages, setMessages] = useState<FanMessage[]>([]);
@@ -123,6 +140,21 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
     setTimeout(() => setFormSuccess(false), 3000);
   };
 
+  // Helper to parse DD/MM/YYYY date strings cleanly for sorting
+  const parseDateString = (dateStr: string): number => {
+    if (!dateStr || typeof dateStr !== 'string') return 0;
+    const parts = dateStr.trim().split('/');
+    if (parts.length === 3) {
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1; // months are 0-indexed in JS
+      const year = parseInt(parts[2], 10);
+      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+        return new Date(year, month, day).getTime();
+      }
+    }
+    return Date.parse(dateStr) || 0;
+  };
+
   // Filter hints
   const filteredHints = useMemo(() => {
     return hints.filter(item => {
@@ -132,6 +164,11 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
       return matchesSearch && matchesCategory;
     });
   }, [hints, hintSearch, selectedHintCategory]);
+
+  // Sort Hints (newest first / descending date)
+  const sortedHints = useMemo(() => {
+    return [...filteredHints].sort((a, b) => parseDateString(b.date) - parseDateString(a.date));
+  }, [filteredHints]);
 
   // Extract all tags from Gallery Data
   const allGalleryTags = useMemo(() => {
@@ -152,6 +189,11 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
     });
   }, [gallerySearch, selectedGalleryCategory]);
 
+  // Sort Gallery (newest first / descending date)
+  const sortedGallery = useMemo(() => {
+    return [...filteredGallery].sort((a, b) => parseDateString(b.date) - parseDateString(a.date));
+  }, [filteredGallery]);
+
   // Filter recommendations
   const filteredRecs = useMemo(() => {
     return RECS_DATA.filter(item => {
@@ -159,6 +201,40 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
       return item.type === activeRecType;
     });
   }, [activeRecType]);
+
+  // Sort Recs (newest first based on ID index)
+  const sortedRecs = useMemo(() => {
+    return [...filteredRecs].sort((a, b) => {
+      const numA = parseInt(a.id.replace(/\D/g, ''), 10) || 0;
+      const numB = parseInt(b.id.replace(/\D/g, ''), 10) || 0;
+      return numB - numA;
+    });
+  }, [filteredRecs]);
+
+  // Pagination setups (Items per page = 6)
+  const ITEMS_PER_PAGE = 6;
+
+  // Paginated Lists
+  const paginatedHints = useMemo(() => {
+    const startIndex = (hintsPage - 1) * ITEMS_PER_PAGE;
+    return sortedHints.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [sortedHints, hintsPage]);
+
+  const totalHintsPages = Math.ceil(sortedHints.length / ITEMS_PER_PAGE) || 1;
+
+  const paginatedGallery = useMemo(() => {
+    const startIndex = (galleryPage - 1) * ITEMS_PER_PAGE;
+    return sortedGallery.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [sortedGallery, galleryPage]);
+
+  const totalGalleryPages = Math.ceil(sortedGallery.length / ITEMS_PER_PAGE) || 1;
+
+  const paginatedRecs = useMemo(() => {
+    const startIndex = (recsPage - 1) * ITEMS_PER_PAGE;
+    return sortedRecs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [sortedRecs, recsPage]);
+
+  const totalRecsPages = Math.ceil(sortedRecs.length / ITEMS_PER_PAGE) || 1;
 
   // STICKERS list for selection
   const stickers = ['✨', '💖', '🍀', '🍑', '🌸', '🍩', '🐾', '🎀'];
@@ -346,75 +422,99 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                 ))}
               </div>
 
-              {/* Hints list view */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredHints.map((hint) => (
-                  <div 
-                    key={hint.id} 
-                    className={`border-2 border-slate-900 rounded-2xl p-5 bg-white relative shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] overflow-hidden flex flex-col justify-between min-h-48`}
+              {/* Hints grid view like gallery */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+                {paginatedHints.map((hint) => (
+                  <motion.div 
+                    key={hint.id}
+                    onClick={() => {
+                      if (!hint.isUnlocked) {
+                        unlockHint(hint.id);
+                      }
+                      setSelectedHintItem(hint);
+                    }}
+                    className="group bg-gradient-to-br from-amber-50 to-orange-100/90 rounded-2xl border-2 border-slate-900 p-4 shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] hover:shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] transition-all cursor-pointer hover:-translate-y-0.5 flex flex-col justify-between h-56"
                   >
-                    {/* Header line on hint card */}
-                    <div className="flex items-center justify-between pb-3.5 border-b border-dashed border-slate-200 mb-3.5">
-                      <span className="text-[10px] uppercase font-bold tracking-wider font-mono text-brand-teal-700 bg-brand-teal-50 px-2.5 py-0.5 rounded-full border border-brand-teal-100">
-                        {hint.category}
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-mono font-semibold flex items-center gap-1">
-                        <Calendar className="w-3 h-3" /> {hint.date}
-                      </span>
+                    <div>
+                      {/* Emoji / Illustration block */}
+                      <div className="flex items-center justify-between">
+                        <div className="h-14 w-14 bg-white/90 border border-slate-900 rounded-xl flex items-center justify-center text-2.5xl mb-3 shadow-xs">
+                          {hint.hintIllustration || '🔑'}
+                        </div>
+                        {hint.category && (
+                          <span className="text-[9px] font-mono font-bold bg-white/90 border-2 border-slate-900 rounded-full px-2 py-0.5 text-slate-850 uppercase tracking-wider mb-3">
+                            {hint.category}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <h4 className="font-bold text-slate-800 text-sm line-clamp-1">{hint.title}</h4>
+
+                      {/* Lock-sensitive description preview */}
+                      {hint.isUnlocked ? (
+                        <p className="text-[11px] text-slate-600 line-clamp-2 mt-1 leading-relaxed font-semibold">
+                          {hint.content}
+                        </p>
+                      ) : (
+                        <div className="mt-2 flex items-center gap-1 text-[10px] text-slate-500 font-bold bg-amber-50 rounded-lg p-1.5 border border-dashed border-amber-200">
+                          <Lock className="w-3 h-3 text-amber-500 flex-shrink-0" />
+                          <span className="line-clamp-1">Nội dung mật đang ẩn... Click để lật mở 🔑</span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Unlocked / Locked display logic */}
-                    {hint.isUnlocked ? (
-                      <div className="flex-1 flex flex-col justify-between">
-                        <div>
-                          <h4 className="font-bold text-slate-800 text-sm mb-2">{hint.title}</h4>
-                          <p className="text-xs text-slate-600 leading-relaxed font-semibold">{hint.content}</p>
-                        </div>
-                        {/* Illustration description decorator */}
-                        <div className="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 font-medium">
-                          <span>Trạng thái: Hoàn toàn công khai cho fan</span>
-                          <span className="text-base text-slate-800 font-bold bg-slate-50 px-2 py-0.5 rounded border border-slate-200">{hint.hintIllustration}</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex-1 flex flex-col justify-between text-center py-4 bg-slate-50 rounded-xl border border-slate-200/60 border-dashed">
-                        <div className="flex flex-col items-center gap-2">
-                          <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center border-2 border-slate-905 text-amber-600">
-                            <Lock className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <h4 className="font-bold text-slate-700 text-xs">Manh Mối Này Đang Bị Khóa</h4>
-                            <p className="text-[10px] text-slate-500 mt-1 max-w-xs px-4 font-semibold">Để bảo vệ thông tin mật, hãy nhấp chuột để lật mở thủ công dưới sự cam kết tuyệt đối.</p>
-                          </div>
-                        </div>
-
-                        <button 
-                          id={`btn-unlock-${hint.id}`}
-                          onClick={() => unlockHint(hint.id)}
-                          className="mt-3.5 mx-auto bg-slate-900 text-white font-bold text-xs py-1.5 px-4 rounded-lg cursor-pointer hover:bg-brand-teal-500 hover:text-slate-900 flex items-center gap-1 hover:scale-102 active:scale-95 transition-all"
-                        >
-                          <Unlock className="w-3.5 h-3.5" />
-                          <span>Lập tức Cam kết & Mở khóa 🔑</span>
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Temporary flash banner after unlock action */}
-                    {unlockMessageId === hint.id && (
-                      <div className="absolute inset-x-0 bottom-0 bg-brand-teal-500 text-slate-905 text-[10px] font-bold text-center py-1 border-t border-slate-900 animate-slide-up">
-                        Chúc mừng! Hướng thệ ước đã bảo hộ thành công 🔐✨
-                      </div>
-                    )}
-                  </div>
+                    {/* Metadata Footer bar */}
+                    <div className="pt-2 border-t border-slate-900/10 flex items-center justify-between text-[9px] font-bold font-mono text-slate-500">
+                      <span>{hint.date || "Secret"}</span>
+                      {hint.isUnlocked && <span className="text-brand-teal-600 font-bold">Lật mở ✔ Code</span>}
+                    </div>
+                  </motion.div>
                 ))}
 
-                {filteredHints.length === 0 && (
-                  <div className="md:col-span-2 text-center py-12 bg-white rounded-2xl border-2 border-slate-900 border-dashed">
+                {paginatedHints.length === 0 && (
+                  <div className="col-span-full text-center py-12 bg-white rounded-2xl border-2 border-slate-900 border-dashed">
                     <span className="text-2xl block mb-2">🔎</span>
                     <p className="text-sm text-slate-500 font-semibold">Không tìm thấy manh mối nào khớp với yêu cầu!</p>
                   </div>
                 )}
               </div>
+
+              {/* Hints Pagination Controls */}
+              {totalHintsPages > 1 && (
+                <div className="flex items-center justify-center gap-2 pt-6 font-sans">
+                  <button
+                    onClick={() => setHintsPage(p => Math.max(1, p - 1))}
+                    disabled={hintsPage === 1}
+                    className="px-3 py-1.5 rounded-lg border-2 border-slate-900 bg-white font-bold text-xs disabled:opacity-45 hover:bg-slate-50 active:scale-95 transition-transform cursor-pointer"
+                  >
+                    ◀
+                  </button>
+                  {Array.from({ length: totalHintsPages }).map((_, idx) => {
+                    const pageNum = idx + 1;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setHintsPage(pageNum)}
+                        className={`w-8 h-8 rounded-lg border-2 font-bold text-xs transition-colors flex items-center justify-center cursor-pointer ${
+                          hintsPage === pageNum
+                            ? 'bg-brand-teal-400 border-slate-900 text-slate-1000 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]'
+                            : 'bg-white border-slate-200 text-slate-600 hover:border-slate-800'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => setHintsPage(p => Math.min(totalHintsPages, p + 1))}
+                    disabled={hintsPage === totalHintsPages}
+                    className="px-3 py-1.5 rounded-lg border-2 border-slate-900 bg-white font-bold text-xs disabled:opacity-45 hover:bg-slate-50 active:scale-95 transition-transform cursor-pointer"
+                  >
+                    ▶
+                  </button>
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -437,21 +537,6 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                     <p className="text-xs text-slate-500 font-semibold">{SITE_CONFIG.gallerySectionDesc}</p>
                   )}
                 </div>
-
-                {/* Grid Search */}
-                <div className="flex items-center gap-2">
-                  <div className="relative">
-                    <input
-                      id="input-search-gallery"
-                      type="text"
-                      className="w-full sm:w-44 bg-white border-2 border-slate-800 rounded-xl py-1.5 pl-8 pr-3 text-xs font-semibold focus:outline-none focus:border-brand-teal-500"
-                      placeholder="Tìm thẻ ảnh..."
-                      value={gallerySearch}
-                      onChange={(e) => setGallerySearch(e.target.value)}
-                    />
-                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
-                  </div>
-                </div>
               </div>
 
               {/* Category filters */}
@@ -473,19 +558,19 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
 
               {/* Gallery Grid */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
-                {filteredGallery.map((item) => (
+                {paginatedGallery.map((item) => (
                   <motion.div
                     key={item.id}
                     id={`gallery-item-${item.id}`}
                     onClick={() => setSelectedGalleryItem(item)}
-                    className={`group bg-gradient-to-br ${item.colorTheme} rounded-2xl border-2 border-slate-900 p-4 shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] hover:shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] transition-all cursor-zoom-in hover:-translate-y-0.5 flex flex-col justify-between h-56`}
+                    className={`group bg-gradient-to-br ${item.colorTheme || "from-sky-105 to-sky-200"} rounded-2xl border-2 border-slate-900 p-4 shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] hover:shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] transition-all cursor-zoom-in hover:-translate-y-0.5 flex flex-col justify-between h-56`}
                     layoutId={`gallery-anim-${item.id}`}
                   >
                     <div>
                       {/* Emoji Illustration Showcase */}
                       <div className="flex items-center justify-between">
                         <div className="h-14 w-14 bg-white/90 border border-slate-900 rounded-xl flex items-center justify-center text-2.5xl mb-3 shadow-xs">
-                          {item.emoji}
+                          {item.emoji || "🖼️"}
                         </div>
                         {item.category && (
                           <span className="text-[9px] font-mono font-bold bg-white/90 border-2 border-slate-900 rounded-full px-2 py-0.5 text-slate-850 uppercase tracking-wider mb-3">
@@ -494,26 +579,64 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                         )}
                       </div>
                       <h4 className="font-bold text-slate-800 text-sm line-clamp-1">{item.title}</h4>
-                      <p className="text-[11px] text-slate-600 line-clamp-2 mt-1 leading-relaxed font-semibold">
-                        {item.description}
-                      </p>
+                      {item.description && (
+                        <p className="text-[11px] text-slate-600 line-clamp-2 mt-1 leading-relaxed font-semibold">
+                          {item.description}
+                        </p>
+                      )}
                     </div>
 
                     {/* Metadata Footer bar */}
                     <div className="pt-2 border-t border-slate-900/10 flex items-center justify-between text-[9px] font-bold font-mono">
-                      <span className="opacity-75">Tác giả: {item.author}</span>
+                      <span className="opacity-75">{item.author ? `Tác giả: ${item.author}` : "Chamchamz Fanart"}</span>
                       <span className="opacity-50">{item.date}</span>
                     </div>
                   </motion.div>
                 ))}
 
-                {filteredGallery.length === 0 && (
+                {paginatedGallery.length === 0 && (
                   <div className="col-span-full text-center py-12 bg-white rounded-2xl border-2 border-slate-900 border-dashed">
                     <span className="text-2xl block mb-2">📸</span>
                     <p className="text-sm text-slate-500 font-semibold">Chưa có tác phẩm ảnh cúc hoa nào khớp với bộ lọc!</p>
                   </div>
                 )}
               </div>
+
+              {/* Gallery Pagination Controls */}
+              {totalGalleryPages > 1 && (
+                <div className="flex items-center justify-center gap-2 pt-6 font-sans">
+                  <button
+                    onClick={() => setGalleryPage(p => Math.max(1, p - 1))}
+                    disabled={galleryPage === 1}
+                    className="px-3 py-1.5 rounded-lg border-2 border-slate-900 bg-white font-bold text-xs disabled:opacity-45 hover:bg-slate-50 active:scale-95 transition-transform cursor-pointer"
+                  >
+                    ◀
+                  </button>
+                  {Array.from({ length: totalGalleryPages }).map((_, idx) => {
+                    const pageNum = idx + 1;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setGalleryPage(pageNum)}
+                        className={`w-8 h-8 rounded-lg border-2 font-bold text-xs transition-colors flex items-center justify-center cursor-pointer ${
+                          galleryPage === pageNum
+                            ? 'bg-brand-cyan-500 border-slate-900 text-white shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]'
+                            : 'bg-white border-slate-200 text-slate-600 hover:border-slate-800'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => setGalleryPage(p => Math.min(totalGalleryPages, p + 1))}
+                    disabled={galleryPage === totalGalleryPages}
+                    className="px-3 py-1.5 rounded-lg border-2 border-slate-900 bg-white font-bold text-xs disabled:opacity-45 hover:bg-slate-50 active:scale-95 transition-transform cursor-pointer"
+                  >
+                    ▶
+                  </button>
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -637,7 +760,7 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
 
                 {/* Recommendations specific items list grid (Col-7) */}
                 <div className="lg:col-span-7 space-y-4">
-                  {filteredRecs.map((rec) => (
+                  {paginatedRecs.map((rec) => (
                     <div 
                       key={rec.id}
                       className="bg-white border-2 border-slate-900 p-4.5 rounded-2xl shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] flex items-start gap-4"
@@ -652,7 +775,9 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                         <div className="flex items-center justify-between gap-2">
                           <div>
                             <h4 className="font-bold text-slate-850 text-sm inline-block mr-1.5">{rec.title}</h4>
-                            <span className="text-[10px] font-mono text-slate-400 italic">({rec.creator})</span>
+                            {rec.creator && (
+                              <span className="text-[10px] font-mono text-slate-400 italic">({rec.creator})</span>
+                            )}
                           </div>
                           
                           {/* Play button specifically for Khác / audios */}
@@ -674,9 +799,11 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                             </button>
                           )}
                         </div>
-                        <p className="text-xs text-slate-600 leading-relaxed font-semibold">
-                          {rec.reason}
-                        </p>
+                        {rec.reason && (
+                          <p className="text-xs text-slate-600 leading-relaxed font-semibold">
+                            {rec.reason}
+                          </p>
+                        )}
                         
                         {/* Optional Reference button */}
                         {rec.url && (
@@ -693,6 +820,42 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                       </div>
                     </div>
                   ))}
+
+                  {/* Recommendations Pagination Controls */}
+                  {totalRecsPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 pt-4 font-sans">
+                      <button
+                        onClick={() => setRecsPage(p => Math.max(1, p - 1))}
+                        disabled={recsPage === 1}
+                        className="px-3 py-1.5 rounded-lg border-2 border-slate-900 bg-white font-bold text-xs disabled:opacity-45 hover:bg-slate-50 active:scale-95 transition-transform cursor-pointer"
+                      >
+                        ◀
+                      </button>
+                      {Array.from({ length: totalRecsPages }).map((_, idx) => {
+                        const pageNum = idx + 1;
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => setRecsPage(pageNum)}
+                            className={`w-8 h-8 rounded-lg border-2 font-bold text-xs transition-colors flex items-center justify-center cursor-pointer ${
+                              recsPage === pageNum
+                                ? 'bg-brand-teal-500 border-slate-900 text-white shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]'
+                                : 'bg-white border-slate-200 text-slate-600 hover:border-slate-800'
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+                      <button
+                        onClick={() => setRecsPage(p => Math.min(totalRecsPages, p + 1))}
+                        disabled={recsPage === totalRecsPages}
+                        className="px-3 py-1.5 rounded-lg border-2 border-slate-900 bg-white font-bold text-xs disabled:opacity-45 hover:bg-slate-50 active:scale-95 transition-transform cursor-pointer"
+                      >
+                        ▶
+                      </button>
+                    </div>
+                  )}
                 </div>
 
               </div>
@@ -824,9 +987,25 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                 <h3 className="text-xl font-bold text-slate-800 mb-2">{selectedGalleryItem.title}</h3>
                 
                 {/* Description paragraphs */}
-                <p className="text-xs text-slate-600 leading-relaxed font-semibold">
-                  {selectedGalleryItem.description}
-                </p>
+                {selectedGalleryItem.description && (
+                  <p className="text-xs text-slate-600 leading-relaxed font-semibold">
+                    {selectedGalleryItem.description}
+                  </p>
+                )}
+
+                {/* Source Url Link block */}
+                {selectedGalleryItem.sourceUrl && (
+                  <div className="mt-4 pt-1.5">
+                    <a 
+                      href={selectedGalleryItem.sourceUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="inline-flex items-center gap-1.5 bg-brand-teal-50 border border-brand-teal-200 text-brand-teal-700 text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-brand-teal-100 transition-colors cursor-pointer"
+                    >
+                      <span>Xem link gốc 🔗</span>
+                    </a>
+                  </div>
+                )}
 
                 {/* Download alert notice */}
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2.5 items-start mt-5">
@@ -839,11 +1018,126 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
 
               {/* Author & Actions footer */}
               <div className="pt-4 mt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold font-mono">
-                <span className="text-slate-400">Ghi danh: {selectedGalleryItem.author}</span>
+                <span className="text-slate-400">
+                  {selectedGalleryItem.author ? `Ghi danh: ${selectedGalleryItem.author}` : "Chamchamz Fanart"}
+                </span>
                 <button
                   id="btn-agree-close-lightbox"
                   onClick={() => setSelectedGalleryItem(null)}
                   className="bg-slate-900 hover:bg-brand-teal-500 hover:text-slate-900 text-white font-bold py-2 px-5 rounded-xl cursor-pointer hover:scale-101 active:scale-95 transition-transform"
+                >
+                  Đồng ý & Đóng 🌸
+                </button>
+              </div>
+
+            </motion.div>
+          </div>
+        )}
+
+        {/* 🔍 HINT DEEP LIGHTBOX DIALOG OVERLAY */}
+        {selectedHintItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              onClick={() => setSelectedHintItem(null)}
+              className="absolute inset-0 bg-slate-950/80 backdrop-blur-xs"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+
+            {/* Lightbox Card layout */}
+            <motion.div
+              className="bg-white rounded-3xl border-4 border-slate-900 w-full max-w-lg p-6 md:p-8 relative z-10 shadow-2xl flex flex-col justify-between text-slate-800"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+            >
+              <button
+                id="btn-close-hint-lightbox"
+                className="absolute top-4 right-4 p-2 bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 rounded-full cursor-pointer"
+                onClick={() => setSelectedHintItem(null)}
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div>
+                {/* Big cute visual representation / Emoji block */}
+                <div className="aspect-video rounded-2xl bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center text-6xl border-2 border-slate-900 shadow-sm relative overflow-hidden mb-6">
+                  <span>{selectedHintItem.hintIllustration || "🔑"}</span>
+                  <div className="absolute bottom-2 right-2 bg-white/90 border border-slate-900 text-[9px] font-bold px-2 py-0.5 rounded uppercase font-mono">
+                    SECRET HINT 🔐
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <span className="text-[10px] uppercase font-bold tracking-wider font-mono text-brand-teal-700 bg-brand-teal-50 px-2.5 py-0.5 rounded-full border border-brand-teal-100">
+                    {selectedHintItem.category}
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-mono font-semibold flex items-center gap-1">
+                    <Calendar className="w-3 h-3" /> {selectedHintItem.date}
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-xl font-bold text-slate-800 mb-2">{selectedHintItem.title}</h3>
+
+                {/* Lock evaluation panel */}
+                {selectedHintItem.isUnlocked ? (
+                  <div className="space-y-4">
+                    {selectedHintItem.content && (
+                      <p className="text-xs text-slate-600 leading-relaxed font-semibold bg-slate-50 border border-slate-100 rounded-xl p-3.5">
+                        {selectedHintItem.content}
+                      </p>
+                    )}
+
+                    {selectedHintItem.sourceUrl && (
+                      <div className="pt-2">
+                        <a 
+                          href={selectedHintItem.sourceUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="inline-flex items-center gap-1.5 bg-brand-teal-50 border border-brand-teal-200 text-brand-teal-700 text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-brand-teal-100 transition-colors cursor-pointer"
+                        >
+                          <span>Xem link gốc 🔗</span>
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 bg-slate-50 rounded-xl border border-slate-200 border-dashed space-y-4">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center border-2 border-slate-900 text-amber-600">
+                        <Lock className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-slate-700 text-sm">Nội Dung Manh Mối Này Đang Bị Khóa</h4>
+                        <p className="text-[11px] text-slate-500 mt-1 max-w-xs mx-auto px-4 font-semibold leading-relaxed">
+                          Nhấp chuột để lập tức cam kết tuyệt đối bảo mật thông tin nội bộ của fandom và mở khóa lật mở!
+                        </p>
+                      </div>
+                    </div>
+
+                    <button 
+                      id={`btn-modal-unlock-${selectedHintItem.id}`}
+                      onClick={() => {
+                        unlockHint(selectedHintItem.id);
+                        setSelectedHintItem(prev => prev ? { ...prev, isUnlocked: true } : null);
+                      }}
+                      className="mx-auto bg-slate-900 text-white font-bold text-xs py-2 px-5 rounded-xl cursor-pointer hover:bg-brand-teal-500 hover:text-slate-900 flex items-center gap-1.5 hover:scale-102 transition-all shadow-md"
+                    >
+                      <Unlock className="w-3.5 h-3.5" />
+                      <span>Cam kết & Mở khóa ngay 🔐</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Author & Actions footer */}
+              <div className="pt-4 mt-6 border-t border-slate-100 flex items-center justify-end">
+                <button
+                  onClick={() => setSelectedHintItem(null)}
+                  className="bg-slate-900 hover:bg-brand-teal-500 hover:text-slate-900 text-white font-bold py-2 px-5 rounded-xl cursor-pointer hover:scale-101 active:scale-95 transition-transform text-xs"
                 >
                   Đồng ý & Đóng 🌸
                 </button>
