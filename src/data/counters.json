@@ -3,15 +3,15 @@
   "stream_date": "2025-11-05",
   "show_counter2_live_tag": true,
   "counter1_title": "First Livestream:",
-  "counter2_title": "Tổng số lượt nhân sự điểm danh 📊",
+  "counter2_title": "Tổng số lượt ghé thăm:",
   "counter2_live_tag": "Live",
-  "counters_section_title": "Tổng số lượt nhân sự điểm danh 📊",
+  "counters_section_title": "Cập nhật mới nhất theo thời gian thực.",
   "base_visits": 0,
   "show_counters_section_title": true,
-  "counter2_desc": "Lượt điểm danh.",
+  "counter2_desc": "Lượt ghé thăm cho tới hiện tại.",
   "counter1_suffix": "ngày đã trôi qua",
-  "counter1_desc": "Được tính tự động từ ngày livestream ({date}).",
+  "counter1_desc": "Được tính từ ngày livestream ({date}).",
   "counter1_emoji": "🗓️",
   "counter2_emoji": "🐾",
-  "counters_bottom_note": "Thank you for coming!"
+  "counters_bottom_note": "Hoonjames yêu nhau!"
 }
