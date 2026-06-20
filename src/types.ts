@@ -42,6 +42,7 @@ export interface RecItem {
   url?: string;
   imageFile?: string;
   isHidden?: boolean;
+  recIllustration?: string;
 }
 
 export interface FanMessage {

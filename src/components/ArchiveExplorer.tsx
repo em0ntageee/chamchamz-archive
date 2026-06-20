@@ -39,6 +39,7 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [activeRecType, setActiveRecType] = useState<string>('all');
   const [recsPage, setRecsPage] = useState(1);
+  const [selectedRecItem, setSelectedRecItem] = useState<RecItem | null>(null);
 
   // Reset pagination on category or search updates
   useEffect(() => {
@@ -379,9 +380,6 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
               Folder: /{activeTab}_archive/
             </span>
           </div>
-          <div className="px-3.5 py-1 bg-white border-2 border-slate-900 rounded-full text-xs font-bold text-slate-800 flex items-center gap-1">
-            <span>Quốc gia: 🇻🇳</span>
-          </div>
         </div>
 
         {/* Dynamic Tab Renderer */}
@@ -677,200 +675,89 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                 </div>
               </div>
 
-              {/* Retro Music Tape Interactive Player / Showcase */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-                
-                {/* Simulated Vinyl/Cassette Deck Panel (Col-5) */}
-                <div className="lg:col-span-5 bg-gradient-to-b from-slate-800 to-slate-900 text-slate-200 rounded-3xl p-5 border-4 border-slate-950 shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] flex flex-col justify-between min-h-64 relative overflow-hidden">
-                  {/* Speaker mesh design element */}
-                  <div className="absolute right-3 top-3 opacity-15 text-[9px] font-mono leading-none tracking-tighter select-none">
-                    :::: :::: ::::<br />
-                    :::: :::: ::::<br />
-                    :::: :::: ::::
-                  </div>
-
-                  <div className="space-y-4">
-                    <span className="text-[10px] font-mono text-brand-teal-400 font-bold tracking-widest uppercase block">★ Retrowave Player UI ★</span>
-                    
-                    {/* Vinyl Record rotation component */}
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
-                        <div className={`w-16 h-16 rounded-full bg-slate-950 border-4 border-slate-700 flex items-center justify-center relative ${playingId ? 'animate-spin' : ''}`} style={{ animationDuration: '6s' }}>
-                          <div className="w-6 h-6 rounded-full bg-brand-cyan-300 border-2 border-slate-800 flex items-center justify-center">
-                            <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />
-                          </div>
+              {/* Recommendations grid view (identical to Hints & Gallery) */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+                {paginatedRecs.map((rec) => (
+                  <motion.div 
+                    key={rec.id}
+                    onClick={() => setSelectedRecItem(rec)}
+                    className="group bg-gradient-to-br from-teal-50 to-emerald-100/95 rounded-2xl border-2 border-slate-900 p-4 shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] hover:shadow-[5px_5px_0px_0px_rgba(15,23,42,1)] transition-all cursor-pointer hover:-translate-y-0.5 flex flex-col justify-between h-56"
+                  >
+                    <div>
+                      {/* Emoji / Illustration block */}
+                      <div className="flex items-center justify-between">
+                        <div className="h-14 w-14 bg-white/90 border border-slate-900 rounded-xl flex items-center justify-center text-2.5xl mb-3 shadow-xs font-mono">
+                          {rec.recIllustration || (rec.type === 'Fanfic/Author' ? '📖' : rec.type === 'Art/Artist' ? '🎨' : '🩵')}
                         </div>
-                        {/* Needle pin arm */}
-                        <div className={`absolute -top-1 right-0 w-8 h-8 pointer-events-none origin-top-left transition-transform duration-500 ${playingId ? 'rotate-12' : 'rotate-0'}`}>
-                          💬
-                        </div>
-                      </div>
-
-                      {/* Song Details inside tape deck */}
-                      <div>
-                        {playingId ? (
-                          (() => {
-                            const current = RECS_DATA.find(x => x.id === playingId);
-                            return (
-                              <div className="animate-pulse">
-                                <h4 className="text-xs font-bold text-brand-cyan-300 line-clamp-1">{current?.title}</h4>
-                                <p className="text-[10px] text-slate-400 font-mono mt-0.5">by {current?.creator}</p>
-                                <span className="inline-flex mt-1.5 px-2 py-0.5 bg-brand-teal-900/50 text-brand-teal-400 text-[8px] uppercase font-bold rounded">Đang Phát</span>
-                              </div>
-                            );
-                          })()
-                        ) : (
-                          <div>
-                            <h4 className="text-xs font-bold text-slate-400">Tape Deck Offline</h4>
-                            <p className="text-[10px] text-slate-500 font-mono mt-0.5">Chọn phím Play ở thẻ bên cạnh</p>
-                          </div>
+                        {rec.type && (
+                          <span className="text-[9px] font-mono font-bold bg-white/90 border-2 border-slate-900 rounded-full px-2 py-0.5 text-slate-850 uppercase tracking-wider mb-3">
+                            {rec.type === 'Fanfic/Author' ? 'Fanfic' : rec.type === 'Art/Artist' ? 'Fanart' : 'Khác'}
+                          </span>
                         )}
                       </div>
+
+                      {/* Title */}
+                      <h4 className="font-bold text-slate-800 text-sm line-clamp-1">{rec.title}</h4>
+
+                      {/* Description / Content Preview */}
+                      {rec.reason && (
+                        <p className="text-[11px] text-slate-600 line-clamp-2 mt-1 leading-relaxed font-semibold">
+                          {rec.reason}
+                        </p>
+                      )}
                     </div>
 
-                    {/* Web Soundwave line simulation */}
-                    <div className="h-6 flex items-end gap-1 px-1 justify-center bg-slate-950/80 rounded-lg p-1.5">
-                      {Array.from({ length: 18 }).map((_, idx) => (
-                        <div 
-                          key={idx} 
-                          className="w-1 bg-brand-teal-400 rounded-full transition-all"
-                          style={{
-                            height: playingId ? `${Math.floor(Math.random() * 80) + 10}%` : '20%',
-                            transitionDuration: playingId ? '0.15s' : '0.4s'
-                          }}
-                        />
-                      ))}
+                    {/* Metadata Footer bar */}
+                    <div className="pt-2 border-t border-slate-900/10 flex items-center justify-between text-[9px] font-bold font-mono text-slate-500">
+                      <span>{rec.creator || "Tác giả"}</span>
+                      <span className="text-brand-teal-600 font-bold">Xem chi tiết ↗</span>
                     </div>
+                  </motion.div>
+                ))}
+
+                {paginatedRecs.length === 0 && (
+                  <div className="col-span-full text-center py-12 bg-white rounded-2xl border-2 border-slate-900 border-dashed">
+                    <span className="text-2xl block mb-2">🔎</span>
+                    <p className="text-sm text-slate-500 font-semibold">Không tìm thấy bài viết đề xuất nào khớp với bộ lọc!</p>
                   </div>
-
-                  {/* Tape controls */}
-                  <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between mt-4">
-                    <div className="flex gap-1.5">
-                      <button 
-                        id="btn-tape-stop"
-                        onClick={() => setPlayingId(null)}
-                        disabled={!playingId}
-                        className="p-1 px-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 rounded border border-slate-700 text-[10px] font-bold text-rose-400 font-mono cursor-pointer"
-                      >
-                        STOP
-                      </button>
-                    </div>
-                    <span className="text-[9px] font-mono text-slate-500 font-bold">192KBPS STEREO CASSETTE</span>
-                  </div>
-                </div>
-
-                {/* Recommendations specific items list grid (Col-7) */}
-                <div className="lg:col-span-7 space-y-4">
-                  {paginatedRecs.map((rec) => (
-                    <div 
-                      key={rec.id}
-                      className="bg-white border-2 border-slate-900 p-4.5 rounded-2xl shadow-[3px_3px_0px_0px_rgba(15,23,42,1)] flex items-start gap-4"
-                    >
-                      {/* Media type icon column */}
-                      <div className="text-2.5xl flex-shrink-0 mt-0.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
-                        {rec.type === 'Fanfic/Author' ? '📖' : rec.type === 'Art/Artist' ? '🎨' : '🎵'}
-                      </div>
-
-                      {/* Detail Column */}
-                      <div className="flex-1 space-y-1.5">
-                        <div className="flex items-center justify-between gap-2">
-                          <div>
-                            <h4 className="font-bold text-slate-850 text-sm inline-block mr-1.5">{rec.title}</h4>
-                            {rec.creator && (
-                              <span className="text-[10px] font-mono text-slate-400 italic">({rec.creator})</span>
-                            )}
-                          </div>
-                          
-                          {/* Play button specifically for Khác / audios */}
-                          {rec.type === 'Khác' && (
-                            <button
-                              id={`btn-play-rec-${rec.id}`}
-                              onClick={() => setPlayingId(playingId === rec.id ? null : rec.id)}
-                              className={`p-1.5 rounded-lg border-2 cursor-pointer transition-colors ${
-                                playingId === rec.id
-                                  ? 'bg-rose-100 border-rose-300 text-rose-800'
-                                  : 'bg-brand-cyan-100 border-slate-900 text-slate-900 hover:bg-brand-cyan-200'
-                              }`}
-                            >
-                              {playingId === rec.id ? (
-                                <Pause className="w-3.5 h-3.5" />
-                              ) : (
-                                <Play className="w-3.5 h-3.5 fill-current" />
-                              )}
-                            </button>
-                          )}
-                        </div>
-                        {rec.reason && (
-                          <p className="text-xs text-slate-600 leading-relaxed font-semibold">
-                            {rec.reason}
-                          </p>
-                        )}
-
-                        {rec.imageFile && (
-                          <div className="mt-2.5 max-w-sm rounded-xl overflow-hidden border-2 border-slate-900 aspect-video bg-slate-50 flex items-center justify-center relative shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]">
-                            <img 
-                              src={rec.imageFile} 
-                              alt={rec.title} 
-                              className="w-full h-full object-cover" 
-                              referrerPolicy="no-referrer"
-                            />
-                          </div>
-                        )}
-                        
-                        {/* Optional Reference button */}
-                        {rec.url && (
-                          <a
-                            id={`link-rec-${rec.id}`}
-                            href={rec.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[10px] text-brand-teal-600 font-bold hover:underline"
-                          >
-                            <span>{rec.linkText || 'Xem chi tiết'} ↗</span>
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-
-                  {/* Recommendations Pagination Controls */}
-                  {totalRecsPages > 1 && (
-                    <div className="flex items-center justify-center gap-2 pt-4 font-sans">
-                      <button
-                        onClick={() => setRecsPage(p => Math.max(1, p - 1))}
-                        disabled={recsPage === 1}
-                        className="px-3 py-1.5 rounded-lg border-2 border-slate-900 bg-white font-bold text-xs disabled:opacity-45 hover:bg-slate-50 active:scale-95 transition-transform cursor-pointer"
-                      >
-                        ◀
-                      </button>
-                      {Array.from({ length: totalRecsPages }).map((_, idx) => {
-                        const pageNum = idx + 1;
-                        return (
-                          <button
-                            key={pageNum}
-                            onClick={() => setRecsPage(pageNum)}
-                            className={`w-8 h-8 rounded-lg border-2 font-bold text-xs transition-colors flex items-center justify-center cursor-pointer ${
-                              recsPage === pageNum
-                                ? 'bg-brand-teal-500 border-slate-900 text-white shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]'
-                                : 'bg-white border-slate-200 text-slate-600 hover:border-slate-800'
-                            }`}
-                          >
-                            {pageNum}
-                          </button>
-                        );
-                      })}
-                      <button
-                        onClick={() => setRecsPage(p => Math.min(totalRecsPages, p + 1))}
-                        disabled={recsPage === totalRecsPages}
-                        className="px-3 py-1.5 rounded-lg border-2 border-slate-900 bg-white font-bold text-xs disabled:opacity-45 hover:bg-slate-50 active:scale-95 transition-transform cursor-pointer"
-                      >
-                        ▶
-                      </button>
-                    </div>
-                  )}
-                </div>
-
+                )}
               </div>
+
+              {/* Recommendations Pagination Controls */}
+              {totalRecsPages > 1 && (
+                <div className="flex items-center justify-center gap-2 pt-6 font-sans">
+                  <button
+                    onClick={() => setRecsPage(p => Math.max(1, p - 1))}
+                    disabled={recsPage === 1}
+                    className="px-3 py-1.5 rounded-lg border-2 border-slate-900 bg-white font-bold text-xs disabled:opacity-45 hover:bg-slate-50 active:scale-95 transition-transform cursor-pointer"
+                  >
+                    ◀
+                  </button>
+                  {Array.from({ length: totalRecsPages }).map((_, idx) => {
+                    const pageNum = idx + 1;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setRecsPage(pageNum)}
+                        className={`w-8 h-8 rounded-lg border-2 font-bold text-xs transition-colors flex items-center justify-center cursor-pointer ${
+                          recsPage === pageNum
+                            ? 'bg-brand-teal-400 border-slate-900 text-slate-1000 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]'
+                            : 'bg-white border-slate-200 text-slate-600 hover:border-slate-800'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => setRecsPage(p => Math.min(totalRecsPages, p + 1))}
+                    disabled={recsPage === totalRecsPages}
+                    className="px-3 py-1.5 rounded-lg border-2 border-slate-900 bg-white font-bold text-xs disabled:opacity-45 hover:bg-slate-50 active:scale-95 transition-transform cursor-pointer"
+                  >
+                    ▶
+                  </button>
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -1177,6 +1064,113 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   className="bg-slate-900 hover:bg-brand-teal-500 hover:text-slate-900 text-white font-bold py-2 px-5 rounded-xl cursor-pointer hover:scale-101 active:scale-95 transition-transform text-xs"
                 >
                   Đồng ý & Đóng 🌸
+                </button>
+              </div>
+
+            </motion.div>
+          </div>
+        )}
+
+        {/* 📚 RECOMMENDATION DEEP LIGHTBOX DIALOG OVERLAY */}
+        {selectedRecItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              onClick={() => setSelectedRecItem(null)}
+              className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+
+            {/* Lightbox Card layout */}
+            <motion.div
+              className="bg-white rounded-3xl border-4 border-slate-900 w-full max-w-lg p-6 md:p-8 relative z-10 shadow-2xl flex flex-col justify-between text-slate-800"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+            >
+              <button
+                id="btn-close-rec-lightbox"
+                className="absolute top-4 right-4 p-2 bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 rounded-full cursor-pointer"
+                onClick={() => setSelectedRecItem(null)}
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div>
+                {/* Big cute visual representation / Image */}
+                <div className="aspect-video rounded-2xl bg-gradient-to-br from-teal-50 to-emerald-100 flex items-center justify-center text-6xl border-2 border-slate-900 shadow-sm relative overflow-hidden mb-6">
+                  {selectedRecItem.imageFile ? (
+                    <img 
+                      src={selectedRecItem.imageFile} 
+                      alt={selectedRecItem.title} 
+                      className="w-full h-full object-cover" 
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <span>{selectedRecItem.recIllustration || (selectedRecItem.type === 'Fanfic/Author' ? '📖' : selectedRecItem.type === 'Art/Artist' ? '🎨' : '🩵')}</span>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <span className="text-[10px] uppercase font-bold tracking-wider font-mono text-brand-teal-700 bg-brand-teal-50 px-2.5 py-0.5 rounded-full border border-brand-teal-100 font-sans">
+                    {selectedRecItem.type === 'Fanfic/Author' ? 'Fanfic' : selectedRecItem.type === 'Art/Artist' ? 'Fanart' : selectedRecItem.type}
+                  </span>
+                  {selectedRecItem.creator && (
+                    <span className="text-[10px] text-slate-400 font-mono font-semibold flex items-center gap-1 font-sans">
+                      🧑‍💻 Tác giả: {selectedRecItem.creator}
+                    </span>
+                  )}
+                </div>
+
+                {/* Title */}
+                <h3 className="text-xl font-bold text-slate-850 mb-2 font-sans">{selectedRecItem.title}</h3>
+
+                {/* Content / Reason */}
+                {selectedRecItem.reason && (
+                  <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 max-h-72 overflow-y-auto shadow-inner text-xs font-semibold leading-relaxed text-slate-600 font-sans">
+                    <div className="markdown-body text-xs break-words">
+                      <Markdown
+                        components={{
+                          h1: ({node, ...props}) => <h1 className="text-base font-extrabold text-slate-900 mt-3 mb-1.5" {...props} />,
+                          h2: ({node, ...props}) => <h2 className="text-sm font-bold text-slate-900 mt-2.5 mb-1" {...props} />,
+                          h3: ({node, ...props}) => <h3 className="text-xs font-bold text-slate-900 mt-2 mb-1" {...props} />,
+                          p: ({node, ...props}) => <p className="mb-2.5 last:mb-0 leading-relaxed" {...props} />,
+                          ul: ({node, ...props}) => <ul className="list-disc pl-4 mb-2.5 space-y-1" {...props} />,
+                          ol: ({node, ...props}) => <ol className="list-decimal pl-4 mb-2.5 space-y-1" {...props} />,
+                          li: ({node, ...props}) => <li className="mb-0.5" {...props} />,
+                          strong: ({node, ...props}) => <strong className="font-extrabold text-slate-950" {...props} />,
+                          em: ({node, ...props}) => <em className="italic text-slate-705" {...props} />,
+                        }}
+                      >
+                        {selectedRecItem.reason}
+                      </Markdown>
+                    </div>
+                  </div>
+                )}
+
+                {selectedRecItem.url && (
+                  <div className="pt-3 font-sans">
+                    <a 
+                      href={selectedRecItem.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="inline-flex items-center gap-1.5 bg-brand-teal-50 border border-brand-teal-200 text-brand-teal-700 text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-brand-teal-100 transition-colors cursor-pointer"
+                    >
+                      <span>{selectedRecItem.linkText || 'Xem liên kết'} 🔗</span>
+                    </a>
+                  </div>
+                )}
+              </div>
+
+              {/* Actions footer */}
+              <div className="pt-4 mt-6 border-t border-slate-100 flex items-center justify-end font-sans">
+                <button
+                  onClick={() => setSelectedRecItem(null)}
+                  className="bg-slate-900 hover:bg-brand-teal-500 hover:text-slate-900 text-white font-bold py-2 px-5 rounded-xl cursor-pointer hover:scale-101 active:scale-95 transition-transform text-xs"
+                >
+                  Đóng 🌸
                 </button>
               </div>
 
