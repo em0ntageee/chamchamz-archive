@@ -1,17 +1,17 @@
 {
-  "show_counters_bottom_note": true,
   "stream_date": "2025-11-05",
-  "show_counter2_live_tag": true,
-  "counter1_title": "First Duo Livestream",
-  "counter2_title": "Lượt ghé thăm",
-  "counter2_live_tag": "Live",
-  "counters_section_title": "Số liệu thời gian thực:",
   "base_visits": 0,
+  "counters_section_title": "Chỉ Số Thời Gian Thực 📊",
   "show_counters_section_title": true,
-  "counter2_desc": "Người đồng hành đã ghé thăm nhà.",
-  "counter1_suffix": "ngày đã trôi qua",
-  "counter1_desc": "Được tính từ ngày livestream ({date}).",
+  "counter1_title": "Kỷ Niệm Cặp Đôi (Livestream)",
   "counter1_emoji": "🗓️",
+  "counter1_suffix": "ngày đã trôi qua",
+  "counter1_desc": "Được tính tự động từ ngày livestream ({date}).",
+  "counter2_title": "Tổng Lượt Tham Quan Archive",
   "counter2_emoji": "🐾",
-  "counters_bottom_note": "Only for Chamchamz."
+  "counter2_desc": "Số lần fan chân chính mở xem rương lưu trữ kể từ ngày đầu tiên xây dựng.",
+  "counter2_live_tag": "Live",
+  "show_counter2_live_tag": true,
+  "counters_bottom_note": "Mọi số liệu được bảo vệ nghiêm mật theo hiệp ước.",
+  "show_counters_bottom_note": true
 }

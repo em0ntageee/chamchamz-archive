@@ -906,13 +906,7 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   </div>
                 )}
 
-                {/* Download alert notice */}
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2.5 items-start mt-5">
-                  <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-[10px] text-amber-800 font-semibold leading-relaxed">
-                    <strong>Lưu ý quan trọng:</strong> Bức ảnh này đã được cấp mã số bản quyền tác giả trong Chamchamz Archive. Tuyệt đối nghiêm cấm việc lưu về máy và tái đăng tải ra thế giới bên ngoài. Tận hưởng khoảnh khắc ngọt ngào một cách văn minh nhất!
-                  </p>
-                </div>
+
               </div>
 
               {/* Author & Actions footer */}
