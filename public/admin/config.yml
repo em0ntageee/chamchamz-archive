@@ -478,6 +478,29 @@ collections:
             default: "https://threads.net/@chamchamz"
             required: true
 
+          - label: "🖼️ CẤU HÌNH SEO & CHIA SẺ TRANG (SOCIAL SHARE)"
+            name: "seo_divider"
+            widget: "hidden"
+            default: "divider"
+
+          - label: "Tiêu đề khi chia sẻ link (Social Share Title)"
+            name: "shareTitle"
+            widget: "string"
+            default: "Chamchamz Archive - Vùng Bảo Mật Fan-Only 🐾"
+            required: false
+
+          - label: "Mô tả ngắn khi chia sẻ link (Social Share Description)"
+            name: "shareDescription"
+            widget: "text"
+            default: "Nơi cất giữ báu vật rực rỡ và những hạt giống niềm vui của bé Chamchamz. Xem ngay album manh mối, triển lãm ảnh và đề xuất sách nhạc dễ thương!"
+            required: false
+
+          - label: "Ảnh bìa preview khi chia sẻ link (Social Share Image)"
+            name: "shareImage"
+            widget: "image"
+            default: "/chamchamz_social_cover.jpg"
+            required: false
+
   # Collection 1 & 2: Counters settings
   - name: "counters"
     label: "⏱️ Bộ Đếm Chỉ Số"
@@ -638,7 +661,7 @@ collections:
         name: "hintIllustration"
         widget: "string"
         default: "🔑"
-      - label: "Trạng Trái Mở Khóa"
+      - label: "Trạng Thái Mở Khóa"
         name: "isUnlocked"
         widget: "boolean"
         default: false
