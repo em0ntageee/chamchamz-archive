@@ -33,20 +33,11 @@ const PRESET_TRACKS: MusicTrack[] = (musicData && musicData.tracks) ? musicData.
 ];
 
 export default function BackgroundMusic() {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [tracks, setTracks] = useState<MusicTrack[]>(() => {
-    const saved = localStorage.getItem('chamchamz_custom_tracks');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        return PRESET_TRACKS;
-      }
-    }
-    return PRESET_TRACKS;
-  });
+  
+  const tracks = PRESET_TRACKS;
 
   const [activeTrackIndex, setActiveTrackIndex] = useState<number>(() => {
     const savedIndex = localStorage.getItem('chamchamz_active_track_idx');
@@ -57,31 +48,39 @@ export default function BackgroundMusic() {
     return 0; // default track 0
   });
 
-  const [customUrl, setCustomUrl] = useState('');
-  const [customName, setCustomName] = useState('');
-  const [saveSuccess, setSaveSuccess] = useState(false);
-
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Initialize and play audio
   useEffect(() => {
     // Create new audio element
     const audio = new Audio(tracks[activeTrackIndex].url);
-    audio.loop = true;
+    audio.loop = false; // Disable single track loop so we can transition to next track
     audio.volume = isMuted ? 0 : 0.45;
     audioRef.current = audio;
 
+    // Play if enabled
+    if (isPlaying) {
+      audio.play().catch((err) => {
+        console.log("Autoplay block detected, waiting for user click/scroll", err);
+      });
+    }
+
     // Handles chrome autoplay policies gracefully
     const handleFirstUserInteraction = () => {
-      // Prompt user or start stream
       if (isPlaying) {
-        audio.play().catch(() => {
-          // Autoplay was blocked, reset state 
-          setIsPlaying(false);
-        });
+        audio.play().catch(() => {});
       }
       cleanupEvents();
     };
+
+    const handleTrackEnded = () => {
+      const nextIndex = (activeTrackIndex + 1) % PRESET_TRACKS.length;
+      setActiveTrackIndex(nextIndex);
+      localStorage.setItem('chamchamz_active_track_idx', String(nextIndex));
+      setIsPlaying(true);
+    };
+
+    audio.addEventListener('ended', handleTrackEnded);
 
     const cleanupEvents = () => {
       window.removeEventListener('click', handleFirstUserInteraction);
@@ -93,6 +92,7 @@ export default function BackgroundMusic() {
 
     return () => {
       cleanupEvents();
+      audio.removeEventListener('ended', handleTrackEnded);
       audio.pause();
       audioRef.current = null;
     };
@@ -112,7 +112,6 @@ export default function BackgroundMusic() {
         })
         .catch(err => {
           console.log("Audio autoplay prevented. Must tap play first.", err);
-          // Let try loading again
           audioRef.current?.load();
           audioRef.current?.play().then(() => setIsPlaying(true));
         });
@@ -135,37 +134,6 @@ export default function BackgroundMusic() {
     setActiveTrackIndex(index);
     localStorage.setItem('chamchamz_active_track_idx', String(index));
     setIsPlaying(true);
-  };
-
-  // Add custom URL track
-  const handleAddCustomTrack = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!customUrl.trim()) return;
-
-    const name = customName.trim() || `Nhạc Tùy Chọn #${tracks.length + 1}`;
-    const newTrack: MusicTrack = {
-      name,
-      artist: "Liên kết tải lên",
-      url: customUrl.trim()
-    };
-
-    const updatedTracks = [...tracks, newTrack];
-    setTracks(updatedTracks);
-    localStorage.setItem('chamchamz_custom_tracks', JSON.stringify(updatedTracks));
-    
-    // Select the newly added track
-    const newIndex = updatedTracks.length - 1;
-    setActiveTrackIndex(newIndex);
-    localStorage.setItem('chamchamz_active_track_idx', String(newIndex));
-
-    setCustomUrl('');
-    setCustomName('');
-    setSaveSuccess(true);
-    setIsPlaying(true);
-
-    setTimeout(() => {
-      setSaveSuccess(false);
-    }, 2000);
   };
 
   const currentTrack = tracks[activeTrackIndex] || PRESET_TRACKS[0];
@@ -243,45 +211,11 @@ export default function BackgroundMusic() {
                 </div>
               </div>
 
-              {/* Add Custom Track URL Form */}
-              <form onSubmit={handleAddCustomTrack} className="border-t border-slate-100 pt-3 space-y-2">
-                <span className="text-[9px] font-bold text-[#1e293b]/50 uppercase tracking-widest block">Thêm Link Nhạc (MP3)</span>
-                
-                <input
-                  id="input-custom-music-name"
-                  type="text"
-                  placeholder="Tên bài hát..."
-                  value={customName}
-                  onChange={(e) => setCustomName(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-[11px] font-mono focus:outline-none focus:border-brand-cyan-400 block"
-                />
-
-                <div className="relative">
-                  <input
-                    id="input-custom-music-url"
-                    type="url"
-                    placeholder="https://domain.com/music.mp3"
-                    value={customUrl}
-                    onChange={(e) => setCustomUrl(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 pr-8 text-[11px] font-mono focus:outline-none focus:border-brand-cyan-400 block"
-                  />
-                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-400 pointer-events-none">
-                    <Link className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-
-                <button
-                  id="btn-add-custom-music"
-                  type="submit"
-                  className="w-full py-1 bg-slate-900 text-white font-bold rounded-lg text-[10px] hover:bg-brand-cyan-500 hover:text-slate-900 cursor-pointer transition-colors block text-center"
-                >
-                  Tải Lên Máy Phát
-                </button>
-
-                {saveSuccess && (
-                  <p className="text-[9px] text-emerald-600 font-extrabold text-center">🎉 Đã kích hoạt bài hát của bạn!</p>
-                )}
-              </form>
+              {/* Admin note about playlist updates */}
+              <div className="border-t border-slate-100 pt-3 text-center">
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Cập nhật nhạc mới</span>
+                <p className="text-[10px] text-slate-500 font-semibold leading-relaxed mt-1">Playlist chỉ được thay đổi bởi Admin trên trang quản trị 🔒</p>
+              </div>
 
             </motion.div>
           )}

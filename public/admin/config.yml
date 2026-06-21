@@ -501,6 +501,13 @@ collections:
             default: "/chamchamz_social_cover.jpg"
             required: false
 
+          - label: "Facebook App ID (fb:app_id) - Đậy cảnh báo"
+            name: "fbAppId"
+            widget: "string"
+            default: ""
+            required: false
+            hint: "Mã số Facebook App ID của riêng bạn nhằm giải quyết cảnh báo missing fb:app_id trên FB Debugger. Để trống nếu tự chọn lọc mặc định."
+
   # Collection 1 & 2: Counters settings
   - name: "counters"
     label: "⏱️ Bộ Đếm Chỉ Số"
@@ -695,15 +702,15 @@ collections:
       - label: "Chuyên mục"
         field: "category"
     view_filters:
-      - label: "X"
-        field: "category"
-        pattern: "X"
       - label: "IG"
         field: "category"
         pattern: "IG"
       - label: "Weverse"
         field: "category"
         pattern: "Weverse"
+      - label: "Reels/Challenge"
+        field: "category"
+        pattern: "Reels/Challenge"
       - label: "Nguồn bên ngoài"
         field: "category"
         pattern: "Nguồn bên ngoài"
@@ -723,37 +730,22 @@ collections:
       - label: "Mô tả ngắn"
         name: "description"
         widget: "text"
-        required: true
+        required: false
       - label: "Emoji đại diện"
         name: "emoji"
         widget: "string"
         default: "🖼️"
-      - label: "Người vẽ / Tác giả"
-        name: "author"
-        widget: "string"
-        default: "Chamchamz Fanart"
-      - label: "Màu thẻ (Tailwind Class)"
-        name: "colorTheme"
-        widget: "string"
-        default: "from-sky-100 to-cyan-100 border-sky-305 text-sky-800"
       - label: "Chuyên mục (Category)"
         name: "category"
         widget: "select"
-        options: ["X", "IG", "Weverse", "Nguồn bên ngoài"]
-        default: "X"
+        options: ["IG", "Weverse", "Reels/Challenge", "Nguồn bên ngoài"]
+        default: "IG"
         required: true
       - label: "Ẩn bài viết này khỏi trang chủ"
         name: "isHidden"
         widget: "boolean"
         default: false
         required: false
-      - label: "Từ khóa nhãn (Tags)"
-        name: "tags"
-        widget: "list"
-        fields:
-          - label: "Tên nhãn"
-            name: "tag"
-            widget: "string"
       - label: "Danh sách Hình ảnh tải lên (Multiple Images)"
         name: "images"
         widget: "list"
@@ -801,20 +793,11 @@ collections:
         name: "title"
         widget: "string"
         required: true
-      - label: "Tác Giả / Người Sáng Tạo"
-        name: "creator"
-        widget: "string"
-        required: true
       - label: "Thể Loại"
         name: "type"
         widget: "select"
         options: ["Fanfic/Author", "Art/Artist", "Khác"]
         default: "Khác"
-      - label: "Biểu Tượng Đề Xuất (Emoji)"
-        name: "recIllustration"
-        widget: "string"
-        default: "📚"
-        required: false
       - label: "Ẩn bài viết này khỏi trang chủ"
         name: "isHidden"
         widget: "boolean"

@@ -32,12 +32,15 @@ export function mapRecType(type: string): string {
 }
 
 export function mapGalleryCategory(cat: string): string {
-  const norm = String(cat || 'X').trim().toLowerCase();
-  if (norm === 'x') return 'X';
-  if (norm === 'ig') return 'IG';
+  const norm = String(cat || '').trim().toLowerCase();
+  
+  if (norm === 'ig' || norm === 'instagram') return 'IG';
   if (norm === 'weverse') return 'Weverse';
-  if (norm === 'nguồn bên ngoài') return 'Nguồn bên ngoài';
-  return cat || 'X';
+  if (norm === 'reels/challenge' || norm === 'reels' || norm === 'challenge') return 'Reels/Challenge';
+  if (norm === 'nguồn bên ngoài' || norm === 'nguon ben ngoai' || norm === 'external') return 'Nguồn bên ngoài';
+  
+  // Since X is removed, map existing posts of type X or empty to 'Nguồn bên ngoài'
+  return 'Nguồn bên ngoài';
 }
 
 // 1. Process CMS Hints

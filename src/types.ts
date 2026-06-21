@@ -21,12 +21,12 @@ export interface GalleryItem {
   id: string;
   title: string;
   date: string;
-  tags: string[];
+  tags?: string[];
   category?: string; // E.g., 'X', 'IG', 'Weverse', 'Nguồn bên ngoài'
-  description: string;
-  colorTheme: string; // Pastel tailwind colors
+  description?: string;
+  colorTheme?: string; // Pastel tailwind colors
   emoji: string;
-  author: string;
+  author?: string;
   images?: { image_file: string; caption?: string }[];
   sourceUrl?: string;
   isHidden?: boolean;
@@ -35,7 +35,7 @@ export interface GalleryItem {
 export interface RecItem {
   id: string;
   title: string;
-  creator: string;
+  creator?: string;
   type: string; // E.g., 'Fanfic/Author', 'Art/Artist', 'Khác' or legacy 'music'/'book'/'movie'
   reason: string;
   linkText?: string;

@@ -473,8 +473,8 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
 
                 {paginatedHints.length === 0 && (
                   <div className="col-span-full text-center py-12 bg-white rounded-2xl border-2 border-slate-900 border-dashed">
-                    <span className="text-2xl block mb-2">🔎</span>
-                    <p className="text-sm text-slate-500 font-semibold">Không tìm thấy manh mối nào khớp với yêu cầu!</p>
+                    <span className="text-2xl block mb-2 font-mono">🌸</span>
+                    <p className="text-sm text-slate-500 font-semibold">Đang đợi cập nhật thêm...</p>
                   </div>
                 )}
               </div>
@@ -540,7 +540,7 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
 
               {/* Category filters */}
               <div className="flex flex-wrap gap-1.5 font-sans">
-                {['all', 'X', 'IG', 'Weverse', 'Nguồn bên ngoài'].map((cat) => (
+                {['all', 'IG', 'Weverse', 'Reels/Challenge', 'Nguồn bên ngoài'].map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setSelectedGalleryCategory(cat)}
@@ -595,8 +595,8 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
 
                 {paginatedGallery.length === 0 && (
                   <div className="col-span-full text-center py-12 bg-white rounded-2xl border-2 border-slate-900 border-dashed">
-                    <span className="text-2xl block mb-2">📸</span>
-                    <p className="text-sm text-slate-500 font-semibold">Chưa có tác phẩm ảnh cúc hoa nào khớp với bộ lọc!</p>
+                    <span className="text-2xl block mb-2 font-mono">🌸</span>
+                    <p className="text-sm text-slate-500 font-semibold">Đang đợi cập nhật thêm...</p>
                   </div>
                 )}
               </div>
@@ -717,8 +717,8 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
 
                 {paginatedRecs.length === 0 && (
                   <div className="col-span-full text-center py-12 bg-white rounded-2xl border-2 border-slate-900 border-dashed">
-                    <span className="text-2xl block mb-2">🔎</span>
-                    <p className="text-sm text-slate-500 font-semibold">Không tìm thấy bài viết đề xuất nào khớp với bộ lọc!</p>
+                    <span className="text-2xl block mb-2 font-mono">🌸</span>
+                    <p className="text-sm text-slate-500 font-semibold">Đang đợi cập nhật thêm...</p>
                   </div>
                 )}
               </div>
@@ -854,9 +854,6 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                         className="w-full h-full object-cover"
                         referrerPolicy="no-referrer"
                       />
-                      <div className="absolute bottom-2 right-2 bg-white/90 border border-slate-900 text-[9px] font-bold px-2 py-0.5 rounded uppercase font-mono z-10">
-                        Watermarked 🚫
-                      </div>
                     </div>
                     {selectedGalleryItem.images[0].caption && (
                       <p className="text-[11px] text-slate-500 italic text-center font-semibold">
@@ -867,9 +864,6 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                 ) : (
                   <div className={`aspect-video rounded-2xl bg-gradient-to-br ${selectedGalleryItem.colorTheme} flex items-center justify-center text-6xl border-2 border-slate-900 shadow-sm relative overflow-hidden mb-6`}>
                     <span>{selectedGalleryItem.emoji}</span>
-                    <div className="absolute bottom-2 right-2 bg-white/90 border border-slate-900 text-[9px] font-bold px-2 py-0.5 rounded uppercase font-mono">
-                      Watermarked 🚫
-                    </div>
                   </div>
                 )}
 
@@ -894,15 +888,18 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
 
                 {/* Source Url Link block */}
                 {selectedGalleryItem.sourceUrl && (
-                  <div className="mt-4 pt-1.5">
-                    <a 
-                      href={selectedGalleryItem.sourceUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="inline-flex items-center gap-1.5 bg-brand-teal-50 border border-brand-teal-200 text-brand-teal-700 text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-brand-teal-100 transition-colors cursor-pointer"
-                    >
-                      <span>Xem link gốc 🔗</span>
-                    </a>
+                  <div className="mt-4 pt-1.5 flex flex-wrap gap-2">
+                    {selectedGalleryItem.sourceUrl.split(/[\s,;]+/).map(u => u.trim()).filter(u => u.startsWith('http')).map((url, uidx, arr) => (
+                      <a 
+                        key={uidx}
+                        href={url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="inline-flex items-center gap-1.5 bg-brand-teal-50 border border-brand-teal-200 text-brand-teal-700 text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-brand-teal-100 transition-colors cursor-pointer"
+                      >
+                        <span>{arr.length > 1 ? `Link gốc ${uidx + 1} 🔗` : `Xem link gốc 🔗`}</span>
+                      </a>
+                    ))}
                   </div>
                 )}
 
@@ -1010,15 +1007,18 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                     )}
 
                     {selectedHintItem.sourceUrl && (
-                      <div className="pt-2">
-                        <a 
-                          href={selectedHintItem.sourceUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="inline-flex items-center gap-1.5 bg-brand-teal-50 border border-brand-teal-200 text-brand-teal-700 text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-brand-teal-100 transition-colors cursor-pointer"
-                        >
-                          <span>Xem link gốc 🔗</span>
-                        </a>
+                      <div className="pt-2 flex flex-wrap gap-2">
+                        {selectedHintItem.sourceUrl.split(/[\s,;]+/).map(u => u.trim()).filter(u => u.startsWith('http')).map((url, uidx, arr) => (
+                          <a 
+                            key={uidx}
+                            href={url} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="inline-flex items-center gap-1.5 bg-brand-teal-50 border border-brand-teal-200 text-brand-teal-700 text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-brand-teal-100 transition-colors cursor-pointer"
+                          >
+                            <span>{arr.length > 1 ? `Link gốc ${uidx + 1} 🔗` : `Xem link gốc 🔗`}</span>
+                          </a>
+                        ))}
                       </div>
                     )}
                   </div>
@@ -1145,15 +1145,18 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                 )}
 
                 {selectedRecItem.url && (
-                  <div className="pt-3 font-sans">
-                    <a 
-                      href={selectedRecItem.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="inline-flex items-center gap-1.5 bg-brand-teal-50 border border-brand-teal-200 text-brand-teal-700 text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-brand-teal-100 transition-colors cursor-pointer"
-                    >
-                      <span>{selectedRecItem.linkText || 'Xem liên kết'} 🔗</span>
-                    </a>
+                  <div className="pt-3 font-sans flex flex-wrap gap-2">
+                    {selectedRecItem.url.split(/[\s,;]+/).map(u => u.trim()).filter(u => u.startsWith('http')).map((url, uidx, arr) => (
+                      <a 
+                        key={uidx}
+                        href={url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="inline-flex items-center gap-1.5 bg-brand-teal-50 border border-brand-teal-200 text-brand-teal-700 text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-brand-teal-100 transition-colors cursor-pointer"
+                      >
+                        <span>{arr.length > 1 ? `${selectedRecItem.linkText || 'Xem liên kết'} ${uidx + 1} 🔗` : `${selectedRecItem.linkText || 'Xem liên kết'} 🔗`}</span>
+                      </a>
+                    ))}
                   </div>
                 )}
               </div>

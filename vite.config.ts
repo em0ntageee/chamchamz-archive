@@ -56,6 +56,10 @@ const seoInjectPlugin = () => {
           // Replace twitter:image
           modifiedHtml = modifiedHtml.replace(/<meta property="twitter:image" content=".*?" \/>/gi, `<meta property="twitter:image" content="${absoluteImgUrl}" />`);
 
+          // Replace fb:app_id
+          const fbAppId = config.fbAppId || "";
+          modifiedHtml = modifiedHtml.replace(/<meta property="fb:app_id" content=".*?" \/>/gi, `<meta property="fb:app_id" content="${fbAppId}" />`);
+
           return modifiedHtml;
         }
       } catch (err) {
