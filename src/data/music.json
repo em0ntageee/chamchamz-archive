@@ -2,19 +2,24 @@
   "version": "1.0",
   "tracks": [
     {
-      "name": "Cozy Stream Lo-Fi",
-      "artist": "Chilhop Melodies",
-      "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      "url": "/uploads/freecompress-daniel-caesar-superpowers-official-audio-daniel-caesar-128k-.mp3",
+      "name": "Superpowers",
+      "artist": "Daniel Caesar"
     },
     {
-      "name": "Golden Coffee Hour",
-      "artist": "Acoustic Ukulele",
-      "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+      "artist": "Stevie Wonder",
+      "name": "Isn't She Lovely",
+      "url": "/uploads/freecompress-isn-t-she-lovely-stevie-wonder-128k-.mp3"
     },
     {
-      "name": "Sunny Sandbox Loop",
-      "artist": "Fluffy Clouds",
-      "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
+      "artist": "Daniel Caesar",
+      "name": "Always",
+      "url": "/uploads/freecompress-daniel-caesar-always-official-audio-daniel-caesar-128k-.mp3"
+    },
+    {
+      "name": "Sure Thing",
+      "artist": "Miguel",
+      "url": "/uploads/freecompress-miguel-sure-thing-official-video-miguel-128k-.mp3"
     }
   ]
 }
