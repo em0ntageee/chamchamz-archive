@@ -2,19 +2,14 @@
   "version": "1.0",
   "tracks": [
     {
-      "url": "/uploads/freecompress-daniel-caesar-superpowers-official-audio-daniel-caesar-128k-.mp3",
+      "url": "/uploads/daniel-caesar-superpowers-official-audio-.mp3",
       "name": "Superpowers",
       "artist": "Daniel Caesar"
     },
     {
       "artist": "Stevie Wonder",
       "name": "Isn't She Lovely",
-      "url": "/uploads/freecompress-isn-t-she-lovely-stevie-wonder-128k-.mp3"
-    },
-    {
-      "artist": "Daniel Caesar",
-      "name": "Always",
-      "url": "/uploads/freecompress-daniel-caesar-always-official-audio-daniel-caesar-128k-.mp3"
+      "url": "/uploads/isn-t-she-lovely.mp3"
     },
     {
       "name": "Sure Thing",
