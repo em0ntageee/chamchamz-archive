@@ -586,8 +586,7 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                     </div>
 
                     {/* Metadata Footer bar */}
-                    <div className="pt-2 border-t border-slate-900/10 flex items-center justify-between text-[9px] font-bold font-mono">
-                      <span className="opacity-75">{item.author ? `Tác giả: ${item.author}` : "Chamchamz Fanart"}</span>
+                    <div className="pt-2 border-t border-slate-900/10 flex items-center justify-end text-[9px] font-bold font-mono">
                       <span className="opacity-50">{item.date}</span>
                     </div>
                   </motion.div>
@@ -906,11 +905,8 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
 
               </div>
 
-              {/* Author & Actions footer */}
-              <div className="pt-4 mt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold font-mono">
-                <span className="text-slate-400">
-                  {selectedGalleryItem.author ? `Ghi danh: ${selectedGalleryItem.author}` : "Chamchamz Fanart"}
-                </span>
+              {/* Actions footer */}
+              <div className="pt-4 mt-6 border-t border-slate-100 flex items-center justify-end text-xs font-bold font-mono">
                 <button
                   id="btn-agree-close-lightbox"
                   onClick={() => setSelectedGalleryItem(null)}

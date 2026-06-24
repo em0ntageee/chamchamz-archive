@@ -9,22 +9,20 @@ import { ShieldAlert, BookOpen, Quote, Heart, CheckCircle2, LockKeyhole } from '
 import { SITE_CONFIG } from '../data';
 
 export default function About() {
-  const [pledgesCount, setPledgesCount] = useState(0);
-  const [hasPledged, setHasPledged] = useState(false);
+  const [clickCount, setClickCount] = useState(() => {
+    const savedClicks = localStorage.getItem('chamchamz_pledge_clicks_v2');
+    return savedClicks ? parseInt(savedClicks, 10) : 0;
+  });
+  const [justClicked, setJustClicked] = useState(false);
 
-  useEffect(() => {
-    const savedPledge = localStorage.getItem('chamchamz_pledge');
-    if (savedPledge === 'true') {
-      setHasPledged(true);
-      setPledgesCount((prev) => prev + 1);
-    }
-  }, []);
+  const pledgesCount = 520 + clickCount;
 
   const handlePledge = () => {
-    if (hasPledged) return;
-    localStorage.setItem('chamchamz_pledge', 'true');
-    setHasPledged(true);
-    setPledgesCount((prev) => prev + 1);
+    const nextClicks = clickCount + 1;
+    setClickCount(nextClicks);
+    localStorage.setItem('chamchamz_pledge_clicks_v2', String(nextClicks));
+    setJustClicked(true);
+    setTimeout(() => setJustClicked(false), 800);
   };
 
   return (
@@ -119,37 +117,40 @@ export default function About() {
             {/* Interactive Pledge Widget */}
             <div className="mt-6 pt-5 border-t border-brand-teal-200/50">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-slate-600 font-bold">
+                <span className="text-sm text-slate-700 font-bold">
                   {SITE_CONFIG.aboutPledgeLabel || "Số fan đã thực hiện lời thề:"}
                 </span>
-                <span id="pledge-counter" className="text-xs font-mono font-bold bg-white px-2.5 py-0.5 rounded-full border border-slate-200 text-brand-teal-700">
-                  {pledgesCount.toLocaleString()} {SITE_CONFIG.aboutPledgeSuffix || "🧑‍🚀"}
+                <span id="pledge-counter" className="text-xs font-mono font-bold bg-white px-2.5 py-1 rounded-full border-2 border-slate-900 text-slate-900 shadow-[2px_2px_0px_rgba(0,0,0,1)] flex items-center gap-1">
+                  <span>{pledgesCount.toLocaleString()}</span>
+                  <span>{SITE_CONFIG.aboutPledgeSuffix || "🧑‍🚀"}</span>
                 </span>
               </div>
 
-              <motion.button
-                id="btn-sign-pledge"
-                onClick={handlePledge}
-                disabled={hasPledged}
-                className={`w-full py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all border-2 ${
-                  hasPledged
-                    ? 'bg-emerald-100 border-emerald-300 text-emerald-800 cursor-default'
-                    : 'bg-slate-900 border-slate-900 hover:bg-brand-teal-600 hover:border-brand-teal-600 text-white hover:scale-102 active:scale-98'
-                }`}
-                whileTap={hasPledged ? {} : { scale: 0.95 }}
-              >
-                {hasPledged ? (
-                  <>
-                    <LockKeyhole className="w-4 h-4 text-emerald-600" />
-                    <span>{SITE_CONFIG.aboutPledgeBtnSignedText || "Đã Ký Thệ Ước Bảo Mật 💖"}</span>
-                  </>
-                ) : (
-                  <>
-                    <Heart className="w-4 h-4 text-rose-400 animate-pulse animate-bounce" />
-                    <span>{SITE_CONFIG.aboutPledgeBtnText || "Tớ Đồng Ý Bảo Mật Kho Lưu Trữ"}</span>
-                  </>
+              <div className="relative">
+                <motion.button
+                  id="btn-sign-pledge"
+                  onClick={handlePledge}
+                  className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-slate-900 border-2 border-slate-900 text-white hover:bg-brand-teal-500 hover:text-slate-900 hover:border-slate-900 cursor-pointer transition-colors flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Heart className={`w-4 h-4 text-rose-400 ${justClicked ? 'scale-150 animate-bounce' : 'animate-pulse'}`} />
+                  <span>{SITE_CONFIG.aboutPledgeBtnText || "Tớ Đồng Ý Bảo Mật Kho Lưu Trữ"}</span>
+                </motion.button>
+
+                {justClicked && (
+                  <motion.div
+                    initial={{ opacity: 1, y: 0, scale: 0.8 }}
+                    animate={{ opacity: 0, y: -40, scale: 1.2 }}
+                    transition={{ duration: 0.6 }}
+                    className="absolute inset-x-0 -top-8 text-center text-rose-500 font-bold text-sm pointer-events-none"
+                  >
+                    +1 Thệ Ước ❤️
+                  </motion.div>
                 )}
-              </motion.button>
+              </div>
+              <p className="text-[10px] text-slate-400 font-bold text-center mt-2">
+                ✨ Nhấp nút để cùng tích lũy và đóng góp thệ ước (bấm nhiều lần đều được) ✨
+              </p>
             </div>
 
           </div>
