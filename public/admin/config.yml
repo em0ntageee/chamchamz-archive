@@ -523,12 +523,6 @@ collections:
             default: "2025-11-05"
             required: true
             hint: "Dùng để đo số ngày kỷ niệm đã trôi qua ."
-          - label: "Số lượng lượt tham quan ban đầu (Visits Base)"
-            name: "base_visits"
-            widget: "number"
-            default: 142580
-            required: true
-            hint: "Điểm mốc thiết lập trước cho lượt truy cập trang chủ."
           - label: "Tiêu đề cụm chỉ số (Section Badge Title)"
             name: "counters_section_title"
             widget: "string"
@@ -558,30 +552,11 @@ collections:
             widget: "string"
             default: "Được tính tự động từ ngày livestream ({date})."
             required: false
-          - label: "Tiêu đề Bộ đếm 2 (Lượt truy cập)"
-            name: "counter2_title"
+          - label: "Lời dẫn Góc Tâm Nguyện (Manifest Text)"
+            name: "manifest_lead_text"
             widget: "string"
-            default: "Tổng Lượt Tham Quan Archive"
+            default: "Cùng nhau manifest cho Chamchamz bình an, may mắn, hạnh phúc và luôn ở cạnh nhau: 🕯️"
             required: true
-          - label: "Biểu tượng Bộ đếm 2 (Emoji)"
-            name: "counter2_emoji"
-            widget: "string"
-            default: "🐾"
-            required: false
-          - label: "Nhãn Nhấp nháy Live"
-            name: "counter2_live_tag"
-            widget: "string"
-            default: "Live"
-            required: false
-          - label: "Hiện nhãn nhấp nháy Live"
-            name: "show_counter2_live_tag"
-            widget: "boolean"
-            default: true
-          - label: "Dòng chú thích Bộ đếm 2"
-            name: "counter2_desc"
-            widget: "string"
-            default: "Số lần fan chân chính mở xem rương lưu trữ kể từ ngày đầu tiên xây dựng."
-            required: false
           - label: "Chú thích an ninh ở cuối khối"
             name: "counters_bottom_note"
             widget: "string"
@@ -821,26 +796,4 @@ collections:
         widget: "string"
         required: false
 
-  # Collection 7: Categories/Cards - Contact (Feedback inbox & message setup)
-  - name: "contact"
-    label: "✉️ Trang Gửi Thư Liên Hệ (Contact)"
-    files:
-      - file: "src/data/contact.json"
-        name: "contact_setup"
-        label: "Cấu hình Hòm Thư Liên Hệ"
-        fields:
-          - label: "Tiêu đề trang"
-            name: "title"
-            widget: "string"
-            default: "Lá Thư Gửi Gắm Tình Yêu ✉️"
-            required: true
-          - label: "Mô tả / Lời ngỏ"
-            name: "description"
-            widget: "text"
-            default: "Không quản ngại khoảng cách địa lý, hãy viết đôi lời nhắn nhủ ngọt ngào đến cặp đôi của chúng ta."
-            required: true
-          - label: "Lời chúc khi gửi thư thành công"
-            name: "success_msg"
-            widget: "string"
-            default: "Thư đã bay thẳng vào hộp kín của Chamchamz rồi nhé! 🕊️"
-            required: true
+

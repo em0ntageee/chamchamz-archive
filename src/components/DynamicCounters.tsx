@@ -117,7 +117,7 @@ export default function DynamicCounters() {
                       Manifest ✨
                     </span>
                     <h3 className="text-sm font-bold text-slate-800 leading-snug">
-                      Cùng nhau manifest cho Chamchamz bình an, may mắn, hạnh phúc và luôn ở cạnh nhau: 🕯️
+                      {countersData.manifest_lead_text || "Cùng nhau manifest cho Chamchamz bình an, may mắn, hạnh phúc và luôn ở cạnh nhau: 🕯️"}
                     </h3>
                     
                     <div className="mt-3">
