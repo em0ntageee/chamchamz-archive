@@ -2,8 +2,16 @@
   "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/api/auth",
+      "destination": "/api/auth.js"
+    },
+    {
+      "source": "/api/callback",
+      "destination": "/api/callback.js"
+    },
+    {
       "source": "/api/:path*",
-      "destination": "/api/:path*"
+      "destination": "/api/index.js"
     },
     {
       "source": "/admin/config.yml",
