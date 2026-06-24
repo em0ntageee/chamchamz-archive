@@ -114,10 +114,10 @@ export default function DynamicCounters() {
                   )}
                   <div className="flex-1">
                     <span className="text-[10px] font-mono font-bold tracking-widest text-[#1e293b]/70 uppercase block mb-1">
-                      Góc Tâm Nguyện (Manifest) ✨
+                      Manifest ✨
                     </span>
                     <h3 className="text-sm font-bold text-slate-800 leading-snug">
-                      Cùng thắp nến cầu chúc may mắn & bình an cho hai đứa
+                      Cùng nhau manifest cho Chamchamz bình an, may mắn, hạnh phúc và luôn ở cạnh nhau: 🕯️
                     </h3>
                     
                     <div className="mt-3">
