@@ -134,6 +134,7 @@ async function startServer() {
   // API 5: Get all comments (sorted newest first)
   app.get('/api/comments', (req, res) => {
     db = loadDatabase();
+    if (!db.comments) db.comments = [];
     const sortedComments = [...db.comments].sort(
       (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
@@ -189,6 +190,7 @@ async function startServer() {
     };
 
     db = loadDatabase();
+    if (!db.comments) db.comments = [];
     db.comments.push(newComment);
     saveDatabase(db);
 
@@ -205,6 +207,7 @@ async function startServer() {
     }
 
     db = loadDatabase();
+    if (!db.comments) db.comments = [];
     const originalLength = db.comments.length;
     db.comments = db.comments.filter(c => c.id !== id);
 

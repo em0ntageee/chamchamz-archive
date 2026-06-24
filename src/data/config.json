@@ -11,7 +11,7 @@
   "showHints": true,
   "showGallery": true,
   "showRecs": true,
-  "showContact": false,
+  "showContact": true,
   "showAbout": true,
   "mascotImageUrl": "",
   "navbarLogoUrl": "",

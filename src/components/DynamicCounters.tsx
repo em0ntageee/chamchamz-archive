@@ -573,7 +573,7 @@ export default function DynamicCounters() {
                           : 'border-transparent text-slate-400 hover:text-slate-800'
                       }`}
                     >
-                      💬 Lời Yêu Thương
+                      ✉️ Quản lý Thư & Lời Yêu
                     </button>
                   </div>
 
@@ -646,9 +646,9 @@ export default function DynamicCounters() {
                       {/* Comments status toggle switch */}
                       <div className="flex items-center justify-between p-3 bg-white border-2 border-slate-200 rounded-xl">
                         <div className="space-y-0.5">
-                          <span className="text-xs font-extrabold text-slate-800">Trạng thái nhận lời yêu thương</span>
+                          <span className="text-xs font-extrabold text-slate-800">Trạng thái nhận Thư & Lời yêu mới</span>
                           <span className="text-[10px] text-slate-400 font-semibold block">
-                            {commentsEnabled ? 'Đang mở (Fan có thể gửi lời chúc mới)' : 'Đã đóng (Chỉ hiển thị các lời chúc cũ, ẩn ô gửi)'}
+                            {commentsEnabled ? 'Đang mở (Fan có thể gửi lời chúc mới)' : 'Đã đóng (Ẩn khung gửi thư, chỉ hiện lời chúc cũ)'}
                           </span>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
