@@ -82,35 +82,6 @@ export default function DynamicCounters() {
       localStorage.setItem('chamchamz_candle_count', String(val));
     };
 
-    // Increment visitor count globally on mount
-    fetch('/api/visitor/increment', { method: 'POST' })
-      .then(async res => {
-        const text = await res.text();
-        try {
-          const data = JSON.parse(text);
-          if (active && typeof data.visitorCount === 'number') {
-            setVisitorCount(data.visitorCount);
-            setAdminVisitorInput(String(data.visitorCount));
-            saveLocalVisitorCount(data.visitorCount);
-          }
-        } catch (e) {
-          if (active) {
-            const fallbackVal = getLocalVisitorCount() + 1;
-            setVisitorCount(fallbackVal);
-            setAdminVisitorInput(String(fallbackVal));
-            saveLocalVisitorCount(fallbackVal);
-          }
-        }
-      })
-      .catch(err => {
-        if (active) {
-          const fallbackVal = getLocalVisitorCount() + 1;
-          setVisitorCount(fallbackVal);
-          setAdminVisitorInput(String(fallbackVal));
-          saveLocalVisitorCount(fallbackVal);
-        }
-      });
-
     // Fetch initial stats
     const fetchStats = () => {
       fetch('/api/stats')
@@ -144,7 +115,37 @@ export default function DynamicCounters() {
         });
     };
 
-    fetchStats();
+    const hasVisitedThisSession = sessionStorage.getItem('chamchamz_visited');
+
+    if (!hasVisitedThisSession) {
+      // Increment visitor count globally on mount for a new session
+      fetch('/api/visitor/increment', { method: 'POST' })
+        .then(async res => {
+          const text = await res.text();
+          try {
+            const data = JSON.parse(text);
+            if (active && typeof data.visitorCount === 'number') {
+              setVisitorCount(data.visitorCount);
+              setAdminVisitorInput(String(data.visitorCount));
+              saveLocalVisitorCount(data.visitorCount);
+              sessionStorage.setItem('chamchamz_visited', 'true');
+            }
+          } catch (e) {
+            // Handle parsing error
+          }
+          if (active) {
+            fetchStats();
+          }
+        })
+        .catch(err => {
+          if (active) {
+            fetchStats();
+          }
+        });
+    } else {
+      // Already visited in this session, just fetch stats
+      fetchStats();
+    }
 
     // Poll counts every 10 seconds to keep pages updated across clients
     const pollInterval = setInterval(fetchStats, 10000);
