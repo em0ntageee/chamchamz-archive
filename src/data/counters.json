@@ -1,12 +1,12 @@
 {
-  "stream_date": "2025-11-05",
-  "counters_section_title": "Chỉ Số Thời Gian Thực 📊",
-  "show_counters_section_title": true,
-  "counter1_title": "Kỷ Niệm Cặp Đôi (Livestream)",
-  "counter1_emoji": "🗓️",
-  "counter1_suffix": "ngày đã trôi qua",
-  "counter1_desc": "Được tính tự động từ ngày livestream ({date}).",
   "manifest_lead_text": "Cùng nhau manifest cho Chamchamz bình an, may mắn, hạnh phúc và luôn ở cạnh nhau: 🕯️",
-  "counters_bottom_note": "Mọi số liệu được bảo vệ nghiêm mật theo hiệp ước.",
-  "show_counters_bottom_note": true
+  "show_counters_bottom_note": true,
+  "stream_date": "2025-11-05",
+  "counter1_title": "Kỷ Niệm Cặp Đôi (Livestream)",
+  "counters_section_title": "Số liệu thời gian thực:",
+  "show_counters_section_title": true,
+  "counter1_suffix": "ngày đã trôi qua",
+  "counter1_desc": "Được tính từ ngày livestream ({date}).",
+  "counter1_emoji": "🗓️",
+  "counters_bottom_note": "Only for Chamchamz."
 }
