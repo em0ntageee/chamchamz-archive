@@ -15,7 +15,7 @@ export default function DynamicCounters() {
   const [daysSince, setDaysSince] = useState<number>(225);
 
   // VISITOR COUNTER and CANDLE MANIFEST setups
-  const [visitorCount, setVisitorCount] = useState<number>(5240);
+  const [visitorCount, setVisitorCount] = useState<number>(0);
   const [candleCount, setCandleCount] = useState<number>(0);
   const [isCandleLitToday, setIsCandleLitToday] = useState(false);
   const [justLit, setJustLit] = useState(false);
@@ -66,7 +66,7 @@ export default function DynamicCounters() {
     // Helper to get local fallback counts
     const getLocalVisitorCount = () => {
       const saved = localStorage.getItem('chamchamz_visitor_count');
-      return saved ? parseInt(saved, 10) : 5240;
+      return saved ? parseInt(saved, 10) : 0;
     };
 
     const getLocalCandleCount = () => {
@@ -348,7 +348,7 @@ export default function DynamicCounters() {
     }
   }, [isAdminUnlocked, adminTab, isAdminOpen]);
 
-  // 6. Save new admin specifications
+  // 6. Save new admin specifications (Stream Date only)
   const handleSaveAdminSettings = (e: React.FormEvent) => {
     e.preventDefault();
     setAdminError('');
@@ -365,75 +365,13 @@ export default function DynamicCounters() {
       return;
     }
 
-    const parsedVisits = parseInt(adminVisitorInput, 10);
-    if (isNaN(parsedVisits) || parsedVisits < 0) {
-      setAdminError('Số lượng lượt truy cập phải là số lớn hơn hoặc bằng 0!');
-      return;
-    }
-
-    // Call server to set counter globally
-    fetch('/api/visitor/set', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        count: parsedVisits,
-        token: 'chamchamz'
-      })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) {
-          setAdminError(data.error);
-        } else {
-          localStorage.setItem('chamchamz_stream_date', adminDateInput);
-          setLivestreamDateStr(adminDateInput);
-          setVisitorCount(parsedVisits);
-          setAdminSuccess(true);
-          setTimeout(() => {
-            setAdminSuccess(false);
-            setIsAdminOpen(false);
-          }, 1500);
-        }
-      })
-      .catch(err => {
-        console.error('Admin set visitor count error:', err);
-        setAdminError('Lỗi kết nối server!');
-      });
-  };
-
-  // 7. Reset counters to 0
-  const handleResetToZero = () => {
-    const todayStr = new Date().toISOString().split('T')[0];
-    
-    fetch('/api/visitor/set', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        count: 0,
-        token: 'chamchamz'
-      })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) {
-          setAdminError(data.error);
-        } else {
-          localStorage.setItem('chamchamz_stream_date', todayStr);
-          setAdminDateInput(todayStr);
-          setAdminVisitorInput('0');
-          setLivestreamDateStr(todayStr);
-          setVisitorCount(0);
-          setAdminSuccess(true);
-          setTimeout(() => {
-            setAdminSuccess(false);
-            setIsAdminOpen(false);
-          }, 1500);
-        }
-      })
-      .catch(err => {
-        console.error('Reset error:', err);
-        setAdminError('Lỗi kết nối server!');
-      });
+    localStorage.setItem('chamchamz_stream_date', adminDateInput);
+    setLivestreamDateStr(adminDateInput);
+    setAdminSuccess(true);
+    setTimeout(() => {
+      setAdminSuccess(false);
+      setIsAdminOpen(false);
+    }, 1500);
   };
 
   const showStatic = SITE_CONFIG.showStaticIcons !== false;
@@ -725,18 +663,6 @@ export default function DynamicCounters() {
                         <p className="text-[10px] text-slate-400 font-semibold">Mặc định: {DEFAULT_STREAM_DATE}. Thay đổi ngày sẽ cập nhật số ngày kỷ niệm cặp đôi.</p>
                       </div>
 
-                      {/* Visit Baseline configuration */}
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase font-bold text-slate-500 block">Thiết lập số lượt truy cập (Visits Value)</label>
-                        <input
-                          id="input-admin-visitor-count"
-                          type="number"
-                          value={adminVisitorInput}
-                          onChange={(e) => setAdminVisitorInput(e.target.value)}
-                          className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-2 px-3.5 text-xs font-semibold focus:outline-none focus:border-brand-cyan-500 text-slate-800"
-                        />
-                      </div>
-
                       {/* Status messages */}
                       {adminError && (
                         <div className="text-[10px] font-bold text-rose-500 bg-rose-50 p-2 rounded-lg border border-rose-100 flex items-center gap-1">
@@ -753,20 +679,11 @@ export default function DynamicCounters() {
                       )}
 
                       {/* Submit button bar */}
-                      <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
-                        <button
-                          id="btn-admin-reset-counters"
-                          type="button"
-                          onClick={handleResetToZero}
-                          className="py-2.5 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold border-2 border-rose-100 rounded-xl text-xs cursor-pointer focus:outline-none hover:scale-102 transition-transform"
-                        >
-                          Reset về 0 hằng ngày
-                        </button>
-
+                      <div className="pt-4 border-t border-slate-100 flex items-center justify-end">
                         <button
                           id="btn-admin-save-counters"
                           type="submit"
-                          className="flex-1 py-2.5 px-4 bg-slate-900 text-white hover:bg-brand-cyan-500 hover:text-slate-900 border-2 border-slate-900 font-bold rounded-xl text-xs cursor-pointer hover:scale-101 active:scale-97 transition-all flex items-center justify-center gap-1.5"
+                          className="w-full py-2.5 px-4 bg-slate-900 text-white hover:bg-brand-cyan-500 hover:text-slate-900 border-2 border-slate-900 font-bold rounded-xl text-xs cursor-pointer hover:scale-101 active:scale-97 transition-all flex items-center justify-center gap-1.5"
                         >
                           <Check className="w-4 h-4" />
                           <span>Lưu Thay Đổi</span>
