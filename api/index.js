@@ -82,8 +82,24 @@ function getFirestoreDb() {
   if (firebaseDb) return firebaseDb;
   try {
     const configPath = path.join(process.cwd(), 'firebase-applet-config.json');
+    let config = null;
     if (fs.existsSync(configPath)) {
-      const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    } else {
+      // Hardcoded fallback specifically for Vercel Serverless environment where static files are not copied
+      config = {
+        "projectId": "intense-quote-95w43",
+        "appId": "1:258481005612:web:5e9dddf7b6b73d4d98dd89",
+        "apiKey": "AIzaSyApqYnhyUFdsVNWxbtV1PiECC0DAYku5i0",
+        "authDomain": "intense-quote-95w43.firebaseapp.com",
+        "firestoreDatabaseId": "ai-studio-58f91e89-0eda-461d-9604-aaa57592742c",
+        "storageBucket": "intense-quote-95w43.firebasestorage.app",
+        "messagingSenderId": "258481005612"
+      };
+      console.log('API Index: Using bundled Firestore configuration fallback.');
+    }
+
+    if (config) {
       const fbApp = initializeApp({
         projectId: config.projectId,
         appId: config.appId,
@@ -94,8 +110,6 @@ function getFirestoreDb() {
       });
       firebaseDb = getFirestore(fbApp, config.firestoreDatabaseId || "ai-studio-58f91e89-0eda-461d-9604-aaa57592742c");
       console.log('API Index: Successfully connected to Firebase Firestore.');
-    } else {
-      console.warn('API Index: firebase-applet-config.json not found in cwd.');
     }
   } catch (error) {
     console.error('API Index: Failed to initialize Firebase:', error);

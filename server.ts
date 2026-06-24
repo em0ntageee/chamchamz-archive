@@ -89,8 +89,24 @@ function getFirestoreDb(): any {
   if (firebaseDb) return firebaseDb;
   try {
     const configPath = path.join(process.cwd(), 'firebase-applet-config.json');
+    let config: any = null;
     if (fs.existsSync(configPath)) {
-      const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    } else {
+      // Hardcoded fallback specifically for Vercel/Cloud Run environments where static files are not traced/copied
+      config = {
+        projectId: "intense-quote-95w43",
+        appId: "1:258481005612:web:5e9dddf7b6b73d4d98dd89",
+        apiKey: "AIzaSyApqYnhyUFdsVNWxbtV1PiECC0DAYku5i0",
+        authDomain: "intense-quote-95w43.firebaseapp.com",
+        firestoreDatabaseId: "ai-studio-58f91e89-0eda-461d-9604-aaa57592742c",
+        storageBucket: "intense-quote-95w43.firebasestorage.app",
+        messagingSenderId: "258481005612"
+      };
+      console.log('Using bundled Firestore configuration fallback in server.ts.');
+    }
+
+    if (config) {
       const app = initializeApp({
         projectId: config.projectId,
         appId: config.appId,
