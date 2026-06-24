@@ -7,6 +7,8 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore';
 
 const PORT = 3000;
 const DB_FILE = path.join(process.cwd(), 'db_store.json');
@@ -78,6 +80,117 @@ function saveDatabase(store: DBStore) {
   }
 }
 
+// Dynamic Firebase Firestore initialization
+let firebaseDb: any = null;
+
+function getFirestoreDb(): any {
+  if (firebaseDb) return firebaseDb;
+  try {
+    const configPath = path.join(process.cwd(), 'firebase-applet-config.json');
+    if (fs.existsSync(configPath)) {
+      const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      const app = initializeApp({
+        projectId: config.projectId,
+        appId: config.appId,
+        apiKey: config.apiKey,
+        authDomain: config.authDomain,
+        storageBucket: config.storageBucket,
+        messagingSenderId: config.messagingSenderId
+      });
+      firebaseDb = getFirestore(app, config.firestoreDatabaseId || "ai-studio-58f91e89-0eda-461d-9604-aaa57592742c");
+      console.log('Successfully connected to Firebase Firestore.');
+    }
+  } catch (error) {
+    console.error('Failed to initialize Firebase in server:', error);
+  }
+  return firebaseDb;
+}
+
+async function getFirestoreStats(): Promise<{ visitorCount: number; candleCount: number }> {
+  const fdb = getFirestoreDb();
+  if (!fdb) {
+    const local = loadDatabase();
+    return { visitorCount: local.visitorCount, candleCount: local.candleCount };
+  }
+
+  try {
+    const docRef = doc(fdb, 'counters', 'stats');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        visitorCount: data && typeof data.visitorCount === 'number' ? data.visitorCount : 1580,
+        candleCount: data && typeof data.candleCount === 'number' ? data.candleCount : 0
+      };
+    } else {
+      const local = loadDatabase();
+      const visitorBaseline = Math.max(local.visitorCount || 0, 1580);
+      const candleBaseline = local.candleCount || 0;
+      await setDoc(docRef, {
+        visitorCount: visitorBaseline,
+        candleCount: candleBaseline
+      });
+      return { visitorCount: visitorBaseline, candleCount: candleBaseline };
+    }
+  } catch (error) {
+    console.error('Error fetching stats from Firestore:', error);
+    const local = loadDatabase();
+    return { visitorCount: local.visitorCount, candleCount: local.candleCount };
+  }
+}
+
+async function incrementFirestoreVisitor(): Promise<number> {
+  const fdb = getFirestoreDb();
+  if (!fdb) {
+    const local = loadDatabase();
+    local.visitorCount += 1;
+    saveDatabase(local);
+    return local.visitorCount;
+  }
+
+  try {
+    const docRef = doc(fdb, 'counters', 'stats');
+    const stats = await getFirestoreStats();
+    const newVisitorCount = stats.visitorCount + 1;
+    await updateDoc(docRef, {
+      visitorCount: increment(1)
+    });
+    return newVisitorCount;
+  } catch (error) {
+    console.error('Error incrementing visitor count in Firestore:', error);
+    const local = loadDatabase();
+    local.visitorCount += 1;
+    saveDatabase(local);
+    return local.visitorCount;
+  }
+}
+
+async function incrementFirestoreCandle(): Promise<number> {
+  const fdb = getFirestoreDb();
+  if (!fdb) {
+    const local = loadDatabase();
+    local.candleCount += 1;
+    saveDatabase(local);
+    return local.candleCount;
+  }
+
+  try {
+    const docRef = doc(fdb, 'counters', 'stats');
+    const stats = await getFirestoreStats();
+    const newCandleCount = stats.candleCount + 1;
+    await updateDoc(docRef, {
+      candleCount: increment(1)
+    });
+    return newCandleCount;
+  } catch (error) {
+    console.error('Error incrementing candle count in Firestore:', error);
+    const local = loadDatabase();
+    local.candleCount += 1;
+    saveDatabase(local);
+    return local.candleCount;
+  }
+}
+
 async function startServer() {
   const app = express();
   app.use(express.json());
@@ -86,25 +199,20 @@ async function startServer() {
   let db = loadDatabase();
 
   // API 1: Get global stats
-  app.get('/api/stats', (req, res) => {
-    db = loadDatabase();
-    res.json({
-      visitorCount: db.visitorCount,
-      candleCount: db.candleCount
-    });
+  app.get('/api/stats', async (req, res) => {
+    const stats = await getFirestoreStats();
+    res.json(stats);
   });
 
   // API 2: Increment website visitor count
-  app.post('/api/visitor/increment', (req, res) => {
-    db = loadDatabase();
-    db.visitorCount += 1;
-    saveDatabase(db);
-    res.json({ visitorCount: db.visitorCount });
+  app.post('/api/visitor/increment', async (req, res) => {
+    const newCount = await incrementFirestoreVisitor();
+    res.json({ visitorCount: newCount });
   });
 
   // API 3: Set website visitor count directly (for Admin panel reset/adjustment)
-  app.post('/api/visitor/set', (req, res) => {
-    const { count, streamDate, token } = req.body;
+  app.post('/api/visitor/set', async (req, res) => {
+    const { count, token } = req.body;
     
     // basic password verify
     if (token !== 'chamchamz') {
@@ -116,20 +224,29 @@ async function startServer() {
       return res.status(400).json({ error: 'Số lượt truy cập không hợp lệ!' });
     }
 
+    const fdb = getFirestoreDb();
+    if (fdb) {
+      try {
+        const docRef = doc(fdb, 'counters', 'stats');
+        await setDoc(docRef, { visitorCount: parsed }, { merge: true });
+      } catch (error) {
+        console.error('Error setting visitor count in Firestore:', error);
+      }
+    }
+
     db = loadDatabase();
     db.visitorCount = parsed;
     saveDatabase(db);
 
-    res.json({ success: true, visitorCount: db.visitorCount });
+    res.json({ success: true, visitorCount: parsed });
   });
 
   // API 4: Increment candle count
-  app.post('/api/candle/increment', (req, res) => {
-    db = loadDatabase();
-    db.candleCount += 1;
-    saveDatabase(db);
-    res.json({ candleCount: db.candleCount });
+  app.post('/api/candle/increment', async (req, res) => {
+    const newCount = await incrementFirestoreCandle();
+    res.json({ candleCount: newCount });
   });
+
 
   // API 5: Get all comments (sorted newest first)
   app.get('/api/comments', (req, res) => {

@@ -136,14 +136,6 @@ export default function Footer({ onTabSwitch }: FooterProps) {
             <div className="flex gap-4 items-center">
               <span className="hover:text-slate-400 cursor-default">{SITE_CONFIG.footerPolicyLabel || "Chính Sách Nội Bộ"}</span>
               <span className="hover:text-slate-400 cursor-default">{SITE_CONFIG.footerTermsLabel || "Điều Khoản Fan"}</span>
-              <span className="text-slate-750">|</span>
-              <button 
-                onClick={() => window.dispatchEvent(new Event('open-admin'))}
-                className="hover:text-slate-300 font-bold text-slate-450 flex items-center gap-1 cursor-pointer transition-colors active:scale-95"
-                title="Mở Trình Quản Trị Hệ Thống"
-              >
-                ⚙️ Admin
-              </button>
             </div>
           </div>
         </div>
