@@ -16,9 +16,10 @@ export default function DynamicCounters() {
 
   // VISITOR COUNTER and CANDLE MANIFEST setups
   const [visitorCount, setVisitorCount] = useState<number>(5240);
-  const [candleCount, setCandleCount] = useState<number>(1314);
+  const [candleCount, setCandleCount] = useState<number>(0);
   const [isCandleLitToday, setIsCandleLitToday] = useState(false);
   const [justLit, setJustLit] = useState(false);
+  const [secretClickCount, setSecretClickCount] = useState(0);
 
   // Admin Config Panel Visibility and Verification
   const [isAdminOpen, setIsAdminOpen] = useState(false);
@@ -62,33 +63,85 @@ export default function DynamicCounters() {
   useEffect(() => {
     let active = true;
 
+    // Helper to get local fallback counts
+    const getLocalVisitorCount = () => {
+      const saved = localStorage.getItem('chamchamz_visitor_count');
+      return saved ? parseInt(saved, 10) : 5240;
+    };
+
+    const getLocalCandleCount = () => {
+      const saved = localStorage.getItem('chamchamz_candle_count');
+      return saved ? parseInt(saved, 10) : 0;
+    };
+
+    const saveLocalVisitorCount = (val: number) => {
+      localStorage.setItem('chamchamz_visitor_count', String(val));
+    };
+
+    const saveLocalCandleCount = (val: number) => {
+      localStorage.setItem('chamchamz_candle_count', String(val));
+    };
+
     // Increment visitor count globally on mount
     fetch('/api/visitor/increment', { method: 'POST' })
-      .then(res => res.json())
-      .then(data => {
-        if (active && typeof data.visitorCount === 'number') {
-          setVisitorCount(data.visitorCount);
-          setAdminVisitorInput(String(data.visitorCount));
+      .then(async res => {
+        const text = await res.text();
+        try {
+          const data = JSON.parse(text);
+          if (active && typeof data.visitorCount === 'number') {
+            setVisitorCount(data.visitorCount);
+            setAdminVisitorInput(String(data.visitorCount));
+            saveLocalVisitorCount(data.visitorCount);
+          }
+        } catch (e) {
+          if (active) {
+            const fallbackVal = getLocalVisitorCount() + 1;
+            setVisitorCount(fallbackVal);
+            setAdminVisitorInput(String(fallbackVal));
+            saveLocalVisitorCount(fallbackVal);
+          }
         }
       })
-      .catch(err => console.error('Error incrementing visitor count:', err));
+      .catch(err => {
+        if (active) {
+          const fallbackVal = getLocalVisitorCount() + 1;
+          setVisitorCount(fallbackVal);
+          setAdminVisitorInput(String(fallbackVal));
+          saveLocalVisitorCount(fallbackVal);
+        }
+      });
 
     // Fetch initial stats
     const fetchStats = () => {
       fetch('/api/stats')
-        .then(res => res.json())
-        .then(data => {
-          if (active) {
-            if (typeof data.visitorCount === 'number') {
-              setVisitorCount(data.visitorCount);
-              setAdminVisitorInput(String(data.visitorCount));
+        .then(async res => {
+          const text = await res.text();
+          try {
+            const data = JSON.parse(text);
+            if (active) {
+              if (typeof data.visitorCount === 'number') {
+                setVisitorCount(data.visitorCount);
+                setAdminVisitorInput(String(data.visitorCount));
+                saveLocalVisitorCount(data.visitorCount);
+              }
+              if (typeof data.candleCount === 'number') {
+                setCandleCount(data.candleCount);
+                saveLocalCandleCount(data.candleCount);
+              }
             }
-            if (typeof data.candleCount === 'number') {
-              setCandleCount(data.candleCount);
+          } catch (e) {
+            if (active) {
+              setVisitorCount(getLocalVisitorCount());
+              setCandleCount(getLocalCandleCount());
             }
           }
         })
-        .catch(err => console.error('Error fetching global stats:', err));
+        .catch(err => {
+          if (active) {
+            setVisitorCount(getLocalVisitorCount());
+            setCandleCount(getLocalCandleCount());
+          }
+        });
     };
 
     fetchStats();
@@ -111,18 +164,45 @@ export default function DynamicCounters() {
     }
   }, []);
 
+  // Listen to global open-admin event (e.g. from footer)
+  useEffect(() => {
+    const handleOpenAdmin = () => {
+      setIsAdminOpen(true);
+    };
+    window.addEventListener('open-admin', handleOpenAdmin);
+    return () => {
+      window.removeEventListener('open-admin', handleOpenAdmin);
+    };
+  }, []);
+
   // 4. Handle Candle lighting interaction
   const handleLightCandle = () => {
     if (isCandleLitToday) return;
 
     fetch('/api/candle/increment', { method: 'POST' })
-      .then(res => res.json())
-      .then(data => {
-        if (typeof data.candleCount === 'number') {
-          setCandleCount(data.candleCount);
+      .then(async res => {
+        const text = await res.text();
+        try {
+          const data = JSON.parse(text);
+          if (typeof data.candleCount === 'number') {
+            setCandleCount(data.candleCount);
+            localStorage.setItem('chamchamz_candle_count', String(data.candleCount));
+          }
+        } catch (e) {
+          const saved = localStorage.getItem('chamchamz_candle_count');
+          const current = saved ? parseInt(saved, 10) : 0;
+          const updated = current + 1;
+          setCandleCount(updated);
+          localStorage.setItem('chamchamz_candle_count', String(updated));
         }
       })
-      .catch(err => console.error('Failed to light candle:', err));
+      .catch(err => {
+        const saved = localStorage.getItem('chamchamz_candle_count');
+        const current = saved ? parseInt(saved, 10) : 0;
+        const updated = current + 1;
+        setCandleCount(updated);
+        localStorage.setItem('chamchamz_candle_count', String(updated));
+      });
 
     const todayStr = new Date().toISOString().split('T')[0];
     localStorage.setItem('chamchamz_candle_lit_date', todayStr);
@@ -431,7 +511,20 @@ export default function DynamicCounters() {
           <div className="bg-amber-50/60 border-2 border-slate-800 rounded-2xl p-4 md:p-5 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4">
             
             <div className="flex-1 text-center md:text-left">
-              <h4 className="text-xs md:text-sm font-extrabold text-slate-900 tracking-tight flex items-center justify-center md:justify-start gap-1.5">
+              <h4 
+                onClick={() => {
+                  setSecretClickCount(prev => {
+                    const next = prev + 1;
+                    if (next >= 5) {
+                      setIsAdminOpen(true);
+                      return 0;
+                    }
+                    return next;
+                  });
+                }}
+                title="Secret: Nhấp 5 lần để quản trị"
+                className="text-xs md:text-sm font-extrabold text-slate-900 tracking-tight flex items-center justify-center md:justify-start gap-1.5 cursor-pointer select-none active:scale-[0.99] transition-transform"
+              >
                 <Sparkles className="w-4 h-4 text-amber-500 fill-amber-500 animate-pulse" />
                 <span>Cùng nhau manifest cho Chamchamz bình an, may mắn, hạnh phúc và luôn ở cạnh nhau: 🕯️</span>
               </h4>
@@ -491,13 +584,6 @@ export default function DynamicCounters() {
               <AlertCircle className="w-3.5 h-3.5 text-[#1e293b]/50" />
               <span>{countersData.counters_bottom_note}</span>
             </div>
-            
-            <button
-              onClick={() => setIsAdminOpen(true)}
-              className="text-[10px] font-bold text-slate-400 hover:text-slate-800 border border-slate-200 hover:border-slate-400 bg-white hover:bg-slate-50 px-2.5 py-1 rounded-xl cursor-pointer transition-colors"
-            >
-              ⚙️ Admin Panel
-            </button>
           </div>
         )}
 

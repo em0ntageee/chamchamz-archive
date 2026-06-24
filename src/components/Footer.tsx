@@ -133,9 +133,17 @@ export default function Footer({ onTabSwitch }: FooterProps) {
         <div className="bg-slate-950 py-6 px-4 border-t border-slate-800 text-center text-[10px] text-slate-500 font-mono">
           <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <p>{SITE_CONFIG.footerCopyrightText || `© ${currentYear} Chamchamz Archive. Bản quyền được bảo vệ an ninh tuyệt hảo.`}</p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
               <span className="hover:text-slate-400 cursor-default">{SITE_CONFIG.footerPolicyLabel || "Chính Sách Nội Bộ"}</span>
               <span className="hover:text-slate-400 cursor-default">{SITE_CONFIG.footerTermsLabel || "Điều Khoản Fan"}</span>
+              <span className="text-slate-750">|</span>
+              <button 
+                onClick={() => window.dispatchEvent(new Event('open-admin'))}
+                className="hover:text-slate-300 font-bold text-slate-450 flex items-center gap-1 cursor-pointer transition-colors active:scale-95"
+                title="Mở Trình Quản Trị Hệ Thống"
+              >
+                ⚙️ Admin
+              </button>
             </div>
           </div>
         </div>

@@ -40,7 +40,7 @@ function loadDatabase(): DBStore {
   // Sweet seed comments in Vietnamese
   const defaultStore: DBStore = {
     visitorCount: 5240,
-    candleCount: 1314,
+    candleCount: 0,
     comments: [
       {
         id: 'seed-1',

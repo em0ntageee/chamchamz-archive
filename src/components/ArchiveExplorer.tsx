@@ -7,7 +7,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Lock, Unlock, Search, Tag, Play, Pause, Calendar, 
-  User, Send, Volume2, Sparkles, AlertCircle, Heart, X, Smile, Star 
+  User, Send, Volume2, Sparkles, AlertCircle, Heart, X, Smile, Star,
+  Mail, AtSign, Globe
 } from 'lucide-react';
 import { HintItem, GalleryItem, RecItem, FanMessage } from '../types';
 import { HINTS_DATA, GALLERY_DATA, RECS_DATA, INITIAL_MESSAGES, SITE_CONFIG } from '../data';
@@ -772,38 +773,38 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
             >
               <div className="bg-white border-2 border-slate-900 p-8 rounded-2xl shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] font-sans space-y-4">
                 <div className="text-sm font-semibold text-slate-800 space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-dashed border-slate-200 pb-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-dashed border-slate-200 pb-3 gap-2">
                     <span className="text-slate-500 font-bold">Email:</span>
                     <a 
                       id="contact-link-email" 
                       href={`mailto:${SITE_CONFIG.contactEmail || "archive@chamchamz.fan"}`} 
-                      className="text-brand-teal-600 hover:text-brand-teal-700 hover:underline font-mono"
+                      className="text-brand-teal-600 hover:text-brand-teal-700 hover:underline font-mono text-xs font-bold"
                     >
                       {SITE_CONFIG.contactEmail || "archive@chamchamz.fan"}
                     </a>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-dashed border-slate-200 pb-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-dashed border-slate-200 pb-3 gap-2">
                     <span className="text-slate-500 font-bold">Facebook:</span>
                     <a 
                       id="contact-link-facebook" 
                       href={SITE_CONFIG.contactFacebook || "https://facebook.com/chamchamz"} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-brand-teal-600 hover:text-brand-teal-700 hover:underline font-mono"
+                      className="text-brand-teal-600 hover:text-brand-teal-700 hover:underline font-mono text-xs font-bold"
                     >
                       {SITE_CONFIG.contactFacebook || "https://facebook.com/chamchamz"}
                     </a>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-1 gap-2">
                     <span className="text-slate-500 font-bold">Threads:</span>
                     <a 
                       id="contact-link-threads" 
                       href={SITE_CONFIG.contactThreads || "https://threads.net/@chamchamz"} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-brand-teal-600 hover:text-brand-teal-700 hover:underline font-mono"
+                      className="text-brand-teal-600 hover:text-brand-teal-700 hover:underline font-mono text-xs font-bold"
                     >
                       {SITE_CONFIG.contactThreads || "https://threads.net/@chamchamz"}
                     </a>
