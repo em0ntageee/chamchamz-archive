@@ -9,20 +9,53 @@ import { ShieldAlert, BookOpen, Quote, Heart, CheckCircle2, LockKeyhole } from '
 import { SITE_CONFIG } from '../data';
 
 export default function About() {
-  const [clickCount, setClickCount] = useState(() => {
-    const savedClicks = localStorage.getItem('chamchamz_pledge_clicks_v2');
-    return savedClicks ? parseInt(savedClicks, 10) : 0;
-  });
+  const [pledgesCount, setPledgesCount] = useState(520);
   const [justClicked, setJustClicked] = useState(false);
 
-  const pledgesCount = 520 + clickCount;
+  // Load pledge count from server (synced globally)
+  const fetchPledges = () => {
+    fetch('/api/stats')
+      .then(res => res.json())
+      .then(data => {
+        if (data && typeof data.pledgeCount === 'number') {
+          setPledgesCount(data.pledgeCount);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching pledge count:', err);
+        // Local fallback: count clicks locally
+        const savedClicks = localStorage.getItem('chamchamz_pledge_clicks_v2');
+        const clickCount = savedClicks ? parseInt(savedClicks, 10) : 0;
+        setPledgesCount(520 + clickCount);
+      });
+  };
+
+  useEffect(() => {
+    fetchPledges();
+    // Poll the pledge count every 15 seconds to keep it updated for everyone in real-time
+    const interval = setInterval(fetchPledges, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handlePledge = () => {
-    const nextClicks = clickCount + 1;
-    setClickCount(nextClicks);
-    localStorage.setItem('chamchamz_pledge_clicks_v2', String(nextClicks));
     setJustClicked(true);
     setTimeout(() => setJustClicked(false), 800);
+
+    fetch('/api/pledge/increment', { method: 'POST' })
+      .then(res => res.json())
+      .then(data => {
+        if (data && typeof data.pledgeCount === 'number') {
+          setPledgesCount(data.pledgeCount);
+        }
+      })
+      .catch(err => {
+        console.error('Error incrementing pledge count:', err);
+        // Fallback: save to localStorage click count
+        const savedClicks = localStorage.getItem('chamchamz_pledge_clicks_v2');
+        const clickCount = (savedClicks ? parseInt(savedClicks, 10) : 0) + 1;
+        localStorage.setItem('chamchamz_pledge_clicks_v2', String(clickCount));
+        setPledgesCount(520 + clickCount);
+      });
   };
 
   return (

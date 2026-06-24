@@ -2,7 +2,7 @@
   "entities": {
     "CounterStats": {
       "title": "CounterStats",
-      "description": "Statistics for visitor and lit candle counters",
+      "description": "Statistics for visitor, lit candle counters, and secret pledges",
       "type": "object",
       "properties": {
         "visitorCount": {
@@ -10,11 +10,44 @@
         },
         "candleCount": {
           "type": "integer"
+        },
+        "pledgeCount": {
+          "type": "integer"
         }
       },
       "required": [
         "visitorCount",
-        "candleCount"
+        "candleCount",
+        "pledgeCount"
+      ]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Letters of love sent to Chamchamz, James, or Juhoon",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "from",
+        "to",
+        "text",
+        "timestamp"
       ]
     }
   },
@@ -23,6 +56,10 @@
     "/counters/stats": {
       "schema": "CounterStats",
       "description": "The unique document storing the synchronized global counts"
+    },
+    "/comments/{commentId}": {
+      "schema": "Comment",
+      "description": "Letters and comments stored in Firestore"
     }
   }
 }

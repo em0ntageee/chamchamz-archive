@@ -9,6 +9,7 @@ import DynamicCounters from './components/DynamicCounters';
 import BackgroundMusic from './components/BackgroundMusic';
 import About from './components/About';
 import ArchiveExplorer from './components/ArchiveExplorer';
+import CommentsSection from './components/CommentsSection';
 import Footer from './components/Footer';
 import BlueprintDrawer from './components/BlueprintDrawer';
 import JumpingIcons from './components/JumpingIcons';
@@ -131,6 +132,9 @@ export default function App() {
         {(SITE_CONFIG.showHints || SITE_CONFIG.showGallery || SITE_CONFIG.showRecs || SITE_CONFIG.showContact) && (
           <ArchiveExplorer initialTab={explorerTab} />
         )}
+
+        {/* Section 2.5: Letters Section (Hòm thư yêu thương / Viết thư) */}
+        <CommentsSection />
 
         {/* Section 3: About (Pledge & Bio) */}
         {SITE_CONFIG.showAbout && <About />}
