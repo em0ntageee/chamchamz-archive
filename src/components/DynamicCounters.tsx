@@ -150,26 +150,55 @@ export default function DynamicCounters() {
   const fetchAdminComments = () => {
     setIsCommentsLoading(true);
     fetch('/api/comments')
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setAdminComments(data);
+      .then(async res => {
+        const text = await res.text();
+        try {
+          const data = JSON.parse(text);
+          if (Array.isArray(data)) {
+            setAdminComments(data);
+            localStorage.setItem('chamchamz_local_comments', JSON.stringify(data));
+          } else {
+            throw new Error('Not an array');
+          }
+        } catch (e) {
+          const saved = localStorage.getItem('chamchamz_local_comments');
+          if (saved) setAdminComments(JSON.parse(saved));
         }
       })
-      .catch(err => console.error('Error fetching admin comments:', err))
+      .catch(err => {
+        console.error('Error fetching admin comments:', err);
+        const saved = localStorage.getItem('chamchamz_local_comments');
+        if (saved) setAdminComments(JSON.parse(saved));
+      })
       .finally(() => setIsCommentsLoading(false));
 
     fetch('/api/comments/status')
-      .then(res => res.json())
-      .then(data => {
-        if (data && typeof data.commentsEnabled === 'boolean') {
-          setCommentsEnabled(data.commentsEnabled);
+      .then(async res => {
+        const text = await res.text();
+        try {
+          const data = JSON.parse(text);
+          if (data && typeof data.commentsEnabled === 'boolean') {
+            setCommentsEnabled(data.commentsEnabled);
+            localStorage.setItem('chamchamz_comments_enabled', String(data.commentsEnabled));
+          }
+        } catch (e) {
+          const localEnabled = localStorage.getItem('chamchamz_comments_enabled') !== 'false';
+          setCommentsEnabled(localEnabled);
         }
       })
-      .catch(err => console.error('Error fetching admin comments status:', err));
+      .catch(err => {
+        console.error('Error fetching admin comments status:', err);
+        const localEnabled = localStorage.getItem('chamchamz_comments_enabled') !== 'false';
+        setCommentsEnabled(localEnabled);
+      });
   };
 
   const handleToggleComments = (newValue: boolean) => {
+    // Save locally first immediately for static hosts
+    setCommentsEnabled(newValue);
+    localStorage.setItem('chamchamz_comments_enabled', String(newValue));
+    window.dispatchEvent(new Event('storage')); // notify other sections
+
     fetch('/api/comments/status', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -178,18 +207,19 @@ export default function DynamicCounters() {
         token: 'chamchamz'
       })
     })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setCommentsEnabled(newValue);
-          window.dispatchEvent(new Event('storage')); // notify other sections
-        } else {
-          alert(data.error || 'Cập nhật trạng thái thất bại!');
+      .then(async res => {
+        const text = await res.text();
+        try {
+          const data = JSON.parse(text);
+          if (!data.success) {
+            console.warn(data.error || 'Cập nhật trạng thái trên server thất bại!');
+          }
+        } catch (e) {
+          // Handled locally
         }
       })
       .catch(err => {
-        console.error('Error toggling comments status:', err);
-        alert('Lỗi kết nối server!');
+        console.error('Error toggling comments status on server:', err);
       });
   };
 
@@ -197,21 +227,38 @@ export default function DynamicCounters() {
     if (!window.confirm('Cậu có chắc chắn muốn xóa lời yêu thương này không? Action này không thể hoàn tác!')) {
       return;
     }
+
+    // Delete locally first immediately
+    setAdminComments(prev => prev.filter(c => c.id !== id));
+    try {
+      const saved = localStorage.getItem('chamchamz_local_comments');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          localStorage.setItem('chamchamz_local_comments', JSON.stringify(parsed.filter((c: any) => c.id !== id)));
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    window.dispatchEvent(new Event('storage')); // notify other sections
+
     fetch(`/api/comments/${id}?token=chamchamz`, {
       method: 'DELETE'
     })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setAdminComments(prev => prev.filter(c => c.id !== id));
-          window.dispatchEvent(new Event('storage')); // notify other sections
-        } else {
-          alert(data.error || 'Xóa thất bại!');
+      .then(async res => {
+        const text = await res.text();
+        try {
+          const data = JSON.parse(text);
+          if (!data.success) {
+            console.warn(data.error || 'Xóa trên server thất bại!');
+          }
+        } catch (e) {
+          // Handled locally
         }
       })
       .catch(err => {
-        console.error('Error deleting comment:', err);
-        alert('Lỗi kết nối server!');
+        console.error('Error deleting comment on server:', err);
       });
   };
 
