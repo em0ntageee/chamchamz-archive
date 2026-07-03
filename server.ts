@@ -19,6 +19,7 @@ interface Comment {
   to: 'James' | 'Juhoon' | 'Chamchamz';
   text: string;
   timestamp: string;
+  sticker?: string;
 }
 
 interface DBStore {
@@ -303,7 +304,8 @@ async function addFirestoreComment(comment: Comment): Promise<boolean> {
       from: comment.from,
       to: comment.to,
       text: comment.text,
-      timestamp: comment.timestamp
+      timestamp: comment.timestamp,
+      sticker: comment.sticker || '✨'
     });
     return true;
   } catch (error) {
@@ -462,7 +464,7 @@ async function startServer() {
       return res.status(403).json({ error: 'Hệ thống gửi thư hiện đang tạm đóng!' });
     }
 
-    let { from, to, text } = req.body;
+    let { from, to, text, sticker } = req.body;
 
     if (!from || !text) {
       return res.status(400).json({ error: 'Vui lòng nhập tên và lời nhắn!' });
@@ -476,13 +478,15 @@ async function startServer() {
     // Trim and clean inputs
     const cleanFrom = String(from).trim().substring(0, 50);
     const cleanText = String(text).trim().substring(0, 500);
+    const cleanSticker = sticker ? String(sticker).trim().substring(0, 10) : '✨';
 
     const newComment: Comment = {
       id: 'comment-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
       from: cleanFrom,
       to,
       text: cleanText,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      sticker: cleanSticker
     };
 
     if (fdb) {

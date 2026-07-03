@@ -10,8 +10,8 @@ import {
   User, Send, Volume2, Sparkles, AlertCircle, Heart, X, Smile, Star,
   Mail, AtSign, Globe
 } from 'lucide-react';
-import { HintItem, GalleryItem, RecItem, FanMessage } from '../types';
-import { HINTS_DATA, GALLERY_DATA, RECS_DATA, INITIAL_MESSAGES, SITE_CONFIG } from '../data';
+import { HintItem, GalleryItem, RecItem } from '../types';
+import { HINTS_DATA, GALLERY_DATA, RECS_DATA, SITE_CONFIG } from '../data';
 import contactData from '../data/contact.json';
 import Markdown from 'react-markdown';
 
@@ -55,38 +55,10 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
     setRecsPage(1);
   }, [activeRecType]);
 
-  // States for Contact / Fan Wall
-  const [messages, setMessages] = useState<FanMessage[]>([]);
-  const [authorName, setAuthorName] = useState('');
-  const [messageText, setMessageText] = useState('');
-  const [selectedSticker, setSelectedSticker] = useState('✨');
-  const [formError, setFormError] = useState('');
-  const [formSuccess, setFormSuccess] = useState(false);
-
   // Load active tab on prop changes
   useEffect(() => {
     setActiveTab(initialTab);
   }, [initialTab]);
-
-  // Load fan letters from localStorage + initial seed data
-  useEffect(() => {
-    const saved = localStorage.getItem('chamchamz_fan_letters');
-    if (saved) {
-      try {
-        setMessages(JSON.parse(saved));
-      } catch (e) {
-        setMessages(INITIAL_MESSAGES);
-      }
-    } else {
-      setMessages(INITIAL_MESSAGES);
-    }
-  }, []);
-
-  // Save fan letters to localStorage
-  const saveLetters = (newLetters: FanMessage[]) => {
-    setMessages(newLetters);
-    localStorage.setItem('chamchamz_fan_letters', JSON.stringify(newLetters));
-  };
 
   // Switch tabs & scroll smoothly
   const handleTabSwitch = (tabId: string) => {
@@ -106,41 +78,6 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
     setTimeout(() => {
       setUnlockMessageId(null);
     }, 3000);
-  };
-
-  // Handle fan letter submission
-  const handleSubmitMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!authorName.trim()) {
-      setFormError('Vui lòng nhập biệt danh cưng xỉu của bạn!');
-      return;
-    }
-    if (!messageText.trim() || messageText.length < 5) {
-      setFormError('Lá thư phải chứa ít nhất 5 ký tự để gieo tình yêu thương nhé!');
-      return;
-    }
-
-    const newMessage: FanMessage = {
-      id: `msg-${Date.now()}`,
-      authorName: authorName.trim(),
-      createdAt: new Date().toLocaleString('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-      sticker: selectedSticker,
-      messageText: messageText.trim()
-    };
-
-    const updated = [newMessage, ...messages];
-    saveLetters(updated);
-    setAuthorName('');
-    setMessageText('');
-    setFormError('');
-    setFormSuccess(true);
-    setTimeout(() => setFormSuccess(false), 3000);
   };
 
   // Helper to parse DD/MM/YYYY date strings cleanly for sorting
@@ -769,8 +706,9 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.2 }}
-              className="max-w-xl mx-auto py-8"
+              className="max-w-xl mx-auto py-8 space-y-8"
             >
+              {/* Contact Information block */}
               <div className="bg-white border-2 border-slate-900 p-8 rounded-2xl shadow-[4px_4px_0px_0px_rgba(15,23,42,1)] font-sans space-y-4">
                 <div className="text-sm font-semibold text-slate-800 space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-dashed border-slate-200 pb-3 gap-2">
@@ -811,6 +749,8 @@ export default function ArchiveExplorer({ initialTab = 'hints' }: ArchiveExplore
                   </div>
                 </div>
               </div>
+
+
             </motion.div>
           )}
 

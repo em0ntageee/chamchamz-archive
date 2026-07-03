@@ -9,6 +9,7 @@ import DynamicCounters from './components/DynamicCounters';
 import BackgroundMusic from './components/BackgroundMusic';
 import About from './components/About';
 import ArchiveExplorer from './components/ArchiveExplorer';
+import ChamchamzMailbox from './components/ChamchamzMailbox';
 import Footer from './components/Footer';
 import BlueprintDrawer from './components/BlueprintDrawer';
 import JumpingIcons from './components/JumpingIcons';
@@ -17,6 +18,14 @@ import { SITE_CONFIG } from './data';
 
 export default function App() {
   const [explorerTab, setExplorerTab] = useState('hints');
+  const [isAdmin, setIsAdmin] = useState(() => {
+    return localStorage.getItem('chamchamz_is_admin') === 'true';
+  });
+
+  const handleSetIsAdmin = (val: boolean) => {
+    setIsAdmin(val);
+    localStorage.setItem('chamchamz_is_admin', String(val));
+  };
 
   // Interactive scroll and tab selection trigger
   const handleExploreTabSelect = (tabId: string) => {
@@ -132,13 +141,22 @@ export default function App() {
           <ArchiveExplorer initialTab={explorerTab} />
         )}
 
+        {/* Section 2.5: Chamchamz Mailbox (placed above About section) */}
+        <ChamchamzMailbox isAdmin={isAdmin} />
+
         {/* Section 3: About (Pledge & Bio) */}
         {SITE_CONFIG.showAbout && <About />}
 
       </main>
 
       {/* Section 4: Footer */}
-      {SITE_CONFIG.showFooter !== false && <Footer onTabSwitch={handleExploreTabSelect} />}
+      {SITE_CONFIG.showFooter !== false && (
+        <Footer 
+          onTabSwitch={handleExploreTabSelect} 
+          isAdmin={isAdmin} 
+          setIsAdmin={handleSetIsAdmin} 
+        />
+      )}
 
       {/* 🎵 FLOATING BACK GROUND MUSIC WIDGET */}
       {SITE_CONFIG.showMusic && <BackgroundMusic />}

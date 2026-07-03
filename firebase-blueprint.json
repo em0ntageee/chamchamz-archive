@@ -40,6 +40,9 @@
         },
         "timestamp": {
           "type": "string"
+        },
+        "sticker": {
+          "type": "string"
         }
       },
       "required": [

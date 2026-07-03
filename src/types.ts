@@ -51,4 +51,5 @@ export interface FanMessage {
   createdAt: string;
   sticker: string;
   messageText: string;
+  recipient?: 'Juhoon' | 'James' | 'Chamchamz';
 }

@@ -32,11 +32,14 @@ export default function DynamicCounters() {
     }
   }, [livestreamDateStr]);
 
-  // 2. Check if candle has been lit
+  // 2. Check if candle has been lit today
   useEffect(() => {
-    const savedState = localStorage.getItem('chamchamz_candle_lit_manifest');
-    if (savedState === 'true') {
+    const todayStr = new Date().toDateString();
+    const savedDate = localStorage.getItem('chamchamz_candle_lit_date');
+    if (savedDate === todayStr) {
       setIsCandleLitToday(true);
+    } else {
+      setIsCandleLitToday(false);
     }
   }, []);
 
@@ -50,6 +53,8 @@ export default function DynamicCounters() {
         // Fail-silent, we do not block client feedback
       });
 
+    const todayStr = new Date().toDateString();
+    localStorage.setItem('chamchamz_candle_lit_date', todayStr);
     localStorage.setItem('chamchamz_candle_lit_manifest', 'true');
     setIsCandleLitToday(true);
     setJustLit(true);
