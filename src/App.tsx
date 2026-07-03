@@ -17,14 +17,6 @@ import { SITE_CONFIG } from './data';
 
 export default function App() {
   const [explorerTab, setExplorerTab] = useState('hints');
-  const [isAdmin, setIsAdmin] = useState(() => {
-    return localStorage.getItem('chamchamz_is_admin') === 'true';
-  });
-
-  const handleSetIsAdmin = (val: boolean) => {
-    setIsAdmin(val);
-    localStorage.setItem('chamchamz_is_admin', String(val));
-  };
 
   // Interactive scroll and tab selection trigger
   const handleExploreTabSelect = (tabId: string) => {
@@ -149,8 +141,6 @@ export default function App() {
       {SITE_CONFIG.showFooter !== false && (
         <Footer 
           onTabSwitch={handleExploreTabSelect} 
-          isAdmin={isAdmin} 
-          setIsAdmin={handleSetIsAdmin} 
         />
       )}
 

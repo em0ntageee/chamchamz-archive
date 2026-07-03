@@ -10,39 +10,11 @@ import { SITE_CONFIG } from '../data';
 
 interface FooterProps {
   onTabSwitch: (tabId: string) => void;
-  isAdmin: boolean;
-  setIsAdmin: (val: boolean) => void;
 }
 
-export default function Footer({ onTabSwitch, isAdmin, setIsAdmin }: FooterProps) {
+export default function Footer({ onTabSwitch }: FooterProps) {
   const currentYear = new Date().getFullYear();
   const showStatic = SITE_CONFIG.showStaticIcons !== false;
-
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [passwordInput, setPasswordInput] = useState('');
-  const [loginError, setLoginError] = useState('');
-
-  const handleAdminAction = () => {
-    if (isAdmin) {
-      if (window.confirm('Bạn có chắc chắn muốn đăng xuất khỏi quyền quản trị?')) {
-        setIsAdmin(false);
-      }
-    } else {
-      setPasswordInput('');
-      setLoginError('');
-      setShowLoginModal(true);
-    }
-  };
-
-  const handleLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passwordInput.trim() === 'chamchamz') {
-      setIsAdmin(true);
-      setShowLoginModal(false);
-    } else {
-      setLoginError('Sai mật khẩu quản trị rồi bạn ơi! 😢');
-    }
-  };
 
   return (
     <footer id="footer-section" className="bg-slate-900 text-slate-300 mt-16 rounded-t-[2.5rem] border-t-4 border-slate-950 overflow-hidden">
@@ -165,83 +137,10 @@ export default function Footer({ onTabSwitch, isAdmin, setIsAdmin }: FooterProps
             <div className="flex gap-4 items-center flex-wrap justify-center">
               <span className="hover:text-slate-400 cursor-default">{SITE_CONFIG.footerPolicyLabel || "Chính Sách Nội Bộ"}</span>
               <span className="hover:text-slate-400 cursor-default">{SITE_CONFIG.footerTermsLabel || "Điều Khoản Fan"}</span>
-              <span className="text-slate-800">|</span>
-              <button 
-                onClick={handleAdminAction}
-                className={`transition-colors font-bold ${
-                  isAdmin 
-                    ? 'text-brand-teal-400 hover:text-brand-teal-300' 
-                    : 'text-slate-400 hover:text-slate-200'
-                } flex items-center gap-1 cursor-pointer`}
-              >
-                <Lock className="w-3 h-3" />
-                <span>{isAdmin ? 'Admin (Đăng xuất)' : 'Admin'}</span>
-              </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* Admin Login Modal */}
-      <AnimatePresence>
-        {showLoginModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowLoginModal(false)}
-              className="absolute inset-0 bg-slate-950/80 backdrop-blur-xs"
-            />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-2xl border-4 border-slate-950 p-6 max-w-sm w-full relative z-10 text-slate-900 shadow-2xl"
-            >
-              <button 
-                onClick={() => setShowLoginModal(false)}
-                className="absolute top-4 right-4 p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-full cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-
-              <h3 className="text-base font-bold flex items-center gap-2 mb-3">
-                <Lock className="w-4 h-4 text-brand-teal-600" />
-                <span>Đăng nhập quyền Admin</span>
-              </h3>
-
-              <p className="text-xs text-slate-500 font-semibold mb-4 leading-relaxed">
-                Vui lòng nhập mật mã quản trị viên của Chamchamz Archive để kích hoạt tính năng kiểm duyệt thư.
-              </p>
-
-              <form onSubmit={handleLoginSubmit} className="space-y-4">
-                <div>
-                  <input 
-                    type="password"
-                    value={passwordInput}
-                    onChange={(e) => setPasswordInput(e.target.value)}
-                    placeholder="Mật mã bí mật..."
-                    autoFocus
-                    className="w-full px-3 py-2 border-2 border-slate-900 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-teal-400 focus:border-slate-900"
-                  />
-                </div>
-
-                {loginError && (
-                  <p className="text-rose-500 text-xs font-bold">{loginError}</p>
-                )}
-
-                <button 
-                  type="submit"
-                  className="w-full bg-slate-900 hover:bg-brand-teal-400 hover:text-slate-900 text-white font-bold py-2 rounded-lg cursor-pointer transition-colors text-xs border-2 border-slate-900"
-                >
-                  Xác nhận đăng nhập
-                </button>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
     </footer>
   );
