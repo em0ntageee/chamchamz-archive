@@ -88,12 +88,50 @@ export default function ChamchamzMailbox({ isAdmin }: ChamchamzMailboxProps) {
     }
   };
 
-  // Load fan letters from Firestore in real-time
+  const loadCommentsFromApi = async () => {
+    try {
+      const res = await fetch('/api/comments');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          const apiMessages: FanMessage[] = data.map((item: any) => ({
+            id: item.id,
+            authorName: item.from || 'Người hâm mộ',
+            recipient: item.to || 'Chamchamz',
+            messageText: item.text || '',
+            sticker: item.sticker || '✨',
+            createdAt: item.timestamp 
+              ? new Date(item.timestamp).toLocaleString('vi-VN', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : ''
+          }));
+          setMessages(apiMessages);
+          return true;
+        }
+      }
+    } catch (err) {
+      console.warn('Lỗi tải bình luận qua API:', err);
+    }
+    return false;
+  };
+
+  // Load fan letters from Firestore in real-time with automatic API fallback
   useEffect(() => {
+    let isMounted = true;
+    
+    // Load from API first as a robust baseline
+    loadCommentsFromApi();
+
     const commentsCollection = collection(db, 'comments');
     const q = query(commentsCollection, orderBy('timestamp', 'desc'));
     
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!isMounted) return;
       const liveMessages: FanMessage[] = snapshot.docs.map((doc) => {
         const data = doc.data();
         return {
@@ -113,13 +151,20 @@ export default function ChamchamzMailbox({ isAdmin }: ChamchamzMailboxProps) {
             : ''
         };
       });
-      setMessages(liveMessages.length > 0 ? liveMessages : INITIAL_MESSAGES);
+      if (liveMessages.length > 0) {
+        setMessages(liveMessages);
+      }
     }, (error) => {
-      console.warn("Lỗi kết nối Firestore real-time comments, dùng dữ liệu mẫu:", error);
-      setMessages(INITIAL_MESSAGES);
+      console.warn("Lỗi kết nối Firestore real-time comments, giữ dữ liệu hiện tại:", error);
+      if (isMounted) {
+        loadCommentsFromApi();
+      }
     });
 
-    return () => unsubscribe();
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   // Handle fan letter submission
@@ -173,6 +218,10 @@ export default function ChamchamzMailbox({ isAdmin }: ChamchamzMailboxProps) {
       setMessageText('');
       setFormError('');
       setFormSuccess(true);
+      
+      // Refresh the comments immediately
+      loadCommentsFromApi();
+      
       setTimeout(() => setFormSuccess(false), 4000);
     } catch (err) {
       console.error('Lỗi gửi thư:', err);
@@ -189,7 +238,10 @@ export default function ChamchamzMailbox({ isAdmin }: ChamchamzMailboxProps) {
       const response = await fetch(`/api/comments/${id}?token=chamchamz`, {
         method: 'DELETE',
       });
-      if (!response.ok) {
+      if (response.ok) {
+        // Refresh local cache and UI instantly
+        loadCommentsFromApi();
+      } else {
         let deleteErrorMsg = 'Không thể xóa thư hâm mộ.';
         try {
           const errorData = await response.json();

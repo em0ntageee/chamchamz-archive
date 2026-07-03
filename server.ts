@@ -136,139 +136,68 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number, errorMessage: st
   ]);
 }
 
-async function getFirestoreStats(): Promise<{ visitorCount: number; candleCount: number; pledgeCount: number }> {
-  const fdb = getFirestoreDb();
-  if (!fdb) {
-    const local = loadDatabase();
-    return {
-      visitorCount: local.visitorCount,
-      candleCount: local.candleCount,
-      pledgeCount: local.pledgeCount || 520
-    };
-  }
+// Shared memory-based cache for lightning-fast responses (0ms lag)
+const cachedStats = {
+  visitorCount: 1580,
+  candleCount: 0,
+  pledgeCount: 520,
+  commentsEnabled: true
+};
 
+// Background synchronization function to pull stats and comments from Firestore
+async function syncFromFirestore() {
+  const fdb = getFirestoreDb();
+  if (!fdb) return;
+  
   try {
+    // 1. Sync statistics
     const docRef = doc(fdb, 'counters', 'stats');
-    const docSnap = await withTimeout(getDoc(docRef), 4000, 'Firestore getDoc Stats Timeout');
+    const docSnap = await withTimeout(getDoc(docRef), 3500, 'Background Sync stats Timeout');
     if (docSnap.exists()) {
       const data = docSnap.data();
-      return {
-        visitorCount: data && typeof data.visitorCount === 'number' ? data.visitorCount : 1580,
-        candleCount: data && typeof data.candleCount === 'number' ? data.candleCount : 0,
-        pledgeCount: data && typeof data.pledgeCount === 'number' ? data.pledgeCount : 520
-      };
-    } else {
       const local = loadDatabase();
-      const visitorBaseline = Math.max(local.visitorCount || 0, 1580);
-      const candleBaseline = local.candleCount || 0;
-      const pledgeBaseline = Math.max(local.pledgeCount || 0, 520);
-      await withTimeout(setDoc(docRef, {
-        visitorCount: visitorBaseline,
-        candleCount: candleBaseline,
-        pledgeCount: pledgeBaseline
-      }), 4000, 'Firestore setDoc Stats Timeout');
-      return { visitorCount: visitorBaseline, candleCount: candleBaseline, pledgeCount: pledgeBaseline };
+      let changed = false;
+
+      if (data) {
+        if (typeof data.visitorCount === 'number' && data.visitorCount > (local.visitorCount || 0)) {
+          local.visitorCount = data.visitorCount;
+          cachedStats.visitorCount = data.visitorCount;
+          changed = true;
+        }
+        if (typeof data.candleCount === 'number' && data.candleCount > (local.candleCount || 0)) {
+          local.candleCount = data.candleCount;
+          cachedStats.candleCount = data.candleCount;
+          changed = true;
+        }
+        if (typeof data.pledgeCount === 'number' && data.pledgeCount > (local.pledgeCount || 0)) {
+          local.pledgeCount = data.pledgeCount;
+          cachedStats.pledgeCount = data.pledgeCount;
+          changed = true;
+        }
+        if (typeof data.commentsEnabled === 'boolean' && data.commentsEnabled !== local.commentsEnabled) {
+          local.commentsEnabled = data.commentsEnabled;
+          cachedStats.commentsEnabled = data.commentsEnabled;
+          changed = true;
+        }
+      }
+      
+      if (changed) {
+        saveDatabase(local);
+      }
+    } else {
+      // Initialize Firestore document if empty
+      const local = loadDatabase();
+      await setDoc(docRef, {
+        visitorCount: Math.max(local.visitorCount || 0, 1580),
+        candleCount: local.candleCount || 0,
+        pledgeCount: Math.max(local.pledgeCount || 0, 520),
+        commentsEnabled: local.commentsEnabled !== false
+      });
     }
-  } catch (error) {
-    console.error('Error fetching stats from Firestore:', error);
-    const local = loadDatabase();
-    return {
-      visitorCount: local.visitorCount,
-      candleCount: local.candleCount,
-      pledgeCount: local.pledgeCount || 520
-    };
-  }
-}
 
-async function incrementFirestoreVisitor(): Promise<number> {
-  const fdb = getFirestoreDb();
-  if (!fdb) {
-    const local = loadDatabase();
-    local.visitorCount += 1;
-    saveDatabase(local);
-    return local.visitorCount;
-  }
-
-  try {
-    const docRef = doc(fdb, 'counters', 'stats');
-    const stats = await getFirestoreStats();
-    const newVisitorCount = stats.visitorCount + 1;
-    await withTimeout(updateDoc(docRef, {
-      visitorCount: increment(1)
-    }), 4000, 'Firestore updateDoc Visitor Timeout');
-    return newVisitorCount;
-  } catch (error) {
-    console.error('Error incrementing visitor count in Firestore:', error);
-    const local = loadDatabase();
-    local.visitorCount += 1;
-    saveDatabase(local);
-    return local.visitorCount;
-  }
-}
-
-async function incrementFirestoreCandle(): Promise<number> {
-  const fdb = getFirestoreDb();
-  if (!fdb) {
-    const local = loadDatabase();
-    local.candleCount += 1;
-    saveDatabase(local);
-    return local.candleCount;
-  }
-
-  try {
-    const docRef = doc(fdb, 'counters', 'stats');
-    const stats = await getFirestoreStats();
-    const newCandleCount = stats.candleCount + 1;
-    await withTimeout(updateDoc(docRef, {
-      candleCount: increment(1)
-    }), 4000, 'Firestore updateDoc Candle Timeout');
-    return newCandleCount;
-  } catch (error) {
-    console.error('Error incrementing candle count in Firestore:', error);
-    const local = loadDatabase();
-    local.candleCount += 1;
-    saveDatabase(local);
-    return local.candleCount;
-  }
-}
-
-async function incrementFirestorePledge(): Promise<number> {
-  const fdb = getFirestoreDb();
-  if (!fdb) {
-    const local = loadDatabase();
-    const nextPledge = (local.pledgeCount || 520) + 1;
-    local.pledgeCount = nextPledge;
-    saveDatabase(local);
-    return nextPledge;
-  }
-
-  try {
-    const docRef = doc(fdb, 'counters', 'stats');
-    const stats = await getFirestoreStats();
-    const newPledgeCount = stats.pledgeCount + 1;
-    await withTimeout(updateDoc(docRef, {
-      pledgeCount: increment(1)
-    }), 4000, 'Firestore updateDoc Pledge Timeout');
-    return newPledgeCount;
-  } catch (error) {
-    console.error('Error incrementing pledge count in Firestore:', error);
-    const local = loadDatabase();
-    const nextPledge = (local.pledgeCount || 520) + 1;
-    local.pledgeCount = nextPledge;
-    saveDatabase(local);
-    return nextPledge;
-  }
-}
-
-async function getFirestoreComments(): Promise<Comment[]> {
-  const fdb = getFirestoreDb();
-  if (!fdb) {
-    const local = loadDatabase();
-    return local.comments || [];
-  }
-  try {
+    // 2. Sync comments
     const colRef = collection(fdb, 'comments');
-    const querySnapshot = await withTimeout(getDocs(colRef), 4000, 'Firestore getDocs Comments Timeout');
+    const querySnapshot = await withTimeout(getDocs(colRef), 4000, 'Background Sync comments Timeout');
     const commentsList: Comment[] = [];
     querySnapshot.forEach((docSnap) => {
       const data = docSnap.data();
@@ -277,64 +206,20 @@ async function getFirestoreComments(): Promise<Comment[]> {
         from: data.from || '',
         to: data.to || 'Chamchamz',
         text: data.text || '',
-        timestamp: data.timestamp || new Date().toISOString()
+        timestamp: data.timestamp || new Date().toISOString(),
+        sticker: data.sticker || '✨'
       });
     });
 
-    if (commentsList.length === 0) {
-      // Seed default comments into Firestore to give a warm atmosphere
+    if (commentsList.length > 0) {
       const local = loadDatabase();
-      const seeds = local.comments || [];
-      for (const s of seeds) {
-        const docRef = doc(fdb, 'comments', s.id);
-        await withTimeout(setDoc(docRef, {
-          from: s.from,
-          to: s.to,
-          text: s.text,
-          timestamp: s.timestamp
-        }), 2000, 'Firestore setDoc Seed Comment Timeout').catch(() => {});
-        commentsList.push(s);
-      }
+      const localMap = new Map(local.comments.map(c => [c.id, c]));
+      commentsList.forEach(c => localMap.set(c.id, c));
+      local.comments = Array.from(localMap.values()).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      saveDatabase(local);
     }
-
-    // Sort descending by timestamp
-    return commentsList.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-  } catch (error) {
-    console.error('Error fetching comments from Firestore:', error);
-    const local = loadDatabase();
-    return local.comments || [];
-  }
-}
-
-async function addFirestoreComment(comment: Comment): Promise<boolean> {
-  const fdb = getFirestoreDb();
-  if (!fdb) return false;
-  try {
-    const docRef = doc(fdb, 'comments', comment.id);
-    await withTimeout(setDoc(docRef, {
-      from: comment.from,
-      to: comment.to,
-      text: comment.text,
-      timestamp: comment.timestamp,
-      sticker: comment.sticker || '✨'
-    }), 4000, 'Firestore setDoc Comment Timeout');
-    return true;
-  } catch (error) {
-    console.error('Error adding comment to Firestore:', error);
-    return false;
-  }
-}
-
-async function deleteFirestoreComment(id: string): Promise<boolean> {
-  const fdb = getFirestoreDb();
-  if (!fdb) return false;
-  try {
-    const docRef = doc(fdb, 'comments', id);
-    await withTimeout(deleteDoc(docRef), 4000, 'Firestore deleteDoc Comment Timeout');
-    return true;
-  } catch (error) {
-    console.error('Error deleting comment from Firestore:', error);
-    return false;
+  } catch (err) {
+    console.error('Failed background sync from Firestore:', err);
   }
 }
 
@@ -342,26 +227,58 @@ async function startServer() {
   const app = express();
   app.use(express.json());
 
-  // Initialize store
-  let db = loadDatabase();
+  // Initialize store and warm up cache
+  const db = loadDatabase();
+  cachedStats.visitorCount = Math.max(db.visitorCount || 0, 1580);
+  cachedStats.candleCount = db.candleCount || 0;
+  cachedStats.pledgeCount = Math.max(db.pledgeCount || 0, 520);
+  cachedStats.commentsEnabled = db.commentsEnabled !== false;
 
-  // API 1: Get global stats
-  app.get('/api/stats', async (req, res) => {
-    const stats = await getFirestoreStats();
-    res.json(stats);
+  // Run initial sync asynchronously (do not block the main server boot)
+  syncFromFirestore().then(() => {
+    console.log('Initial background sync complete. Memory cache is warmed up!');
+  }).catch(err => {
+    console.error('Initial background sync failed:', err);
   });
 
-  // API 2: Increment website visitor count
-  app.post('/api/visitor/increment', async (req, res) => {
-    const newCount = await incrementFirestoreVisitor();
-    res.json({ visitorCount: newCount });
+  // Run background sync periodically every 30 seconds to fetch updates from Firestore
+  setInterval(() => {
+    syncFromFirestore().catch(err => console.error('Error during automatic background sync:', err));
+  }, 30000);
+
+  // API 1: Get global stats (Instantaneous response from memory cache!)
+  app.get('/api/stats', (req, res) => {
+    res.json({
+      visitorCount: cachedStats.visitorCount,
+      candleCount: cachedStats.candleCount,
+      pledgeCount: cachedStats.pledgeCount
+    });
+  });
+
+  // API 2: Increment website visitor count (Instant response, async Firestore update!)
+  app.post('/api/visitor/increment', (req, res) => {
+    cachedStats.visitorCount += 1;
+    
+    const local = loadDatabase();
+    local.visitorCount = cachedStats.visitorCount;
+    saveDatabase(local);
+    
+    res.json({ visitorCount: cachedStats.visitorCount });
+
+    // Background update
+    const fdb = getFirestoreDb();
+    if (fdb) {
+      const docRef = doc(fdb, 'counters', 'stats');
+      updateDoc(docRef, { visitorCount: increment(1) }).catch(err => {
+        console.error('Error incrementing visitor in Firestore background:', err);
+      });
+    }
   });
 
   // API 3: Set website visitor count directly (for Admin panel reset/adjustment)
-  app.post('/api/visitor/set', async (req, res) => {
+  app.post('/api/visitor/set', (req, res) => {
     const { count, token } = req.body;
     
-    // basic password verify
     if (token !== 'chamchamz') {
       return res.status(403).json({ error: 'Sai mật khẩu quản trị!' });
     }
@@ -371,107 +288,100 @@ async function startServer() {
       return res.status(400).json({ error: 'Số lượt truy cập không hợp lệ!' });
     }
 
-    const fdb = getFirestoreDb();
-    if (fdb) {
-      try {
-        const docRef = doc(fdb, 'counters', 'stats');
-        await withTimeout(setDoc(docRef, { visitorCount: parsed }, { merge: true }), 2500, 'Firestore setDoc visitor/set Timeout');
-      } catch (error) {
-        console.error('Error setting visitor count in Firestore:', error);
-      }
-    }
-
-    db = loadDatabase();
-    db.visitorCount = parsed;
-    saveDatabase(db);
+    cachedStats.visitorCount = parsed;
+    
+    const local = loadDatabase();
+    local.visitorCount = parsed;
+    saveDatabase(local);
 
     res.json({ success: true, visitorCount: parsed });
-  });
 
-  // API 4: Increment candle count
-  app.post('/api/candle/increment', async (req, res) => {
-    const newCount = await incrementFirestoreCandle();
-    res.json({ candleCount: newCount });
-  });
-
-  // API 4.5: Increment secret pledge count
-  app.post('/api/pledge/increment', async (req, res) => {
-    const newCount = await incrementFirestorePledge();
-    res.json({ pledgeCount: newCount });
-  });
-
-
-  // API 5: Get all comments (sorted newest first)
-  app.get('/api/comments', async (req, res) => {
-    const sortedComments = await getFirestoreComments();
-    res.json(sortedComments);
-  });
-
-  // API 5.5: Get comments enabled status
-  app.get('/api/comments/status', async (req, res) => {
     const fdb = getFirestoreDb();
     if (fdb) {
-      try {
-        const docRef = doc(fdb, 'counters', 'stats');
-        const docSnap = await withTimeout(getDoc(docRef), 2500, 'Firestore getDoc comments/status Timeout');
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          if (data && typeof data.commentsEnabled === 'boolean') {
-            return res.json({ commentsEnabled: data.commentsEnabled });
-          }
-        }
-      } catch (e) {
-        console.error('Error fetching comments status from Firestore:', e);
-      }
+      const docRef = doc(fdb, 'counters', 'stats');
+      setDoc(docRef, { visitorCount: parsed }, { merge: true }).catch(err => {
+        console.error('Error setting visitor in Firestore background:', err);
+      });
     }
-    db = loadDatabase();
-    res.json({ commentsEnabled: db.commentsEnabled !== false });
   });
 
-  // API 5.6: Toggle comments enabled status (Admin only)
-  app.post('/api/comments/status', async (req, res) => {
+  // API 4: Increment candle count (Instant response!)
+  app.post('/api/candle/increment', (req, res) => {
+    cachedStats.candleCount += 1;
+    
+    const local = loadDatabase();
+    local.candleCount = cachedStats.candleCount;
+    saveDatabase(local);
+
+    res.json({ candleCount: cachedStats.candleCount });
+
+    const fdb = getFirestoreDb();
+    if (fdb) {
+      const docRef = doc(fdb, 'counters', 'stats');
+      updateDoc(docRef, { candleCount: increment(1) }).catch(err => {
+        console.error('Error incrementing candle in Firestore background:', err);
+      });
+    }
+  });
+
+  // API 4.5: Increment secret pledge count (Instant response!)
+  app.post('/api/pledge/increment', (req, res) => {
+    cachedStats.pledgeCount += 1;
+    
+    const local = loadDatabase();
+    local.pledgeCount = cachedStats.pledgeCount;
+    saveDatabase(local);
+
+    res.json({ pledgeCount: cachedStats.pledgeCount });
+
+    const fdb = getFirestoreDb();
+    if (fdb) {
+      const docRef = doc(fdb, 'counters', 'stats');
+      updateDoc(docRef, { pledgeCount: increment(1) }).catch(err => {
+        console.error('Error incrementing pledge in Firestore background:', err);
+      });
+    }
+  });
+
+  // API 5: Get all comments (Instant response from local database!)
+  app.get('/api/comments', (req, res) => {
+    const local = loadDatabase();
+    const sorted = (local.comments || []).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    res.json(sorted);
+  });
+
+  // API 5.5: Get comments enabled status (Instant response!)
+  app.get('/api/comments/status', (req, res) => {
+    res.json({ commentsEnabled: cachedStats.commentsEnabled !== false });
+  });
+
+  // API 5.6: Toggle comments enabled status (Admin only, instant!)
+  app.post('/api/comments/status', (req, res) => {
     const { commentsEnabled, token } = req.body;
     if (token !== 'chamchamz') {
       return res.status(403).json({ error: 'Sai mật khẩu quản trị!' });
     }
+
+    cachedStats.commentsEnabled = !!commentsEnabled;
+
+    const local = loadDatabase();
+    local.commentsEnabled = !!commentsEnabled;
+    saveDatabase(local);
+
+    res.json({ success: true, commentsEnabled: cachedStats.commentsEnabled });
+
     const fdb = getFirestoreDb();
     if (fdb) {
-      try {
-        const docRef = doc(fdb, 'counters', 'stats');
-        await withTimeout(setDoc(docRef, { commentsEnabled: !!commentsEnabled }, { merge: true }), 2500, 'Firestore setDoc comments/status Timeout');
-      } catch (e) {
-        console.error('Error setting comments status in Firestore:', e);
-      }
+      const docRef = doc(fdb, 'counters', 'stats');
+      setDoc(docRef, { commentsEnabled: !!commentsEnabled }, { merge: true }).catch(err => {
+        console.error('Error setting comments enabled status in Firestore background:', err);
+      });
     }
-    db = loadDatabase();
-    db.commentsEnabled = !!commentsEnabled;
-    saveDatabase(db);
-    res.json({ success: true, commentsEnabled: db.commentsEnabled });
   });
 
-  // API 6: Submit a comment
-  app.post('/api/comments', async (req, res) => {
-    let isEnabled = true;
-    const fdb = getFirestoreDb();
-    if (fdb) {
-      try {
-        const docRef = doc(fdb, 'counters', 'stats');
-        const docSnap = await withTimeout(getDoc(docRef), 2500, 'Firestore getDoc comments check Timeout');
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          if (data && typeof data.commentsEnabled === 'boolean') {
-            isEnabled = data.commentsEnabled;
-          }
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    } else {
-      db = loadDatabase();
-      isEnabled = db.commentsEnabled !== false;
-    }
-
-    if (!isEnabled) {
+  // API 6: Submit a comment (Instant response!)
+  app.post('/api/comments', (req, res) => {
+    if (!cachedStats.commentsEnabled) {
       return res.status(403).json({ error: 'Hệ thống gửi thư hiện đang tạm đóng!' });
     }
 
@@ -500,20 +410,33 @@ async function startServer() {
       sticker: cleanSticker
     };
 
-    if (fdb) {
-      await addFirestoreComment(newComment);
-    }
+    // Save locally
+    const local = loadDatabase();
+    if (!local.comments) local.comments = [];
+    local.comments.push(newComment);
+    saveDatabase(local);
 
-    db = loadDatabase();
-    if (!db.comments) db.comments = [];
-    db.comments.push(newComment);
-    saveDatabase(db);
-
+    // Return instant success to the client
     res.status(201).json(newComment);
+
+    // Update Firestore in background
+    const fdb = getFirestoreDb();
+    if (fdb) {
+      const docRef = doc(fdb, 'comments', newComment.id);
+      setDoc(docRef, {
+        from: newComment.from,
+        to: newComment.to,
+        text: newComment.text,
+        timestamp: newComment.timestamp,
+        sticker: newComment.sticker || '✨'
+      }).catch(err => {
+        console.error('Error adding comment to Firestore background:', err);
+      });
+    }
   });
 
-  // API 7: Delete a comment (Admin only, password verified)
-  app.delete('/api/comments/:id', async (req, res) => {
+  // API 7: Delete a comment (Admin only, password verified, instant!)
+  app.delete('/api/comments/:id', (req, res) => {
     const { id } = req.params;
     const { token } = req.query;
 
@@ -521,16 +444,22 @@ async function startServer() {
       return res.status(403).json({ error: 'Mật khẩu quản trị không đúng hoặc thiếu!' });
     }
 
+    // Delete locally
+    const local = loadDatabase();
+    if (!local.comments) local.comments = [];
+    local.comments = local.comments.filter(c => c.id !== id);
+    saveDatabase(local);
+
+    res.json({ success: true, message: 'Đã xóa bình luận thành công!' });
+
+    // Background delete from Firestore
     const fdb = getFirestoreDb();
     if (fdb) {
-      await deleteFirestoreComment(id);
+      const docRef = doc(fdb, 'comments', id);
+      deleteDoc(docRef).catch(err => {
+        console.error('Error deleting comment from Firestore background:', err);
+      });
     }
-
-    db = loadDatabase();
-    if (!db.comments) db.comments = [];
-    db.comments = db.comments.filter(c => c.id !== id);
-    saveDatabase(db);
-    res.json({ success: true, message: 'Đã xóa bình luận thành công!' });
   });
 
   // Vite Integration
