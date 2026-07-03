@@ -2,19 +2,14 @@
   "version": "1.0",
   "tracks": [
     {
-      "name": "Cozy Stream Lo-Fi",
-      "artist": "Chilhop Melodies",
-      "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      "name": "Superpowers",
+      "artist": "Daniel Caesar",
+      "url": "/uploads/daniel-caesar-superpowers-official-audio-.mp3"
     },
     {
-      "name": "Golden Coffee Hour",
-      "artist": "Acoustic Ukulele",
-      "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
-    },
-    {
-      "name": "Sunny Sandbox Loop",
-      "artist": "Fluffy Clouds",
-      "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
+      "name": "Isn't She Lovely",
+      "artist": "Stevie Wonder",
+      "url": "/uploads/isn-t-she-lovely.mp3"
     }
   ]
 }
