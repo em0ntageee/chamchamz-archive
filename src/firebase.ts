@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { initializeFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   projectId: "intense-quote-95w43",
@@ -12,5 +12,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firestore with the custom database ID from firebase-applet-config.json
-export const db = getFirestore(app, "ai-studio-58f91e89-0eda-461d-9604-aaa57592742c");
+// Initialize Firestore with custom database ID and force long polling
+export const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true
+}, "ai-studio-58f91e89-0eda-461d-9604-aaa57592742c");
+

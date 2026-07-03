@@ -8,7 +8,7 @@ import path from 'path';
 import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, getDocs, deleteDoc } from 'firebase/firestore';
+import { initializeFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, getDocs, deleteDoc } from 'firebase/firestore';
 
 const PORT = 3000;
 const DB_FILE = path.join(process.cwd(), 'db_store.json');
@@ -116,13 +116,24 @@ function getFirestoreDb(): any {
         storageBucket: config.storageBucket,
         messagingSenderId: config.messagingSenderId
       });
-      firebaseDb = getFirestore(app, config.firestoreDatabaseId || "ai-studio-58f91e89-0eda-461d-9604-aaa57592742c");
-      console.log('Successfully connected to Firebase Firestore.');
+      // Force long polling on the server to ensure high reliability in sandboxed/container environments
+      firebaseDb = initializeFirestore(app, {
+        experimentalForceLongPolling: true
+      }, config.firestoreDatabaseId || "ai-studio-58f91e89-0eda-461d-9604-aaa57592742c");
+      console.log('Successfully connected to Firebase Firestore (Server Polling).');
     }
   } catch (error) {
     console.error('Failed to initialize Firebase in server:', error);
   }
   return firebaseDb;
+}
+
+// Timeout helper to prevent hanging database calls from blocking the Node server
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, errorMessage: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error(errorMessage)), timeoutMs))
+  ]);
 }
 
 async function getFirestoreStats(): Promise<{ visitorCount: number; candleCount: number; pledgeCount: number }> {
@@ -138,7 +149,7 @@ async function getFirestoreStats(): Promise<{ visitorCount: number; candleCount:
 
   try {
     const docRef = doc(fdb, 'counters', 'stats');
-    const docSnap = await getDoc(docRef);
+    const docSnap = await withTimeout(getDoc(docRef), 4000, 'Firestore getDoc Stats Timeout');
     if (docSnap.exists()) {
       const data = docSnap.data();
       return {
@@ -151,11 +162,11 @@ async function getFirestoreStats(): Promise<{ visitorCount: number; candleCount:
       const visitorBaseline = Math.max(local.visitorCount || 0, 1580);
       const candleBaseline = local.candleCount || 0;
       const pledgeBaseline = Math.max(local.pledgeCount || 0, 520);
-      await setDoc(docRef, {
+      await withTimeout(setDoc(docRef, {
         visitorCount: visitorBaseline,
         candleCount: candleBaseline,
         pledgeCount: pledgeBaseline
-      });
+      }), 4000, 'Firestore setDoc Stats Timeout');
       return { visitorCount: visitorBaseline, candleCount: candleBaseline, pledgeCount: pledgeBaseline };
     }
   } catch (error) {
@@ -182,9 +193,9 @@ async function incrementFirestoreVisitor(): Promise<number> {
     const docRef = doc(fdb, 'counters', 'stats');
     const stats = await getFirestoreStats();
     const newVisitorCount = stats.visitorCount + 1;
-    await updateDoc(docRef, {
+    await withTimeout(updateDoc(docRef, {
       visitorCount: increment(1)
-    });
+    }), 4000, 'Firestore updateDoc Visitor Timeout');
     return newVisitorCount;
   } catch (error) {
     console.error('Error incrementing visitor count in Firestore:', error);
@@ -208,9 +219,9 @@ async function incrementFirestoreCandle(): Promise<number> {
     const docRef = doc(fdb, 'counters', 'stats');
     const stats = await getFirestoreStats();
     const newCandleCount = stats.candleCount + 1;
-    await updateDoc(docRef, {
+    await withTimeout(updateDoc(docRef, {
       candleCount: increment(1)
-    });
+    }), 4000, 'Firestore updateDoc Candle Timeout');
     return newCandleCount;
   } catch (error) {
     console.error('Error incrementing candle count in Firestore:', error);
@@ -235,9 +246,9 @@ async function incrementFirestorePledge(): Promise<number> {
     const docRef = doc(fdb, 'counters', 'stats');
     const stats = await getFirestoreStats();
     const newPledgeCount = stats.pledgeCount + 1;
-    await updateDoc(docRef, {
+    await withTimeout(updateDoc(docRef, {
       pledgeCount: increment(1)
-    });
+    }), 4000, 'Firestore updateDoc Pledge Timeout');
     return newPledgeCount;
   } catch (error) {
     console.error('Error incrementing pledge count in Firestore:', error);
@@ -257,7 +268,7 @@ async function getFirestoreComments(): Promise<Comment[]> {
   }
   try {
     const colRef = collection(fdb, 'comments');
-    const querySnapshot = await getDocs(colRef);
+    const querySnapshot = await withTimeout(getDocs(colRef), 4000, 'Firestore getDocs Comments Timeout');
     const commentsList: Comment[] = [];
     querySnapshot.forEach((docSnap) => {
       const data = docSnap.data();
@@ -276,12 +287,12 @@ async function getFirestoreComments(): Promise<Comment[]> {
       const seeds = local.comments || [];
       for (const s of seeds) {
         const docRef = doc(fdb, 'comments', s.id);
-        await setDoc(docRef, {
+        await withTimeout(setDoc(docRef, {
           from: s.from,
           to: s.to,
           text: s.text,
           timestamp: s.timestamp
-        });
+        }), 2000, 'Firestore setDoc Seed Comment Timeout').catch(() => {});
         commentsList.push(s);
       }
     }
@@ -300,13 +311,13 @@ async function addFirestoreComment(comment: Comment): Promise<boolean> {
   if (!fdb) return false;
   try {
     const docRef = doc(fdb, 'comments', comment.id);
-    await setDoc(docRef, {
+    await withTimeout(setDoc(docRef, {
       from: comment.from,
       to: comment.to,
       text: comment.text,
       timestamp: comment.timestamp,
       sticker: comment.sticker || '✨'
-    });
+    }), 4000, 'Firestore setDoc Comment Timeout');
     return true;
   } catch (error) {
     console.error('Error adding comment to Firestore:', error);
@@ -319,7 +330,7 @@ async function deleteFirestoreComment(id: string): Promise<boolean> {
   if (!fdb) return false;
   try {
     const docRef = doc(fdb, 'comments', id);
-    await deleteDoc(docRef);
+    await withTimeout(deleteDoc(docRef), 4000, 'Firestore deleteDoc Comment Timeout');
     return true;
   } catch (error) {
     console.error('Error deleting comment from Firestore:', error);
