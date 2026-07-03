@@ -375,7 +375,7 @@ async function startServer() {
     if (fdb) {
       try {
         const docRef = doc(fdb, 'counters', 'stats');
-        await setDoc(docRef, { visitorCount: parsed }, { merge: true });
+        await withTimeout(setDoc(docRef, { visitorCount: parsed }, { merge: true }), 2500, 'Firestore setDoc visitor/set Timeout');
       } catch (error) {
         console.error('Error setting visitor count in Firestore:', error);
       }
@@ -413,7 +413,7 @@ async function startServer() {
     if (fdb) {
       try {
         const docRef = doc(fdb, 'counters', 'stats');
-        const docSnap = await getDoc(docRef);
+        const docSnap = await withTimeout(getDoc(docRef), 2500, 'Firestore getDoc comments/status Timeout');
         if (docSnap.exists()) {
           const data = docSnap.data();
           if (data && typeof data.commentsEnabled === 'boolean') {
@@ -438,7 +438,7 @@ async function startServer() {
     if (fdb) {
       try {
         const docRef = doc(fdb, 'counters', 'stats');
-        await setDoc(docRef, { commentsEnabled: !!commentsEnabled }, { merge: true });
+        await withTimeout(setDoc(docRef, { commentsEnabled: !!commentsEnabled }, { merge: true }), 2500, 'Firestore setDoc comments/status Timeout');
       } catch (e) {
         console.error('Error setting comments status in Firestore:', e);
       }
@@ -456,7 +456,7 @@ async function startServer() {
     if (fdb) {
       try {
         const docRef = doc(fdb, 'counters', 'stats');
-        const docSnap = await getDoc(docRef);
+        const docSnap = await withTimeout(getDoc(docRef), 2500, 'Firestore getDoc comments check Timeout');
         if (docSnap.exists()) {
           const data = docSnap.data();
           if (data && typeof data.commentsEnabled === 'boolean') {

@@ -152,8 +152,19 @@ export default function ChamchamzMailbox({ isAdmin }: ChamchamzMailboxProps) {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        setFormError(errorData.error || 'Có lỗi xảy ra khi gửi thư hâm mộ. Vui lòng thử lại!');
+        let errorMsg = 'Có lỗi xảy ra khi gửi thư hâm mộ. Vui lòng thử lại!';
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.error || errorMsg;
+        } catch (parseErr) {
+          try {
+            const textData = await response.text();
+            if (textData && textData.length < 150 && !textData.includes('<!DOCTYPE')) {
+              errorMsg = textData;
+            }
+          } catch (textErr) {}
+        }
+        setFormError(errorMsg);
         setIsSubmitting(false);
         return;
       }
@@ -179,8 +190,19 @@ export default function ChamchamzMailbox({ isAdmin }: ChamchamzMailboxProps) {
         method: 'DELETE',
       });
       if (!response.ok) {
-        const errorData = await response.json();
-        setDeleteError(errorData.error || 'Không thể xóa thư hâm mộ.');
+        let deleteErrorMsg = 'Không thể xóa thư hâm mộ.';
+        try {
+          const errorData = await response.json();
+          deleteErrorMsg = errorData.error || deleteErrorMsg;
+        } catch (parseErr) {
+          try {
+            const textData = await response.text();
+            if (textData && textData.length < 150 && !textData.includes('<!DOCTYPE')) {
+              deleteErrorMsg = textData;
+            }
+          } catch (textErr) {}
+        }
+        setDeleteError(deleteErrorMsg);
         setTimeout(() => setDeleteError(''), 3000);
       }
     } catch (err) {

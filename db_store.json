@@ -29,6 +29,23 @@
       "to": "Chamchamz",
       "text": "a",
       "timestamp": "2026-06-24T05:50:37.346Z"
+    },
+    {
+      "id": "comment-1783052341476-kyzkz",
+      "from": "b",
+      "to": "Chamchamz",
+      "text": "dsdrtêr",
+      "timestamp": "2026-07-03T04:19:01.476Z",
+      "sticker": "✨"
+    },
+    {
+      "id": "comment-1783052814774-qsoug",
+      "from": "TestUser",
+      "to": "Chamchamz",
+      "text": "This is a test comment",
+      "timestamp": "2026-07-03T04:26:54.774Z",
+      "sticker": "✨"
     }
-  ]
+  ],
+  "commentsEnabled": true
 }
