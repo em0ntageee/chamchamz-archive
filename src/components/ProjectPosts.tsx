@@ -116,7 +116,7 @@ export default function ProjectPosts() {
         {currentItems.length === 0 ? (
           <div className="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
             <Filter className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-            <p className="text-slate-500 text-sm font-semibold">Không tìm thấy bài viết nào thuộc chuyên mục này.</p>
+            <p className="text-slate-500 text-sm font-semibold">Sẽ được cập nhật sau khi có thêm project mới nhé</p>
           </div>
         ) : (
           <motion.div 
