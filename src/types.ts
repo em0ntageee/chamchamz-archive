@@ -53,3 +53,15 @@ export interface FanMessage {
   messageText: string;
   recipient?: 'Juhoon' | 'James' | 'Chamchamz';
 }
+
+export interface ProjectItem {
+  id: string;
+  title: string;
+  imageFile: string;
+  category: 'gift support' | 'led' | 'ads' | 'event' | 'others';
+  sourceUrl: string;
+  caption?: string;
+  date: string;
+  isHidden?: boolean;
+}
+

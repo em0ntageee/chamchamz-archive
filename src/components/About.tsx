@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ShieldAlert, BookOpen, Quote, Heart, CheckCircle2, LockKeyhole } from 'lucide-react';
 import { SITE_CONFIG } from '../data';
+import ProjectPosts from './ProjectPosts';
 
 export default function About() {
   const [pledgesCount, setPledgesCount] = useState(520);
@@ -67,6 +68,11 @@ export default function About() {
   return (
     <section id="about-section" className="py-16 bg-white rounded-3xl mx-4 my-8 p-6 md:p-12 shadow-xs border border-brand-teal-100 font-sans">
       <div className="max-w-4xl mx-auto">
+        {/* Project Support Posts Section */}
+        <ProjectPosts />
+
+        <div className="h-px w-full bg-slate-100 my-16"></div>
+
         {/* Title */}
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold text-slate-800 flex items-center justify-center gap-2.5">

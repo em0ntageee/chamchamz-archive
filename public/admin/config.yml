@@ -796,6 +796,71 @@ collections:
         widget: "string"
         required: false
 
+  # Collection 6.5: Projects/Events Support (Projects list)
+  - name: "projects"
+    label: "🏆 Dự Án & Sự Kiện Support (Projects)"
+    folder: "src/data/projects"
+    extension: "json"
+    format: "json"
+    create: true
+    slug: "{{slug}}"
+    view_groups:
+      - label: "Chuyên mục"
+        field: "category"
+    view_filters:
+      - label: "gift support"
+        field: "category"
+        pattern: "gift support"
+      - label: "led"
+        field: "category"
+        pattern: "led"
+      - label: "ads"
+        field: "category"
+        pattern: "ads"
+      - label: "event"
+        field: "category"
+        pattern: "event"
+      - label: "others"
+        field: "category"
+        pattern: "others"
+    fields:
+      - label: "Mã Định Danh (ID)"
+        name: "id"
+        widget: "string"
+        required: true
+      - label: "Tiêu đề Dự án/Sự kiện"
+        name: "title"
+        widget: "string"
+        required: true
+      - label: "Hình ảnh"
+        name: "imageFile"
+        widget: "image"
+        required: true
+      - label: "Chuyên mục (Category)"
+        name: "category"
+        widget: "select"
+        options: ["gift support", "led", "ads", "event", "others"]
+        default: "gift support"
+        required: true
+      - label: "Đường dẫn gốc (Redirect Link)"
+        name: "sourceUrl"
+        widget: "string"
+        required: true
+      - label: "Mô tả bổ sung (Caption)"
+        name: "caption"
+        widget: "text"
+        required: false
+      - label: "Ngày cập nhật (YYYY-MM-DD)"
+        name: "date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        required: true
+      - label: "Ẩn bài viết này khỏi trang chủ"
+        name: "isHidden"
+        widget: "boolean"
+        default: false
+        required: false
+
   # Collection 7: Categories/Cards - Contact (Feedback inbox & message setup)
   - name: "contact"
     label: "✉️ Trang Gửi Thư Liên Hệ (Contact)"

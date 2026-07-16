@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HintItem, GalleryItem, RecItem, FanMessage } from './types';
+import { HintItem, GalleryItem, RecItem, FanMessage, ProjectItem } from './types';
 import configData from './data/config.json';
 
 export const SITE_CONFIG = configData;
@@ -12,6 +12,16 @@ export const SITE_CONFIG = configData;
 const hintsGlob = (import.meta as any).glob('/src/data/hints/*.json', { eager: true });
 const galleryGlob = (import.meta as any).glob('/src/data/gallery/*.json', { eager: true });
 const recsGlob = (import.meta as any).glob('/src/data/recs/*.json', { eager: true });
+const projectsGlob = (import.meta as any).glob('/src/data/projects/*.json', { eager: true });
+
+export function mapProjectCategory(cat: string): 'gift support' | 'led' | 'ads' | 'event' | 'others' {
+  const norm = String(cat || '').trim().toLowerCase();
+  if (norm === 'gift support' || norm === 'gift') return 'gift support';
+  if (norm === 'led') return 'led';
+  if (norm === 'ads') return 'ads';
+  if (norm === 'event') return 'event';
+  return 'others';
+}
 
 // Helpers to map legacy categories to new requested format
 export function mapHintCategory(cat: string): string {
@@ -136,6 +146,28 @@ try {
   });
 } catch (e) {
   console.warn("Lỗi phân tích CMS recommendations: ", e);
+}
+
+// 4. Process CMS Projects Items
+const cmsProjectsList: ProjectItem[] = [];
+try {
+  Object.entries(projectsGlob).forEach(([path, module]: [string, any]) => {
+    const raw = module.default || module;
+    if (raw && raw.id) {
+      cmsProjectsList.push({
+        id: raw.id,
+        title: raw.title || "",
+        imageFile: raw.imageFile || "",
+        category: mapProjectCategory(raw.category),
+        sourceUrl: raw.sourceUrl || "",
+        caption: raw.caption || "",
+        date: raw.date || "",
+        isHidden: typeof raw.isHidden === 'boolean' ? raw.isHidden : false
+      });
+    }
+  });
+} catch (e) {
+  console.warn("Lỗi phân tích CMS projects: ", e);
 }
 
 const DEFAULT_HINTS: HintItem[] = [
@@ -285,14 +317,99 @@ const DEFAULT_RECS: RecItem[] = [
   }
 ];
 
+const DEFAULT_PROJECTS: ProjectItem[] = [
+  {
+    id: 'project-1',
+    title: 'Hộp Quà Mùa Đông Ấm Áp Cho Cặp Đôi 🎁',
+    category: 'gift support',
+    imageFile: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=600&q=80',
+    sourceUrl: 'https://facebook.com/chamchamz',
+    caption: 'Dự án gửi tặng những món quà len tự đan, album ảnh kỷ niệm và trà sữa ấm áp đến studio nhân ngày ghi hình radio đặc biệt.',
+    date: '2026-07-15',
+    isHidden: false
+  },
+  {
+    id: 'project-2',
+    title: 'Bảng Đèn LED Kỷ Niệm 100 Ngày Tại Ngã Tư Trung Tâm 🌟',
+    category: 'led',
+    imageFile: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80',
+    sourceUrl: 'https://threads.net/@chamchamz',
+    caption: 'Màn hình LED lớn phát sóng các khoảnh khắc livestream đôi đáng nhớ của hai đứa trong suốt một tuần lễ ngọt ngào.',
+    date: '2026-07-12',
+    isHidden: false
+  },
+  {
+    id: 'project-3',
+    title: 'Chiến Dịch Quảng Cáo Bus Shelter Tuyến 02 🚌',
+    category: 'ads',
+    imageFile: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=600&q=80',
+    sourceUrl: 'https://instagram.com',
+    caption: 'Poster quảng bá phủ sóng tại 5 trạm xe buýt chính quanh khu vực trường đại học lớn, lan tỏa nụ cười rạng rỡ của Chamchamz.',
+    date: '2026-07-08',
+    isHidden: false
+  },
+  {
+    id: 'project-4',
+    title: 'Sự Kiện Trà Chiều \'Bong Bóng Ngọc Bích\' 🫧',
+    category: 'event',
+    imageFile: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=80',
+    sourceUrl: 'https://youtube.com',
+    caption: 'Buổi họp mặt offline nhỏ của đại gia đình Fan Chamchamz, cùng ngắm nhìn tranh triển lãm, ký thệ ước bảo mật và uống trà dâu.',
+    date: '2026-07-01',
+    isHidden: false
+  },
+  {
+    id: 'project-5',
+    title: 'Hỗ Trợ Thực Đơn Dinh Dưỡng Cho Ekip Quay Challenge 🍱',
+    category: 'gift support',
+    imageFile: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80',
+    sourceUrl: 'https://threads.net/@chamchamz',
+    caption: 'Gửi tặng 30 phần cơm bento đặc biệt, trái cây tươi và nước ép dâu tây nguyên chất tiếp sức cho đoàn quay phim.',
+    date: '2026-06-25',
+    isHidden: false
+  },
+  {
+    id: 'project-6',
+    title: 'Phát Sóng Clip Ngắn Trên Màn Hình LED Phố Đi Bộ 🎬',
+    category: 'led',
+    imageFile: 'https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?auto=format&fit=crop&w=600&q=80',
+    sourceUrl: 'https://facebook.com',
+    caption: 'Clip tổng hợp nét vẽ dễ thương và lời chúc tốt đẹp nhất được trình chiếu 120 lần/ngày tại khu vực sầm uất nhất.',
+    date: '2026-06-20',
+    isHidden: false
+  },
+  {
+    id: 'project-7',
+    title: 'Ủng Hộ Quỹ Cây Xanh Mang Tên Chamchamz 🌳',
+    category: 'others',
+    imageFile: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80',
+    sourceUrl: 'https://wikipedia.org',
+    caption: 'Đóng góp 500 cây xanh vào dự án phục hồi rừng đầu nguồn, mang lại mảng xanh may mắn dồi dào giống như tinh thần của bé.',
+    date: '2026-06-15',
+    isHidden: false
+  },
+  {
+    id: 'project-8',
+    title: 'Trang Trí Cup Holder Tại 3 Tiệm Cà Phê Đồng Hành ☕',
+    category: 'event',
+    imageFile: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80',
+    sourceUrl: 'https://instagram.com',
+    caption: 'Phát tặng miễn phí 1000 cup holder kèm card bo góc nhám mờ phiên bản giới hạn cho các fan đến uống trà sữa dâu ủng hộ.',
+    date: '2026-06-10',
+    isHidden: false
+  }
+];
+
 // Helper to merge CMS list and hardcoded fallback by ID (using CMS as full authority if populated to allow deletes)
 const computedHints = cmsHintsList.length > 0 ? cmsHintsList : DEFAULT_HINTS;
 const computedGallery = cmsGalleryList.length > 0 ? cmsGalleryList : DEFAULT_GALLERY;
 const computedRecs = cmsRecsList.length > 0 ? cmsRecsList : DEFAULT_RECS;
+const computedProjects = cmsProjectsList.length > 0 ? cmsProjectsList : DEFAULT_PROJECTS;
 
 export const HINTS_DATA = computedHints.filter(item => !item.isHidden);
 export const GALLERY_DATA = computedGallery.filter(item => !item.isHidden);
 export const RECS_DATA = computedRecs.filter(item => !item.isHidden);
+export const PROJECTS_DATA = computedProjects.filter(item => !item.isHidden);
 
 export const INITIAL_MESSAGES: FanMessage[] = [
   {
